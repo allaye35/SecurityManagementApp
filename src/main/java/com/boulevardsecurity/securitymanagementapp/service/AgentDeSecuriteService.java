@@ -34,18 +34,27 @@ public class AgentDeSecuriteService {
 
     // Mettre à jour un agent de sécurité existant
     public AgentDeSecurite updateAgent(Long id, AgentDeSecurite updatedAgent) {
-        Optional<AgentDeSecurite> existingAgent = agentDeSecuriteRepository.findById(id);
-        if (existingAgent.isPresent()) {
-            AgentDeSecurite agent = existingAgent.get();
+        Optional<AgentDeSecurite> existingAgentOpt = agentDeSecuriteRepository.findById(id);
+
+        if (existingAgentOpt.isPresent()) {
+            AgentDeSecurite agent = existingAgentOpt.get();
             agent.setNom(updatedAgent.getNom());
             agent.setPrenom(updatedAgent.getPrenom());
-            agent.setTelephone(updatedAgent.getTelephone());
             agent.setEmail(updatedAgent.getEmail());
+            agent.setTelephone(updatedAgent.getTelephone());
             agent.setAdresse(updatedAgent.getAdresse());
+            agent.setDateNaissance(updatedAgent.getDateNaissance());
+            agent.setZoneDeTravail(updatedAgent.getZoneDeTravail());
+            agent.setSalaire(updatedAgent.getSalaire());
+            agent.setActif(updatedAgent.isActif());
+            System.out.println(agent);
             return agentDeSecuriteRepository.save(agent);
+        } else {
+            return null;  // Pour éviter de sauvegarder un agent inexistant
         }
-        return null; // ou lever une exception
     }
+
+
 
     // Supprimer un agent de sécurité par son ID
     public boolean deleteAgent(Long id) {
@@ -55,4 +64,5 @@ public class AgentDeSecuriteService {
         }
         return false;
     }
+
 }
