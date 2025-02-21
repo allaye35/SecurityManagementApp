@@ -1,12 +1,11 @@
 package com.boulevardsecurity.securitymanagementapp.controller;
 
-
+import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
+import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.model.Planning;
 import com.boulevardsecurity.securitymanagementapp.service.PlanningService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/plannings")
@@ -18,31 +17,39 @@ public class PlanningController {
         this.planningService = planningService;
     }
 
-    @GetMapping("/all")
-    public List<Planning> getAllPlannings() {
-        return planningService.getAllPlannings();
+    // ✅ Ajouter un agent
+    @PostMapping("/{id}/agents")
+    public ResponseEntity<Planning> ajouterAgent(@PathVariable Long id, @RequestBody AgentDeSecurite agent) {
+        return ResponseEntity.ok(planningService.ajouterAgent(id, agent));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Planning> getPlanningById(@PathVariable Long id) {
-        Planning planning = planningService.getPlanningById(id);
-        return planning != null ? ResponseEntity.ok(planning) : ResponseEntity.notFound().build();
+    // ✅ Supprimer un agent
+    @DeleteMapping("/{id}/agents")
+    public ResponseEntity<Planning> supprimerAgent(@PathVariable Long id, @RequestBody AgentDeSecurite agent) {
+        return ResponseEntity.ok(planningService.supprimerAgent(id, agent));
     }
 
-    @PostMapping("/ajouter")
-    public Planning createPlanning(@RequestBody Planning planning) {
-        return planningService.createPlanning(planning);
+    // ✅ Ajouter une mission
+    @PostMapping("/{id}/missions")
+    public ResponseEntity<Planning> ajouterMission(@PathVariable Long id, @RequestBody Mission mission) {
+        return ResponseEntity.ok(planningService.ajouterMission(id, mission));
     }
 
-    @PutMapping("/modifier/{id}")
-    public ResponseEntity<Planning> updatePlanning(@PathVariable Long id, @RequestBody Planning updatedPlanning) {
-        Planning planning = planningService.updatePlanning(id, updatedPlanning);
-        return planning != null ? ResponseEntity.ok(planning) : ResponseEntity.notFound().build();
+    // ✅ Supprimer une mission
+    @DeleteMapping("/{id}/missions")
+    public ResponseEntity<Planning> supprimerMission(@PathVariable Long id, @RequestBody Mission mission) {
+        return ResponseEntity.ok(planningService.supprimerMission(id, mission));
     }
 
-    @DeleteMapping("/supprimer/{id}")
-    public ResponseEntity<Void> deletePlanning(@PathVariable Long id) {
-        planningService.deletePlanning(id);
-        return ResponseEntity.noContent().build();
+    // ✅ Récupérer le nombre d'agents
+    @GetMapping("/{id}/nombre-agents")
+    public ResponseEntity<Integer> getNombreAgents(@PathVariable Long id) {
+        return ResponseEntity.ok(planningService.getNombreAgents(id));
+    }
+
+    // ✅ Récupérer le nombre de missions
+    @GetMapping("/{id}/nombre-missions")
+    public ResponseEntity<Integer> getNombreMissions(@PathVariable Long id) {
+        return ResponseEntity.ok(planningService.getNombreMissions(id));
     }
 }

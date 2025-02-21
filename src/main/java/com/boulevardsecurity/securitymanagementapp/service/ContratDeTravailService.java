@@ -5,43 +5,50 @@ import com.boulevardsecurity.securitymanagementapp.repository.ContratDeTravailRe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ContratDeTravailService {
 
-    private final ContratDeTravailRepository contratDeTravailRepository;
+    private final ContratDeTravailRepository contratRepository;
 
     @Autowired
-    public ContratDeTravailService(ContratDeTravailRepository contratDeTravailRepository) {
-        this.contratDeTravailRepository = contratDeTravailRepository;
+    public ContratDeTravailService(ContratDeTravailRepository contratRepository) {
+        this.contratRepository = contratRepository;
     }
 
     public List<ContratDeTravail> getAllContrats() {
-        return contratDeTravailRepository.findAll();
+        return contratRepository.findAll();
     }
 
     public Optional<ContratDeTravail> getContratById(Long id) {
-        return contratDeTravailRepository.findById(id);
+        return contratRepository.findById(id);
     }
 
-    public ContratDeTravail createContrat(ContratDeTravail contratDeTravail) {
-        return contratDeTravailRepository.save(contratDeTravail);
+    public ContratDeTravail createContrat(ContratDeTravail contrat) {
+        return contratRepository.save(contrat);
     }
 
     public ContratDeTravail updateContrat(Long id, ContratDeTravail updatedContrat) {
-        return contratDeTravailRepository.findById(id)
-                .map(contrat -> {
-                    contrat.setDateDebut(updatedContrat.getDateDebut());
-                    contrat.setDateFin(updatedContrat.getDateFin());
-                    contrat.setSalaire(updatedContrat.getSalaire());
-                    return contratDeTravailRepository.save(contrat);
-                })
-                .orElse(null);
+        return contratRepository.findById(id).map(contrat -> {
+            contrat.setDateDebut(updatedContrat.getDateDebut());
+            contrat.setDateFin(updatedContrat.getDateFin());
+            contrat.setSignatureElectronique(updatedContrat.getSignatureElectronique());
+            return contratRepository.save(contrat);
+        }).orElse(null);
     }
 
     public void deleteContrat(Long id) {
-        contratDeTravailRepository.deleteById(id);
+        contratRepository.deleteById(id);
+    }
+
+    public boolean prolongerContrat(Long id, LocalDate nouvelleDateFin) {
+        return contratRepository.findById(id).map(contrat -> {
+            contrat.prolongerContrat(nouvelleDateFin);
+            contratRepository.save(contrat);
+            return true;
+        }).orElse(false);
     }
 }

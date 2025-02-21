@@ -1,6 +1,9 @@
 package com.boulevardsecurity.securitymanagementapp.model;
 
+import com.boulevardsecurity.securitymanagementapp.Enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -12,16 +15,28 @@ import lombok.*;
 @Builder
 public class Administrateur {
 
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @NotBlank(message = "Le nom d'utilisateur est obligatoire")
     private String username;
 
     @Column(nullable = false)
+    @NotBlank(message = "Le mot de passe est obligatoire")
     private String password;
 
     @Column(nullable = false)
-    private String role = "ADMIN"; // Par défaut, c'est un admin
+    @Email(message = "L'email doit être valide")
+    private String email;
+
+    public void planifierMission(AgentDeSecurite agent, Mission mission) {
+        agent.getMissions().add(mission);
+    }
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.ADMIN; // Rôle par défaut ADMIN
 }

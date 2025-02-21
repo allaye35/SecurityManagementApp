@@ -1,68 +1,56 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
+import com.boulevardsecurity.securitymanagementapp.repository.AgentDeSecuriteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.boulevardsecurity.securitymanagementapp.repository.AgentDeSecuriteRepository;
+
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AgentDeSecuriteService {
 
-    private final AgentDeSecuriteRepository agentDeSecuriteRepository;
+    private final AgentDeSecuriteRepository agentRepository;
 
     @Autowired
-    public AgentDeSecuriteService(AgentDeSecuriteRepository agentDeSecuriteRepository) {
-        this.agentDeSecuriteRepository = agentDeSecuriteRepository;
+    public AgentDeSecuriteService(AgentDeSecuriteRepository agentRepository) {
+        this.agentRepository = agentRepository;
     }
 
-    // Récupérer tous les agents de sécurité
     public List<AgentDeSecurite> getAllAgents() {
-        return agentDeSecuriteRepository.findAll();
+        return agentRepository.findAll();
     }
 
-    // Récupérer un agent par son ID
     public AgentDeSecurite getAgentById(Long id) {
-        return agentDeSecuriteRepository.findById(id).orElse(null);
+        return agentRepository.findById(id).orElse(null);
     }
 
-    // Ajouter un nouvel agent de sécurité
     public AgentDeSecurite createAgent(AgentDeSecurite agent) {
-        return agentDeSecuriteRepository.save(agent);
+        return agentRepository.save(agent);
     }
 
-    // Mettre à jour un agent de sécurité existant
     public AgentDeSecurite updateAgent(Long id, AgentDeSecurite updatedAgent) {
-        Optional<AgentDeSecurite> existingAgentOpt = agentDeSecuriteRepository.findById(id);
-
-        if (existingAgentOpt.isPresent()) {
-            AgentDeSecurite agent = existingAgentOpt.get();
+        Optional<AgentDeSecurite> existingAgent = agentRepository.findById(id);
+        if (existingAgent.isPresent()) {
+            AgentDeSecurite agent = existingAgent.get();
             agent.setNom(updatedAgent.getNom());
             agent.setPrenom(updatedAgent.getPrenom());
             agent.setEmail(updatedAgent.getEmail());
             agent.setTelephone(updatedAgent.getTelephone());
             agent.setAdresse(updatedAgent.getAdresse());
             agent.setDateNaissance(updatedAgent.getDateNaissance());
-            agent.setZoneDeTravail(updatedAgent.getZoneDeTravail());
             agent.setSalaire(updatedAgent.getSalaire());
-            agent.setActif(updatedAgent.isActif());
-            System.out.println(agent);
-            return agentDeSecuriteRepository.save(agent);
-        } else {
-            return null;  // Pour éviter de sauvegarder un agent inexistant
+            agent.setZoneDeTravail(updatedAgent.getZoneDeTravail());
+            agent.setStatut(updatedAgent.getStatut());
+            return agentRepository.save(agent);
         }
+        return null;
     }
 
-
-
-    // Supprimer un agent de sécurité par son ID
-    public boolean deleteAgent(Long id) {
-        if (agentDeSecuriteRepository.existsById(id)) {
-            agentDeSecuriteRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteAgent(Long id) {
+        agentRepository.deleteById(id);
     }
+
 
 }

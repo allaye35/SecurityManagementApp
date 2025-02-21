@@ -1,8 +1,13 @@
 package com.boulevardsecurity.securitymanagementapp.model;
 
+import com.boulevardsecurity.securitymanagementapp.Enums.StatutAgent;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "agents_de_securite")
@@ -12,10 +17,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AgentDeSecurite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false)
@@ -37,12 +44,44 @@ public class AgentDeSecurite {
     private LocalDate dateNaissance;
 
     @Column(nullable = false)
-    private String zoneDeTravail; // Exemple: "Centre commercial", "Événement"
+    private Float salaire;
 
     @Column(nullable = false)
-    private Double salaire;
+    private String zoneDeTravail;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean actif = true; // Statut actif/inactif
+    private StatutAgent statut; // EN_SERVICE, EN_CONGE, ABSENT
+
+    // Un agent appartient à une entreprise
+    @ManyToOne
+    @JoinColumn(name = "entreprise_id", nullable = false)
+    private Entreprise entreprise;
+
+    // Un agent est inclus dans un planning (relation corrigée)
+    @ManyToOne
+    @JoinColumn(name = "planning_id")
+    @JsonIgnore // Évite la récursion infinie
+    private Planning planning;
+
+    // Un agent peut être affecté à plusieurs missions
+    @ManyToMany(mappedBy = "agents", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Mission> missions = new HashSet<>();
+
+    // ======= MÉTHODES UTILITAIRES =======
+
+    public void ajouterMission(Mission mission) {
+        missions.add(mission);
+        mission.getAgents().add(this);
+    }
+
+    public void supprimerMission(Mission mission) {
+        missions.remove(mission);
+        mission.getAgents().remove(this);
+    }
+
+    public boolean estDisponible() {
+        return this.statut == StatutAgent.EN_SERVICE;
+    }
 }
-

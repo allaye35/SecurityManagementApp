@@ -4,6 +4,10 @@ import com.boulevardsecurity.securitymanagementapp.model.ContratDeTravail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ContratDeTravailRepository extends JpaRepository<ContratDeTravail, Long> {
+    List<ContratDeTravail> findByAgentId(Long agentId);
+    List<ContratDeTravail> findByEntrepriseId(Long entrepriseId);
 }

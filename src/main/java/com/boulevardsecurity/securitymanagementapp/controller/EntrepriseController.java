@@ -7,9 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/entreprises")  // ✅ Vérifie bien l'URL de base
+@RequestMapping("/api/entreprises")
 public class EntrepriseController {
 
     private final EntrepriseService entrepriseService;
@@ -19,31 +20,31 @@ public class EntrepriseController {
         this.entrepriseService = entrepriseService;
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public List<Entreprise> getAllEntreprises() {
         return entrepriseService.getAllEntreprises();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Entreprise> getEntrepriseById(@PathVariable Long id) {
-        Entreprise entreprise = entrepriseService.getEntrepriseById(id);
-        return entreprise != null ? ResponseEntity.ok(entreprise) : ResponseEntity.notFound().build();
+        Optional<Entreprise> entreprise = entrepriseService.getEntrepriseById(id);
+        return entreprise.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // ✅ Vérifie bien que l'annotation est correcte
-    @PostMapping("/create")
-    public ResponseEntity<Entreprise> createEntreprise(@RequestBody Entreprise entreprise) {
-        Entreprise savedEntreprise = entrepriseService.createEntreprise(entreprise);
-        return ResponseEntity.ok(savedEntreprise);
+
+
+    @PostMapping
+    public Entreprise createEntreprise(@RequestBody Entreprise entreprise) {
+        return entrepriseService.createEntreprise(entreprise);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Entreprise> updateEntreprise(@PathVariable Long id, @RequestBody Entreprise updatedEntreprise) {
         Entreprise entreprise = entrepriseService.updateEntreprise(id, updatedEntreprise);
         return entreprise != null ? ResponseEntity.ok(entreprise) : ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEntreprise(@PathVariable Long id) {
         entrepriseService.deleteEntreprise(id);
         return ResponseEntity.noContent().build();

@@ -1,8 +1,8 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
-
 import com.boulevardsecurity.securitymanagementapp.model.Entreprise;
 import com.boulevardsecurity.securitymanagementapp.repository.EntrepriseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +13,7 @@ public class EntrepriseService {
 
     private final EntrepriseRepository entrepriseRepository;
 
+    @Autowired
     public EntrepriseService(EntrepriseRepository entrepriseRepository) {
         this.entrepriseRepository = entrepriseRepository;
     }
@@ -21,18 +22,19 @@ public class EntrepriseService {
         return entrepriseRepository.findAll();
     }
 
-    public Entreprise getEntrepriseById(Long id) {
-        return entrepriseRepository.findById(id).orElse(null);
+    public Optional<Entreprise> getEntrepriseById(Long id) {
+        return entrepriseRepository.findById(id);
     }
+
 
     public Entreprise createEntreprise(Entreprise entreprise) {
         return entrepriseRepository.save(entreprise);
     }
 
     public Entreprise updateEntreprise(Long id, Entreprise updatedEntreprise) {
-        Optional<Entreprise> entrepriseOpt = entrepriseRepository.findById(id);
-        if (entrepriseOpt.isPresent()) {
-            Entreprise entreprise = entrepriseOpt.get();
+        Optional<Entreprise> existingEntreprise = entrepriseRepository.findById(id);
+        if (existingEntreprise.isPresent()) {
+            Entreprise entreprise = existingEntreprise.get();
             entreprise.setNom(updatedEntreprise.getNom());
             entreprise.setAdresse(updatedEntreprise.getAdresse());
             entreprise.setTelephone(updatedEntreprise.getTelephone());
@@ -45,4 +47,3 @@ public class EntrepriseService {
         entrepriseRepository.deleteById(id);
     }
 }
-

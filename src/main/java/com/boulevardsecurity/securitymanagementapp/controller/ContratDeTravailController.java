@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,38 +14,44 @@ import java.util.Optional;
 @RequestMapping("/api/contrats")
 public class ContratDeTravailController {
 
-    private final ContratDeTravailService contratDeTravailService;
+    private final ContratDeTravailService contratService;
 
     @Autowired
-    public ContratDeTravailController(ContratDeTravailService contratDeTravailService) {
-        this.contratDeTravailService = contratDeTravailService;
+    public ContratDeTravailController(ContratDeTravailService contratService) {
+        this.contratService = contratService;
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public List<ContratDeTravail> getAllContrats() {
-        return contratDeTravailService.getAllContrats();
+        return contratService.getAllContrats();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ContratDeTravail> getContratById(@PathVariable Long id) {
-        Optional<ContratDeTravail> contrat = contratDeTravailService.getContratById(id);
+        Optional<ContratDeTravail> contrat = contratService.getContratById(id);
         return contrat.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/ajouter")
-    public ResponseEntity<ContratDeTravail> createContrat(@RequestBody ContratDeTravail contratDeTravail) {
-        return ResponseEntity.ok(contratDeTravailService.createContrat(contratDeTravail));
+    @PostMapping
+    public ResponseEntity<ContratDeTravail> createContrat(@RequestBody ContratDeTravail contrat) {
+        return ResponseEntity.ok(contratService.createContrat(contrat));
     }
 
-    @PutMapping("/modifier/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ContratDeTravail> updateContrat(@PathVariable Long id, @RequestBody ContratDeTravail updatedContrat) {
-        ContratDeTravail contrat = contratDeTravailService.updateContrat(id, updatedContrat);
+        ContratDeTravail contrat = contratService.updateContrat(id, updatedContrat);
         return contrat != null ? ResponseEntity.ok(contrat) : ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/supprimer/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteContrat(@PathVariable Long id) {
-        contratDeTravailService.deleteContrat(id);
+        contratService.deleteContrat(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/prolonger")
+    public ResponseEntity<String> prolongerContrat(@PathVariable Long id, @RequestParam LocalDate nouvelleDateFin) {
+        boolean success = contratService.prolongerContrat(id, nouvelleDateFin);
+        return success ? ResponseEntity.ok("Contrat prolongé avec succès") : ResponseEntity.badRequest().body("Erreur de prolongation");
     }
 }

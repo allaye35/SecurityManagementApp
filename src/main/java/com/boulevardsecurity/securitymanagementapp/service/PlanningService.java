@@ -1,11 +1,13 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
+import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
+import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.model.Planning;
 import com.boulevardsecurity.securitymanagementapp.repository.PlanningRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PlanningService {
@@ -16,31 +18,63 @@ public class PlanningService {
         this.planningRepository = planningRepository;
     }
 
-    public List<Planning> getAllPlannings() {
-        return planningRepository.findAll();
-    }
-
-    public Planning getPlanningById(Long id) {
-        return planningRepository.findById(id).orElse(null);
-    }
-
-    public Planning createPlanning(Planning planning) {
-        return planningRepository.save(planning);
-    }
-
-    public Planning updatePlanning(Long id, Planning updatedPlanning) {
-        Optional<Planning> existingPlanning = planningRepository.findById(id);
-        if (existingPlanning.isPresent()) {
-            Planning planning = existingPlanning.get();
-            planning.setDate(updatedPlanning.getDate());
-            planning.setHeureDebut(updatedPlanning.getHeureDebut());
-            planning.setHeureFin(updatedPlanning.getHeureFin());
+    // ✅ Ajouter un agent au planning
+    public Planning ajouterAgent(Long planningId, AgentDeSecurite agent) {
+        Optional<Planning> planningOpt = planningRepository.findById(planningId);
+        if (planningOpt.isPresent()) {
+            Planning planning = planningOpt.get();
+            planning.getAgents().add(agent);
             return planningRepository.save(planning);
         }
-        return null;
+        throw new RuntimeException("Planning non trouvé !");
     }
 
-    public void deletePlanning(Long id) {
-        planningRepository.deleteById(id);
+    // ✅ Supprimer un agent du planning
+    public Planning supprimerAgent(Long planningId, AgentDeSecurite agent) {
+        Optional<Planning> planningOpt = planningRepository.findById(planningId);
+        if (planningOpt.isPresent()) {
+            Planning planning = planningOpt.get();
+            planning.getAgents().remove(agent);
+            return planningRepository.save(planning);
+        }
+        throw new RuntimeException("Planning non trouvé !");
+    }
+
+    // ✅ Ajouter une mission au planning
+    public Planning ajouterMission(Long planningId, Mission mission) {
+        Optional<Planning> planningOpt = planningRepository.findById(planningId);
+        if (planningOpt.isPresent()) {
+            Planning planning = planningOpt.get();
+            mission.setPlanning(planning);
+            planning.getMissions().add(mission);
+            return planningRepository.save(planning);
+        }
+        throw new RuntimeException("Planning non trouvé !");
+    }
+
+    // ✅ Supprimer une mission du planning
+    public Planning supprimerMission(Long planningId, Mission mission) {
+        Optional<Planning> planningOpt = planningRepository.findById(planningId);
+        if (planningOpt.isPresent()) {
+            Planning planning = planningOpt.get();
+            planning.getMissions().remove(mission);
+            mission.setPlanning(null);
+            return planningRepository.save(planning);
+        }
+        throw new RuntimeException("Planning non trouvé !");
+    }
+
+    // ✅ Obtenir le nombre d'agents dans un planning
+    public int getNombreAgents(Long planningId) {
+        return planningRepository.findById(planningId)
+                .map(planning -> planning.getAgents().size())
+                .orElseThrow(() -> new RuntimeException("Planning non trouvé !"));
+    }
+
+    // ✅ Obtenir le nombre de missions dans un planning
+    public int getNombreMissions(Long planningId) {
+        return planningRepository.findById(planningId)
+                .map(planning -> planning.getMissions().size())
+                .orElseThrow(() -> new RuntimeException("Planning non trouvé !"));
     }
 }
