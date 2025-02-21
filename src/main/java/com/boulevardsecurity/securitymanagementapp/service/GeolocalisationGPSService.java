@@ -1,40 +1,66 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.model.GeolocalisationGPS;
+import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.repository.GeolocalisationGPSRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.boulevardsecurity.securitymanagementapp.repository.MissionRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GeolocalisationGPSService {
 
-    @Autowired
-    private GeolocalisationGPSRepository geolocalisationGPSRepository;
+    private final GeolocalisationGPSRepository gpsRepository;
+    private final MissionRepository missionRepository;
 
-    public List<GeolocalisationGPS> getAllGeolocalisations() {
-        return geolocalisationGPSRepository.findAll();
+    public GeolocalisationGPSService(GeolocalisationGPSRepository gpsRepository, MissionRepository missionRepository) {
+        this.gpsRepository = gpsRepository;
+        this.missionRepository = missionRepository;
     }
 
-    public Optional<GeolocalisationGPS> getGeolocalisationById(Long id) {
-        return geolocalisationGPSRepository.findById(id);
+    public List<GeolocalisationGPS> getAll() {
+        return gpsRepository.findAll();
     }
 
-    public GeolocalisationGPS createGeolocalisation(GeolocalisationGPS geolocalisationGPS) {
-        return geolocalisationGPSRepository.save(geolocalisationGPS);
+    public GeolocalisationGPS getById(Long id) {
+        return gpsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("GeolocalisationGPS non trouvée avec id: " + id));
     }
 
-    public GeolocalisationGPS updateGeolocalisation(Long id, GeolocalisationGPS updatedGeolocalisation) {
-        return geolocalisationGPSRepository.findById(id).map(geo -> {
-            geo.setLatitude(updatedGeolocalisation.getLatitude());
-            geo.setLongitude(updatedGeolocalisation.getLongitude());
-            return geolocalisationGPSRepository.save(geo);
-        }).orElse(null);
+    public GeolocalisationGPS create(GeolocalisationGPS gps) {
+        return gpsRepository.save(gps);
     }
 
-    public void deleteGeolocalisation(Long id) {
-        geolocalisationGPSRepository.deleteById(id);
+    public GeolocalisationGPS update(Long id, GeolocalisationGPS gpsDetails) {
+        return gpsRepository.findById(id).map(gps -> {
+            gps.setPrecision(gpsDetails.getPrecision());
+            gps.setPosition(gpsDetails.getPosition());
+            return gpsRepository.save(gps);
+        }).orElseThrow(() -> new RuntimeException("GeolocalisationGPS non trouvée avec id: " + id));
+    }
+
+    public void delete(Long id) {
+        gpsRepository.deleteById(id);
+    }
+
+    // ✅ Correction : Ajouter une mission à une géolocalisation
+    public Mission addMissionToGeolocalisation(Long gpsId, Mission mission) {
+        GeolocalisationGPS gps = gpsRepository.findById(gpsId)
+                .orElseThrow(() -> new RuntimeException("GeolocalisationGPS non trouvée"));
+
+        // Vérifier si la liste des missions est initialisée
+        if (gps.getMissions() == null) {
+            gps.setMissions(new ArrayList<>()); // Initialiser si null
+        }
+
+        // Ajouter la mission à la liste
+        mission.setGeolocalisationGPS(gps);
+        gps.getMissions().add(mission);
+
+        // Sauvegarder les deux
+        gpsRepository.save(gps);
+        return missionRepository.save(mission);
     }
 }

@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
+@Table(name = "geolocalisation_gps")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString
 public class GeolocalisationGPS {
 
@@ -17,12 +20,12 @@ public class GeolocalisationGPS {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double latitude;
-    private double longitude;
-    private LocalDateTime timestamp;
+    @Column(nullable = false)
+    private float precision;
 
-    @PrePersist
-    public void prePersist() {
-        this.timestamp = LocalDateTime.now();
-    }
+    @Embedded // Intègre directement latitude et longitude dans la table
+    private GeoPoint position;
+
+    @OneToMany(mappedBy = "geolocalisationGPS", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Mission> missions;
 }

@@ -1,46 +1,41 @@
 package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.model.GeolocalisationGPS;
+import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.service.GeolocalisationGPSService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/geolocalisationsGPS")
+@RequestMapping("/api/geolocalisations")
 public class GeolocalisationGPSController {
 
-    @Autowired
-    private GeolocalisationGPSService geolocalisationGPSService;
+    private final GeolocalisationGPSService service;
+
+    public GeolocalisationGPSController(GeolocalisationGPSService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<GeolocalisationGPS> getAllGeolocalisations() {
-        return geolocalisationGPSService.getAllGeolocalisations();
+    public List<GeolocalisationGPS> getAll() {
+        return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GeolocalisationGPS> getGeolocalisationById(@PathVariable Long id) {
-        Optional<GeolocalisationGPS> geo = geolocalisationGPSService.getGeolocalisationById(id);
-        return geo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<GeolocalisationGPS> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
     }
 
     @PostMapping
-    public GeolocalisationGPS createGeolocalisation(@RequestBody GeolocalisationGPS geolocalisationGPS) {
-        return geolocalisationGPSService.createGeolocalisation(geolocalisationGPS);
+    public GeolocalisationGPS create(@RequestBody GeolocalisationGPS gps) {
+        return service.create(gps);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<GeolocalisationGPS> updateGeolocalisation(@PathVariable Long id, @RequestBody GeolocalisationGPS updatedGeolocalisation) {
-        GeolocalisationGPS geo = geolocalisationGPSService.updateGeolocalisation(id, updatedGeolocalisation);
-        return geo != null ? ResponseEntity.ok(geo) : ResponseEntity.notFound().build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGeolocalisation(@PathVariable Long id) {
-        geolocalisationGPSService.deleteGeolocalisation(id);
-        return ResponseEntity.noContent().build();
+    // ✅ Nouveau endpoint : Ajouter une mission à une géolocalisation
+    @PostMapping("/{gpsId}/missions")
+    public ResponseEntity<Mission> addMissionToGeolocalisation(@PathVariable Long gpsId, @RequestBody Mission mission) {
+        return ResponseEntity.ok(service.addMissionToGeolocalisation(gpsId, mission));
     }
 }

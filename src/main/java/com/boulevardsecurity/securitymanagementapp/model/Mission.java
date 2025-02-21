@@ -4,6 +4,8 @@ import com.boulevardsecurity.securitymanagementapp.Enums.StatutMission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -64,10 +66,9 @@ public class Mission {
     @JoinColumn(name = "site_id", nullable = false)
     @ToString.Exclude
     private Site site;
-//
-//    // Une mission a une localisation
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "geolocalisation_id", referencedColumnName = "id")
-//    private GeolocalisationGPS geolocalisation;
+
+    @ManyToOne
+    @JoinColumn(name = "geolocalisation_id") // Clé étrangère vers GeolocalisationGPS
+    private GeolocalisationGPS geolocalisationGPS;
 
 }
