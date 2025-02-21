@@ -3,6 +3,8 @@ package com.boulevardsecurity.securitymanagementapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -19,4 +21,5 @@ public class Site {
     private String nom;
     private String adresse;
     private String description;
+
 }

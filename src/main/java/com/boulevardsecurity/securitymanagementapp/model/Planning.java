@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,18 +25,7 @@ public class Planning {
     @Column(nullable = false)
     private LocalDate date;
 
-    @ManyToOne
-    @JoinColumn(name = "entreprise_id", nullable = false)
-    private Entreprise entreprise;
-
-    @ManyToMany
-    @JoinTable(
-            name = "planning_agents",
-            joinColumns = @JoinColumn(name = "planning_id"),
-            inverseJoinColumns = @JoinColumn(name = "agent_id")
-    )
-    private Set<AgentDeSecurite> agents = new HashSet<>();
-
     @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Mission> missions = new HashSet<>();
+    @ToString.Exclude
+    private List<Mission> missions;
 }

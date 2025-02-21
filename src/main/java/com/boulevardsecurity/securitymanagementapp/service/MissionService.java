@@ -2,63 +2,35 @@ package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.repository.MissionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MissionService {
 
     private final MissionRepository missionRepository;
 
-    @Autowired
-    public MissionService(MissionRepository missionRepository) {
-        this.missionRepository = missionRepository;
-    }
-
+    // 🔹 Récupérer toutes les missions
     public List<Mission> getAllMissions() {
         return missionRepository.findAll();
     }
 
-    public Mission getMissionById(Long id) {
-        return missionRepository.findById(id).orElse(null);
+    // 🔹 Récupérer une mission par ID
+    public Optional<Mission> getMissionById(Long id) {
+        return missionRepository.findById(id);
     }
 
-    public Mission createMission(Mission mission) {
+    // 🔹 Ajouter ou mettre à jour une mission
+    public Mission saveMission(Mission mission) {
         return missionRepository.save(mission);
     }
 
-    public Mission updateMission(Long id, Mission updatedMission) {
-        Optional<Mission> existingMission = missionRepository.findById(id);
-        if (existingMission.isPresent()) {
-            Mission mission = existingMission.get();
-            mission.setTitre(updatedMission.getTitre());
-            mission.setDescription(updatedMission.getDescription());
-            mission.setDateDebut(updatedMission.getDateDebut());
-            mission.setDateFin(updatedMission.getDateFin());
-            mission.setEntreprise(updatedMission.getEntreprise());
-            mission.setPlanning(updatedMission.getPlanning());
-            return missionRepository.save(mission);
-        }
-        return null;
-    }
-
+    // 🔹 Supprimer une mission par ID
     public void deleteMission(Long id) {
         missionRepository.deleteById(id);
-    }
-
-    public List<Mission> getMissionsByEntreprise(Long entrepriseId) {
-        return missionRepository.findByEntrepriseId(entrepriseId);
-    }
-
-    public List<Mission> getMissionsEnCours() {
-        return missionRepository.findByDateDebutAfter(LocalDate.now());
-    }
-
-    public List<Mission> getMissionsTerminees() {
-        return missionRepository.findByDateFinBefore(LocalDate.now());
     }
 }

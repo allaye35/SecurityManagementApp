@@ -2,47 +2,34 @@ package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.model.Entreprise;
 import com.boulevardsecurity.securitymanagementapp.repository.EntrepriseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EntrepriseService {
 
     private final EntrepriseRepository entrepriseRepository;
 
-    @Autowired
-    public EntrepriseService(EntrepriseRepository entrepriseRepository) {
-        this.entrepriseRepository = entrepriseRepository;
-    }
-
+    // 🔹 Récupérer toutes les entreprises
     public List<Entreprise> getAllEntreprises() {
         return entrepriseRepository.findAll();
     }
 
+    // 🔹 Récupérer une entreprise par ID
     public Optional<Entreprise> getEntrepriseById(Long id) {
         return entrepriseRepository.findById(id);
     }
 
-
-    public Entreprise createEntreprise(Entreprise entreprise) {
+    // 🔹 Ajouter ou mettre à jour une entreprise
+    public Entreprise saveEntreprise(Entreprise entreprise) {
         return entrepriseRepository.save(entreprise);
     }
 
-    public Entreprise updateEntreprise(Long id, Entreprise updatedEntreprise) {
-        Optional<Entreprise> existingEntreprise = entrepriseRepository.findById(id);
-        if (existingEntreprise.isPresent()) {
-            Entreprise entreprise = existingEntreprise.get();
-            entreprise.setNom(updatedEntreprise.getNom());
-            entreprise.setAdresse(updatedEntreprise.getAdresse());
-            entreprise.setTelephone(updatedEntreprise.getTelephone());
-            return entrepriseRepository.save(entreprise);
-        }
-        return null;
-    }
-
+    // 🔹 Supprimer une entreprise par ID
     public void deleteEntreprise(Long id) {
         entrepriseRepository.deleteById(id);
     }

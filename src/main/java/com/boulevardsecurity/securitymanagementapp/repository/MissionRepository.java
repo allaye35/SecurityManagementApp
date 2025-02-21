@@ -9,7 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MissionRepository extends JpaRepository<Mission, Long> {
-    List<Mission> findByEntrepriseId(Long entrepriseId);
     List<Mission> findByDateDebutAfter(LocalDate date);
     List<Mission> findByDateFinBefore(LocalDate date);
 }

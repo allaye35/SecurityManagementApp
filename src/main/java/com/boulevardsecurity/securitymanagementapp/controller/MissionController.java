@@ -2,64 +2,60 @@ package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.service.MissionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/missions")
+@RequestMapping("/missions")
+@RequiredArgsConstructor
 public class MissionController {
 
     private final MissionService missionService;
 
-    @Autowired
-    public MissionController(MissionService missionService) {
-        this.missionService = missionService;
-    }
-
-    @GetMapping("/listes")
+    // 🔹 Récupérer toutes les missions
+    @GetMapping
     public List<Mission> getAllMissions() {
         return missionService.getAllMissions();
     }
 
+    // 🔹 Récupérer une mission par ID
     @GetMapping("/{id}")
     public ResponseEntity<Mission> getMissionById(@PathVariable Long id) {
-        Mission mission = missionService.getMissionById(id);
-        return mission != null ? ResponseEntity.ok(mission) : ResponseEntity.notFound().build();
+        Optional<Mission> mission = missionService.getMissionById(id);
+        return mission.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/ajouter")
-    public ResponseEntity<Mission> createMission(@RequestBody Mission mission) {
-        Mission newMission = missionService.createMission(mission);
-        return ResponseEntity.ok(newMission);
+    // 🔹 Ajouter une mission
+    @PostMapping
+    public Mission createMission(@RequestBody Mission mission) {
+        return missionService.saveMission(mission);
     }
 
-    @PutMapping("/modifier/{id}")
+    // 🔹 Modifier une mission existante
+    @PutMapping("/{id}")
     public ResponseEntity<Mission> updateMission(@PathVariable Long id, @RequestBody Mission updatedMission) {
-        Mission mission = missionService.updateMission(id, updatedMission);
-        return mission != null ? ResponseEntity.ok(mission) : ResponseEntity.notFound().build();
+        return missionService.getMissionById(id).map(existingMission -> {
+            existingMission.setTitre(updatedMission.getTitre());
+            existingMission.setDescription(updatedMission.getDescription());
+            existingMission.setDateDebut(updatedMission.getDateDebut());
+            existingMission.setDateFin(updatedMission.getDateFin());
+            existingMission.setStatutMission(updatedMission.getStatutMission());
+            return ResponseEntity.ok(missionService.saveMission(existingMission));
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/supprimer/{id}")
+    // 🔹 Supprimer une mission
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMission(@PathVariable Long id) {
-        missionService.deleteMission(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/entreprise/{entrepriseId}")
-    public List<Mission> getMissionsByEntreprise(@PathVariable Long entrepriseId) {
-        return missionService.getMissionsByEntreprise(entrepriseId);
-    }
-
-    @GetMapping("/encours")
-    public List<Mission> getMissionsEnCours() {
-        return missionService.getMissionsEnCours();
-    }
-
-    @GetMapping("/terminees")
-    public List<Mission> getMissionsTerminees() {
-        return missionService.getMissionsTerminees();
+        if (missionService.getMissionById(id).isPresent()) {
+            missionService.deleteMission(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

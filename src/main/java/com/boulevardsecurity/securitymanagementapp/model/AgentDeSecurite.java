@@ -45,47 +45,15 @@ public class AgentDeSecurite {
     private LocalDate dateNaissance;
 
     @Column(nullable = false)
-    private Float salaire;
-
-    @Column(nullable = false)
     private String zoneDeTravail;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatutAgent statut; // EN_SERVICE, EN_CONGE, ABSENT
 
-    // Un agent appartient à une entreprise
-    @ManyToOne
-    @JoinColumn(name = "entreprise_id", nullable = false)
-    @JsonIgnore // Ignore l’entreprise pour éviter la récursion infinie
-    private Entreprise entreprise;
-
-
-
-    // Un agent est inclus dans un planning (relation corrigée)
-    @ManyToOne
-    @JoinColumn(name = "planning_id")
-    @JsonIgnore // Évite la récursion infinie
-    private Planning planning;
-
-    // Un agent peut être affecté à plusieurs missions
-    @ManyToMany(mappedBy = "agents", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @ManyToMany(mappedBy = "agents")
     private Set<Mission> missions = new HashSet<>();
 
-    // ======= MÉTHODES UTILITAIRES =======
 
-    public void ajouterMission(Mission mission) {
-        missions.add(mission);
-        mission.getAgents().add(this);
-    }
 
-    public void supprimerMission(Mission mission) {
-        missions.remove(mission);
-        mission.getAgents().remove(this);
-    }
-
-    public boolean estDisponible() {
-        return this.statut == StatutAgent.EN_SERVICE;
-    }
 }

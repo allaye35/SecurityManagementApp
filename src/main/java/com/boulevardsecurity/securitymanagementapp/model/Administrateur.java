@@ -33,9 +33,6 @@ public class Administrateur {
     @Email(message = "L'email doit être valide")
     private String email;
 
-    public void planifierMission(AgentDeSecurite agent, Mission mission) {
-        agent.getMissions().add(mission);
-    }
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.ADMIN; // Rôle par défaut ADMIN
