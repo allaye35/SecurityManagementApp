@@ -59,6 +59,15 @@ public class Mission {
     @ToString.Exclude
     private Planning planning;
 
-
+    // 🔹 Relation avec Site (Une mission se déroule dans un seul site)
+    @ManyToOne
+    @JoinColumn(name = "site_id", nullable = false)
+    @ToString.Exclude
+    private Site site;
+//
+//    // Une mission a une localisation
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "geolocalisation_id", referencedColumnName = "id")
+//    private GeolocalisationGPS geolocalisation;
 
 }

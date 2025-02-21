@@ -45,6 +45,7 @@ public class MissionController {
             existingMission.setDateDebut(updatedMission.getDateDebut());
             existingMission.setDateFin(updatedMission.getDateFin());
             existingMission.setStatutMission(updatedMission.getStatutMission());
+            existingMission.setSite(updatedMission.getSite()); // 🔹 Ajout du site
             return ResponseEntity.ok(missionService.saveMission(existingMission));
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
