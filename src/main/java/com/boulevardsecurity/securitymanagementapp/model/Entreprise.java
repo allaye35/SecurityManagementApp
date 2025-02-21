@@ -1,5 +1,7 @@
 package com.boulevardsecurity.securitymanagementapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,8 +32,12 @@ public class Entreprise {
     private String telephone;
 
     // Une entreprise peut avoir plusieurs agents
-    @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore // Ignore les agents pour éviter la récursion infinie
     private Set<AgentDeSecurite> agents = new HashSet<>();
+
+
+
 
     // Une entreprise peut gérer plusieurs missions
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)

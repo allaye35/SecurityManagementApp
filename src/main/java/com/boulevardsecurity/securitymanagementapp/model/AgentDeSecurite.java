@@ -1,6 +1,7 @@
 package com.boulevardsecurity.securitymanagementapp.model;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.StatutAgent;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -56,7 +57,10 @@ public class AgentDeSecurite {
     // Un agent appartient à une entreprise
     @ManyToOne
     @JoinColumn(name = "entreprise_id", nullable = false)
+    @JsonIgnore // Ignore l’entreprise pour éviter la récursion infinie
     private Entreprise entreprise;
+
+
 
     // Un agent est inclus dans un planning (relation corrigée)
     @ManyToOne
