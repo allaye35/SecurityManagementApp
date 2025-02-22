@@ -52,6 +52,7 @@ public class AgentDeSecurite {
     private StatutAgent statut; // EN_SERVICE, EN_CONGE, ABSENT
 
     @ManyToMany(mappedBy = "agents")
+    @Builder.Default
     private Set<Mission> missions = new HashSet<>();
 
 

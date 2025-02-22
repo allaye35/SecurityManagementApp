@@ -51,6 +51,7 @@ public class Mission {
             joinColumns = @JoinColumn(name = "mission_id"),
             inverseJoinColumns = @JoinColumn(name = "agent_id")
     )
+    @Builder.Default
     private Set<AgentDeSecurite> agents = new HashSet<>();
 
 
@@ -71,4 +72,7 @@ public class Mission {
     @JoinColumn(name = "geolocalisation_id") // Clé étrangère vers GeolocalisationGPS
     private GeolocalisationGPS geolocalisationGPS;
 
+//    //  Relation avec RapportIntervention
+//    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<RapportIntervention> rapports;
 }

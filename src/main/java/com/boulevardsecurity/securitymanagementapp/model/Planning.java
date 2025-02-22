@@ -28,4 +28,6 @@ public class Planning {
     @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Mission> missions;
+
+
 }

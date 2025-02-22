@@ -1,6 +1,7 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
+import com.boulevardsecurity.securitymanagementapp.model.Planning;
 import com.boulevardsecurity.securitymanagementapp.repository.AgentDeSecuriteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,4 +34,12 @@ public class AgentDeSecuriteService {
     public void deleteAgent(Long id) {
         agentRepository.deleteById(id);
     }
+
+
+
+    // 🔹 Récupérer le planning d’un agent via ses missions
+    public Optional<Planning> getPlanningByAgentId(Long agentId) {
+        return agentRepository.findFirstByMissions_Agents_IdOrderByMissions_DateDebutDesc(agentId);
+    }
+
 }

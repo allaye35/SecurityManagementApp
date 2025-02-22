@@ -3,6 +3,7 @@ package com.boulevardsecurity.securitymanagementapp.controller;
 import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.service.MissionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,11 +11,15 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/missions")
-@RequiredArgsConstructor
+@RequestMapping("/api/missions")
 public class MissionController {
 
+
     private final MissionService missionService;
+    @Autowired
+    MissionController(MissionService missionService) {
+        this.missionService = missionService;
+    }
 
     // 🔹 Récupérer toutes les missions
     @GetMapping
