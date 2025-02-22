@@ -72,7 +72,7 @@ public class Mission {
     @JoinColumn(name = "geolocalisation_id") // Clé étrangère vers GeolocalisationGPS
     private GeolocalisationGPS geolocalisationGPS;
 
-//    //  Relation avec RapportIntervention
-//    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<RapportIntervention> rapports;
+    //  Relation avec RapportIntervention
+    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RapportIntervention> rapports;
 }
