@@ -24,12 +24,23 @@ public class EntrepriseService {
         return entrepriseRepository.findById(id);
     }
 
-    // 🔹 Ajouter ou mettre à jour une entreprise
-    public Entreprise saveEntreprise(Entreprise entreprise) {
+    // 🔹 Ajouter une entreprise
+    public Entreprise createEntreprise(Entreprise entreprise) {
         return entrepriseRepository.save(entreprise);
     }
 
-    // 🔹 Supprimer une entreprise par ID
+    // 🔹 Modifier une entreprise
+    public Entreprise updateEntreprise(Long id, Entreprise updatedEntreprise) {
+        return entrepriseRepository.findById(id).map(existingEntreprise -> {
+            existingEntreprise.setNom(updatedEntreprise.getNom());
+            existingEntreprise.setAdresse(updatedEntreprise.getAdresse());
+            existingEntreprise.setEmail(updatedEntreprise.getEmail());
+            existingEntreprise.setTelephone(updatedEntreprise.getTelephone());
+            return entrepriseRepository.save(existingEntreprise);
+        }).orElseThrow(() -> new RuntimeException("Entreprise non trouvée avec ID: " + id));
+    }
+
+    // 🔹 Supprimer une entreprise
     public void deleteEntreprise(Long id) {
         entrepriseRepository.deleteById(id);
     }

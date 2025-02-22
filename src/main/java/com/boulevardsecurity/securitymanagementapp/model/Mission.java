@@ -75,4 +75,9 @@ public class Mission {
     //  Relation avec RapportIntervention
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RapportIntervention> rapports;
+
+    @ManyToOne
+    @JoinColumn(name = "entreprise_id", nullable = false) // Clé étrangère vers Entreprise
+    private Entreprise entreprise;
+
 }

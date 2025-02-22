@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -31,6 +32,12 @@ public class Entreprise {
     @Column(nullable = false, unique = true)
     private String telephone;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    // Relation avec les missions (Une entreprise peut avoir plusieurs missions)
+    @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL)
+    private List<Mission> missions;
 
 
 }

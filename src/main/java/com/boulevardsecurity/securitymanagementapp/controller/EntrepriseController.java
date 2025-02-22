@@ -3,18 +3,23 @@ package com.boulevardsecurity.securitymanagementapp.controller;
 import com.boulevardsecurity.securitymanagementapp.model.Entreprise;
 import com.boulevardsecurity.securitymanagementapp.service.EntrepriseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/entreprises")
-@RequiredArgsConstructor
+@RequestMapping("/api/entreprises")
 public class EntrepriseController {
 
     private final EntrepriseService entrepriseService;
+
+    @Autowired
+    public EntrepriseController(EntrepriseService entrepriseService) {
+        this.entrepriseService = entrepriseService;
+    }
 
     // 🔹 Récupérer toutes les entreprises
     @GetMapping
@@ -25,35 +30,27 @@ public class EntrepriseController {
     // 🔹 Récupérer une entreprise par ID
     @GetMapping("/{id}")
     public ResponseEntity<Entreprise> getEntrepriseById(@PathVariable Long id) {
-        Optional<Entreprise> entreprise = entrepriseService.getEntrepriseById(id);
-        return entreprise.map(ResponseEntity::ok)
+        return entrepriseService.getEntrepriseById(id)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 🔹 Ajouter une entreprise
     @PostMapping
-    public Entreprise createEntreprise(@RequestBody Entreprise entreprise) {
-        return entrepriseService.saveEntreprise(entreprise);
+    public ResponseEntity<Entreprise> createEntreprise(@RequestBody Entreprise entreprise) {
+        return ResponseEntity.ok(entrepriseService.createEntreprise(entreprise));
     }
 
-    // 🔹 Modifier une entreprise existante
+    // 🔹 Modifier une entreprise
     @PutMapping("/{id}")
     public ResponseEntity<Entreprise> updateEntreprise(@PathVariable Long id, @RequestBody Entreprise updatedEntreprise) {
-        return entrepriseService.getEntrepriseById(id).map(existingEntreprise -> {
-            existingEntreprise.setNom(updatedEntreprise.getNom());
-            existingEntreprise.setAdresse(updatedEntreprise.getAdresse());
-            existingEntreprise.setTelephone(updatedEntreprise.getTelephone());
-            return ResponseEntity.ok(entrepriseService.saveEntreprise(existingEntreprise));
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(entrepriseService.updateEntreprise(id, updatedEntreprise));
     }
 
     // 🔹 Supprimer une entreprise
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEntreprise(@PathVariable Long id) {
-        if (entrepriseService.getEntrepriseById(id).isPresent()) {
-            entrepriseService.deleteEntreprise(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        entrepriseService.deleteEntreprise(id);
+        return ResponseEntity.noContent().build();
     }
 }
