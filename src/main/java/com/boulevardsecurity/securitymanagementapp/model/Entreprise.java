@@ -37,6 +37,7 @@ public class Entreprise {
 
     // Relation avec les missions (Une entreprise peut avoir plusieurs missions)
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Mission> missions;
 
 

@@ -11,4 +11,5 @@ import java.util.List;
 public interface MissionRepository extends JpaRepository<Mission, Long> {
     List<Mission> findByDateDebutAfter(LocalDate date);
     List<Mission> findByDateFinBefore(LocalDate date);
+
 }

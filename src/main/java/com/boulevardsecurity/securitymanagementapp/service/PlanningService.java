@@ -1,6 +1,8 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
+import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.model.Planning;
+import com.boulevardsecurity.securitymanagementapp.repository.MissionRepository;
 import com.boulevardsecurity.securitymanagementapp.repository.PlanningRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.util.Optional;
 public class PlanningService {
 
     private final PlanningRepository planningRepository;
+    private final MissionRepository missionRepository;
 
     // 🔹 Récupérer tous les plannings
     public List<Planning> getAllPlannings() {

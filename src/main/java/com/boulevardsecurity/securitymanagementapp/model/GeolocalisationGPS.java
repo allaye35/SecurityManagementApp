@@ -21,7 +21,7 @@ public class GeolocalisationGPS {
     private Long id;
 
     @Column(nullable = false)
-    private float precision;
+    private float gps_precision;
 
     @Embedded // Intègre directement latitude et longitude dans la table
     private GeoPoint position;

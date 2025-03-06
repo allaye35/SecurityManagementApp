@@ -2,8 +2,10 @@ package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.service.MissionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/missions")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class MissionController {
 
 
@@ -36,10 +40,17 @@ public class MissionController {
     }
 
     // 🔹 Ajouter une mission
+//    @PostMapping
+//    public Mission createMission(@RequestBody Mission mission) {
+//        return missionService.saveMission(mission);
+//    }
+
     @PostMapping
-    public Mission createMission(@RequestBody Mission mission) {
-        return missionService.saveMission(mission);
+    public ResponseEntity<Mission> createMission(@Valid @RequestBody Mission mission) {
+        Mission createdMission = missionService.saveMission(mission);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdMission);
     }
+
 
     // 🔹 Modifier une mission existante
     @PutMapping("/{id}")

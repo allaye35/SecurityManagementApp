@@ -2,8 +2,10 @@ package com.boulevardsecurity.securitymanagementapp.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.aspectj.weaver.loadtime.Agent;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,12 +24,14 @@ public class Planning {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDate date;
 
     @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Mission> missions;
+
+
 
 
 }

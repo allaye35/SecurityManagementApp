@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/agents") // <== L'URL doit être bien définie ici
+@CrossOrigin(origins = "http://localhost:3000") // Autoriser les requêtes depuis l'application React sur le port 3000
 public class AgentDeSecuriteController {
 
     private final AgentDeSecuriteService agentDeSecuriteService;

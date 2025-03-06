@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/entreprises")
+@CrossOrigin(origins = "http://localhost:3000") // Autorise les requêtes depuis React
 public class EntrepriseController {
 
     private final EntrepriseService entrepriseService;

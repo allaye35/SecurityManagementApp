@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/geolocalisations")
+@CrossOrigin(origins = "http://localhost:3000") // Autorise les requêtes depuis React
 public class GeolocalisationGPSController {
 
     private final GeolocalisationGPSService service;

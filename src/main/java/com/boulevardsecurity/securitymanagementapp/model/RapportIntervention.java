@@ -29,6 +29,6 @@ public class RapportIntervention {
 
     //  Relation avec Mission
     @ManyToOne
-    @JoinColumn(name = "mission_id", nullable = false) // Clé étrangère vers Mission
+    @JoinColumn(name = "mission_id", nullable = true) // Clé étrangère vers Mission
     private Mission mission;
 }

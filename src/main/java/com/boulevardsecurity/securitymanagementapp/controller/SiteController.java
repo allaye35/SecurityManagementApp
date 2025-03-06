@@ -5,10 +5,10 @@ import com.boulevardsecurity.securitymanagementapp.service.SiteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000") // Autorise les requêtes depuis React
 @RestController
 @RequestMapping("/sites")
 @RequiredArgsConstructor

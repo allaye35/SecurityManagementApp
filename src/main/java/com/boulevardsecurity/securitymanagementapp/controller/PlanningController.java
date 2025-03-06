@@ -1,5 +1,6 @@
 package com.boulevardsecurity.securitymanagementapp.controller;
 
+import com.boulevardsecurity.securitymanagementapp.model.Mission;
 import com.boulevardsecurity.securitymanagementapp.model.Planning;
 import com.boulevardsecurity.securitymanagementapp.service.PlanningService;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +13,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/plannings")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000") // Autorise les requêtes depuis React
 public class PlanningController {
 
     private final PlanningService planningService;
+
+
 
     // 🔹 Récupérer tous les plannings
     @GetMapping

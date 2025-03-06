@@ -42,4 +42,5 @@ public class AgentDeSecuriteService {
         return agentRepository.findFirstByMissions_Agents_IdOrderByMissions_DateDebutDesc(agentId);
     }
 
+
 }

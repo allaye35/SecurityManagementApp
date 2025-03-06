@@ -1,6 +1,7 @@
 package com.boulevardsecurity.securitymanagementapp.model;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.StatutMission;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,10 +35,10 @@ public class Mission {
     @Column(nullable = false, length = 500)
     private String description;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDate dateDebut;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDate dateFin;
 
     @Enumerated(EnumType.STRING)
@@ -77,7 +78,10 @@ public class Mission {
     private List<RapportIntervention> rapports;
 
     @ManyToOne
-    @JoinColumn(name = "entreprise_id", nullable = false) // Clé étrangère vers Entreprise
+    @JoinColumn(name = "entreprise_id") // Clé étrangère vers Entreprise
+    @JsonBackReference
     private Entreprise entreprise;
+
+
 
 }

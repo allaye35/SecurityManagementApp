@@ -41,7 +41,7 @@ public class AgentDeSecurite {
     @Column(nullable = false)
     private String adresse;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDate dateNaissance;
 
     @Column(nullable = false)
@@ -54,6 +54,7 @@ public class AgentDeSecurite {
     @ManyToMany(mappedBy = "agents")
     @Builder.Default
     private Set<Mission> missions = new HashSet<>();
+
 
 
 

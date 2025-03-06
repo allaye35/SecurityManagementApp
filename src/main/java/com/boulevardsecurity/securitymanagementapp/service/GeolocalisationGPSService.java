@@ -35,7 +35,7 @@ public class GeolocalisationGPSService {
 
     public GeolocalisationGPS update(Long id, GeolocalisationGPS gpsDetails) {
         return gpsRepository.findById(id).map(gps -> {
-            gps.setPrecision(gpsDetails.getPrecision());
+            gps.setGps_precision(gpsDetails.getGps_precision());
             gps.setPosition(gpsDetails.getPosition());
             return gpsRepository.save(gps);
         }).orElseThrow(() -> new RuntimeException("GeolocalisationGPS non trouvée avec id: " + id));
