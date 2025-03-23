@@ -1,34 +1,36 @@
 package com.boulevardsecurity.securitymanagementapp.model;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Date;
 
 @Entity
-@Table(name = "sites")
+@Table(name = "disponibilites")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "missions")
-public class Site {
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Disponibilite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EqualsAndHashCode.Include
+    private int id;
 
-    @Column(nullable = false, unique = true)
-    private String nom;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateDebut;
 
-    @Column(nullable = false)
-    private String adresse;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateFin;
 
-    // Un site peut avoir plusieurs missions
-    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL)
-    private List<Mission> missions;
+    @ManyToOne
+    @JoinColumn(name = "agent_id", nullable = false)
+    private AgentDeSecurite agentDeSecurite;
 }
+

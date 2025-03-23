@@ -1,16 +1,14 @@
 package com.boulevardsecurity.securitymanagementapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "entreprises")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,8 +35,5 @@ public class Entreprise {
 
     // Relation avec les missions (Une entreprise peut avoir plusieurs missions)
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Mission> missions;
-
-
 }

@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface AgentDeSecuriteRepository extends JpaRepository<AgentDeSecurite, Long> {
 
-    // 🔹 Récupérer le planning unique d'un agent via ses missions (JPA génère la requête SQL)
+    // ✅ Méthode JPA pour trouver le Planning via Mission
     Optional<Planning> findFirstByMissions_Agents_IdOrderByMissions_DateDebutDesc(Long agentId);
 }

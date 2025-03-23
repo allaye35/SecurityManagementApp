@@ -28,7 +28,15 @@ public class GeolocalisationGPSController {
     public ResponseEntity<GeolocalisationGPS> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
+    @PutMapping("/{id}")
+    public GeolocalisationGPS update(@PathVariable Long id, @RequestBody GeolocalisationGPS gps) {
+        return service.update(id, gps);
+    }
 
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
     @PostMapping
     public GeolocalisationGPS create(@RequestBody GeolocalisationGPS gps) {
         return service.create(gps);

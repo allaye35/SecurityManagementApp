@@ -1,20 +1,20 @@
 package com.boulevardsecurity.securitymanagementapp.model;
-
 import com.boulevardsecurity.securitymanagementapp.Enums.StatutMission;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.boulevardsecurity.securitymanagementapp.Enums.TypeMission;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "missions")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -41,10 +41,16 @@ public class Mission {
     @Column(nullable = true)
     private LocalDate dateFin;
 
+    @Column(nullable = true)
+    private LocalTime heureDebut;
+
+    @Column(nullable = true)
+    private LocalTime heureFin;
+
+
     @Enumerated(EnumType.STRING)
     @Column(name = "statut_mission")
     private StatutMission statutMission;
-
 
     @ManyToMany
     @JoinTable(
@@ -55,33 +61,36 @@ public class Mission {
     @Builder.Default
     private Set<AgentDeSecurite> agents = new HashSet<>();
 
-
-
     // Relation avec Planning (Une mission appartient à un seul planning)
     @ManyToOne
-    @JoinColumn(name = "planning_id", nullable = false)
+    @JoinColumn(name = "planning_id", nullable = true)
     @ToString.Exclude
     private Planning planning;
 
-    // 🔹 Relation avec Site (Une mission se déroule dans un seul site)
+    // Relation avec Site (Une mission se déroule dans un seul site)
     @ManyToOne
-    @JoinColumn(name = "site_id", nullable = false)
+    @JoinColumn(name = "site_id", nullable = true)
     @ToString.Exclude
     private Site site;
 
     @ManyToOne
-    @JoinColumn(name = "geolocalisation_id") // Clé étrangère vers GeolocalisationGPS
+    @JoinColumn(name = "geolocalisation_id", nullable = true)
     private GeolocalisationGPS geolocalisationGPS;
 
-    //  Relation avec RapportIntervention
+    // Relation avec RapportIntervention (une mission peut avoir plusieurs rapports)
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RapportIntervention> rapports;
 
+    // Association avec Entreprise
     @ManyToOne
-    @JoinColumn(name = "entreprise_id") // Clé étrangère vers Entreprise
-    @JsonBackReference
+    @JoinColumn(name = "entreprise_id")
     private Entreprise entreprise;
 
+    @Enumerated(EnumType.STRING)  // Utilisation de l'enum pour enregistrer le type de mission
+    @Column(nullable = false)
+    private TypeMission typeMission;
 
-
+    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Pointage> pointages = new ArrayList<>();  //
 }

@@ -1,16 +1,20 @@
 package com.boulevardsecurity.securitymanagementapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@Builder
+@ToString(exclude = "mission")
 public class RapportIntervention {
 
     @Id
@@ -25,10 +29,10 @@ public class RapportIntervention {
     private String agentEmail;
     private String agentTelephone;
     private String contenu;
-    private String status; // Ex: "En cours", "Terminé", "Annulé"
+    private String status; // Ex : "En cours", "Terminé", "Annulé"
 
-    //  Relation avec Mission
+    // Relation avec Mission (un rapport appartient à une mission)
     @ManyToOne
-    @JoinColumn(name = "mission_id", nullable = true) // Clé étrangère vers Mission
+    @JoinColumn(name = "mission_id", nullable = true)
     private Mission mission;
 }

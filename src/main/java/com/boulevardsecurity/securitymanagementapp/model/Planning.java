@@ -1,37 +1,47 @@
 package com.boulevardsecurity.securitymanagementapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
-import org.aspectj.weaver.loadtime.Agent;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "plannings")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = "missions")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Planning {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(nullable = true)
-    private LocalDate date;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dateCreation;
 
-    @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
+    @Column(nullable = false)
+    private LocalDateTime dateModification;
+
+    @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL)
     private List<Mission> missions;
 
+    @PrePersist
+    protected void lorsDeLaCreation() {
+        dateCreation = LocalDateTime.now();
+        dateModification = LocalDateTime.now();
+    }
 
-
-
+    @PreUpdate
+    protected void avantModification() {
+        dateModification = LocalDateTime.now();
+    }
 }
