@@ -37,6 +37,7 @@ public class MissionService {
     // ➜ Service d'envoi de mail + SMS
     private final NotificationService notificationService;
 
+
     // ─────────────────────────────────────────────────────────────────────────────
     // 🔹 Récupérer toutes les missions
     // ─────────────────────────────────────────────────────────────────────────────
@@ -310,16 +311,56 @@ public class MissionService {
     // ─────────────────────────────────────────────────────────────────────────────
     // 🔹 Associer une géolocalisation à une mission
     // ─────────────────────────────────────────────────────────────────────────────
-    public Optional<Mission> assignGeolocalisation(Long missionId, Long geolocalisationId) {
-        return missionRepository.findById(missionId).flatMap(mission ->
-                geolocalisationGPSRepository.findById(geolocalisationId).map(geo -> {
-                    mission.setGeolocalisationGPS(geo);
-                    return missionRepository.save(mission);
-                })
-        );
+    public Optional<Mission> assignGeolocalisationToMission(Long missionId) {
+        // Récupérer la mission par son ID
+        Optional<Mission> missionOptional = missionRepository.findById(missionId);
+
+        if (missionOptional.isEmpty()) {
+            System.out.println("❌ Mission non trouvée pour l'ID : " + missionId);
+            return Optional.empty();
+        }
+
+        Mission mission = missionOptional.get();
+
+        // Récupérer le site associé à la mission
+        Site site = mission.getSite();
+        if (site == null || site.getAdresse() == null || site.getAdresse().isEmpty()) {
+            System.out.println("❌ Aucun site ou adresse associée à cette mission.");
+            return Optional.empty();
+        }
+
+        String adresse = site.getAdresse();
+        System.out.println("🌍 Adresse du site trouvé : " + adresse);
+
+        // Obtenir les coordonnées GPS via le GeocodingService
+        GeoPoint geoPoint;
+        try {
+            geoPoint = geocodingService.getCoordinatesFromAddress(adresse);
+        } catch (Exception e) {
+            System.out.println("❌ Erreur lors de la récupération des coordonnées GPS : " + e.getMessage());
+            return Optional.empty();
+        }
+
+        // Créer une nouvelle entrée GeolocalisationGPS
+        GeolocalisationGPS geolocalisationGPS = new GeolocalisationGPS();
+        geolocalisationGPS.setPosition(geoPoint);
+        geolocalisationGPS.setGps_precision(5.0f);
+
+        // Enregistrer la géolocalisation dans la base de données
+        geolocalisationGPSRepository.save(geolocalisationGPS);
+
+        // Associer la géolocalisation à la mission
+        mission.setGeolocalisationGPS(geolocalisationGPS);
+        missionRepository.save(mission);
+
+        System.out.println(" Géolocalisation associée avec succès à la mission : " + missionId);
+
+        return Optional.of(mission);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
+
+
+// ─────────────────────────────────────────────────────────────────────────────
     // ✅ Vérifier la zone de travail (adresse du site) via GeoApiService
     // ─────────────────────────────────────────────────────────────────────────────
     private boolean verifierZoneTravailAgent(AgentDeSecurite agent, Mission mission) {

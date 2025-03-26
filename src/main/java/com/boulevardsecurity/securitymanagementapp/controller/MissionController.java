@@ -186,15 +186,15 @@ public class MissionController {
     // ─────────────────────────────────────────────────────────────────────────────
     // 🔹 Associer une géolocalisation déjà existante à une mission
     // ─────────────────────────────────────────────────────────────────────────────
-    @PutMapping("/{missionId}/geolocalisation/{geolocalisationId}")
+    @PutMapping("/{missionId}/geolocalisation")
     public ResponseEntity<Mission> assignGeolocalisationToMission(
-            @PathVariable Long missionId,
-            @PathVariable Long geolocalisationId
+            @PathVariable Long missionId
     ) {
-        return missionService.assignGeolocalisation(missionId, geolocalisationId)
+        return missionService.assignGeolocalisationToMission(missionId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     // ─────────────────────────────────────────────────────────────────────────────
     // 🔹 Récupérer les missions qui commencent après une date donnée
