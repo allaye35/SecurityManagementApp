@@ -1,7 +1,9 @@
 package com.boulevardsecurity.securitymanagementapp.controller;
 import com.boulevardsecurity.securitymanagementapp.model.CarteProfessionnelle;
+import com.boulevardsecurity.securitymanagementapp.service.AgentDeSecuriteService;
 import com.boulevardsecurity.securitymanagementapp.service.CarteProfessionnelleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -12,10 +14,13 @@ import java.util.Optional;
 public class CarteProfessionnelleController {
 
     private final CarteProfessionnelleService carteProfessionnelleService;
+    private final AgentDeSecuriteService agentDeSecuriteService;
 
     @Autowired
-    public CarteProfessionnelleController(CarteProfessionnelleService carteProfessionnelleService) {
+    public CarteProfessionnelleController(CarteProfessionnelleService carteProfessionnelleService,
+                                          AgentDeSecuriteService agentDeSecuriteService) {
         this.carteProfessionnelleService = carteProfessionnelleService;
+        this.agentDeSecuriteService = agentDeSecuriteService;
     }
 
     //  Créer une nouvelle carte professionnelle
@@ -67,5 +72,19 @@ public class CarteProfessionnelleController {
             return ResponseEntity.notFound().build();
         }
     }
+    // 🔹 Ajouter une carte professionnelle à un agent
+    @PostMapping("/{agentId}/cartesProfessionnelles")
+    public ResponseEntity<CarteProfessionnelle> ajouterCarteProfessionnellePourAgent(
+            @PathVariable Long agentId,
+            @RequestBody CarteProfessionnelle carteProfessionnelle
+    ) {
+        try {
+            CarteProfessionnelle nouvelleCarte = agentDeSecuriteService.ajouterCarteProfessionnelle(agentId, carteProfessionnelle);
+            return ResponseEntity.ok(nouvelleCarte);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
 }
 

@@ -184,17 +184,20 @@ public class MissionController {
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // 🔹 Associer une géolocalisation déjà existante à une mission
-    // ─────────────────────────────────────────────────────────────────────────────
+// 🔹 Associer une géolocalisation à une mission
+// ─────────────────────────────────────────────────────────────────────────────
     @PutMapping("/{missionId}/geolocalisation")
     public ResponseEntity<Mission> assignGeolocalisationToMission(
             @PathVariable Long missionId
     ) {
-        return missionService.assignGeolocalisationToMission(missionId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+        Optional<Mission> missionOptional = missionService.assignGeolocalisationToMission(missionId);
 
+        if (missionOptional.isPresent()) {
+            return ResponseEntity.ok(missionOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
     // ─────────────────────────────────────────────────────────────────────────────
     // 🔹 Récupérer les missions qui commencent après une date donnée
@@ -227,4 +230,18 @@ public class MissionController {
     public ResponseEntity<List<Mission>> getMissionsByPlanningId(@PathVariable Long planningId) {
         return ResponseEntity.ok(missionService.getMissionsByPlanningId(planningId));
     }
+
+    // 🔥 Supprimer l'affectation d'un agent à une mission
+    @DeleteMapping("/{missionId}/agent/{agentId}")
+    public ResponseEntity<Void> removeAgentFromMission(
+            @PathVariable Long missionId,
+            @PathVariable Long agentId) {
+        try {
+            missionService.removeAgentFromMission(missionId, agentId);
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

@@ -1,13 +1,11 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
-import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
-import com.boulevardsecurity.securitymanagementapp.model.Planning;
-import com.boulevardsecurity.securitymanagementapp.model.ZoneDeTravail;
-import com.boulevardsecurity.securitymanagementapp.repository.AgentDeSecuriteRepository;
-import com.boulevardsecurity.securitymanagementapp.repository.ZoneDeTravailRepository;
+import com.boulevardsecurity.securitymanagementapp.model.*;
+import com.boulevardsecurity.securitymanagementapp.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.security.PrivateKey;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +17,10 @@ public class AgentDeSecuriteService {
 
     private final AgentDeSecuriteRepository agentRepository;
     private final ZoneDeTravailRepository zoneDeTravailRepository;
+    private final DisponibiliteRepository disponibiliteRepository;
+    private final CarteProfessionnelleRepository carteProfessionnelleRepository;
 
+    private final AgentDeSecuriteRepository agentDeSecuriteRepository;
 
     // ✅ Récupérer tous les agents de sécurité
     public List<AgentDeSecurite> getAllAgents() {
@@ -108,5 +109,15 @@ public class AgentDeSecuriteService {
             throw new RuntimeException("Agent non trouvé avec l'id : " + agentId);
         }
     }
+
+
+    public CarteProfessionnelle ajouterCarteProfessionnelle(Long agentId, CarteProfessionnelle carteProfessionnelle) {
+        AgentDeSecurite agent = agentDeSecuriteRepository.findById(agentId)
+                .orElseThrow(() -> new IllegalArgumentException("Agent non trouvé avec ID : " + agentId));
+
+        carteProfessionnelle.setAgentDeSecurite(agent);
+        return carteProfessionnelleRepository.save(carteProfessionnelle);
+    }
+
 
 }

@@ -12,8 +12,13 @@ import java.util.Optional;
 @Service
 public class ZoneDeTravailService {
 
-    @Autowired
+
     private ZoneDeTravailRepository zoneDeTravailRepository;
+
+    @Autowired
+    public ZoneDeTravailService(ZoneDeTravailRepository zoneDeTravailRepository) {
+        this.zoneDeTravailRepository = zoneDeTravailRepository;
+    }
 
     //  Création d'une nouvelle zone de travail
     public ZoneDeTravail creerZoneDeTravail(ZoneDeTravail zoneDeTravail) {
@@ -43,14 +48,27 @@ public class ZoneDeTravailService {
         return zoneDeTravailRepository.findByTypeZone(typeZone);
     }
 
-    //  Mettre à jour une zone de travail
+    // ─────────────────────────────────────────────────────────────────────────────
+//  Mettre à jour une zone de travail
+// ─────────────────────────────────────────────────────────────────────────────
     public ZoneDeTravail mettreAJourZoneDeTravail(Long id, ZoneDeTravail nouvelleZone) {
         return zoneDeTravailRepository.findById(id).map(zone -> {
             zone.setNom(nouvelleZone.getNom());
             zone.setTypeZone(nouvelleZone.getTypeZone());
+
+            // Mettre à jour les nouveaux champs
+            zone.setCodePostal(nouvelleZone.getCodePostal());
+            zone.setVille(nouvelleZone.getVille());
+            zone.setDepartement(nouvelleZone.getDepartement());
+            zone.setRegion(nouvelleZone.getRegion());
+            zone.setPays(nouvelleZone.getPays());
+
+            // Sauvegarde et retour de la zone mise à jour
             return zoneDeTravailRepository.save(zone);
-        }).orElseThrow(() -> new RuntimeException("Zone de travail non trouvée !"));
+
+        }).orElseThrow(() -> new RuntimeException("Zone de travail non trouvée pour l'ID : " + id));
     }
+
 
     //  Supprimer une zone de travail par son ID
     public void supprimerZoneDeTravail(Long id) {

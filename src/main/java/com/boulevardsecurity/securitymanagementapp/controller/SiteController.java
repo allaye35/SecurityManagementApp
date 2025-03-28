@@ -16,35 +16,39 @@ public class SiteController {
 
     private final SiteService siteService;
 
-    // ✅ Récupérer tous les sites
+    //  Récupérer tous les sites
     @GetMapping
     public List<Site> getAllSites() {
         return siteService.getAllSites();
     }
 
-    // ✅ Récupérer un site par ID
+    //  Récupérer un site par ID
     @GetMapping("/{id}")
     public ResponseEntity<Site> getSiteById(@PathVariable Long id) {
         Optional<Site> site = siteService.getSiteById(id);
         return site.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // ✅ Ajouter un site
+    //  Ajouter un site
     @PostMapping
     public ResponseEntity<Site> createSite(@RequestBody Site site) {
         Site savedSite = siteService.saveSite(site);
         return ResponseEntity.ok(savedSite);
     }
 
-    // ✅ Modifier un site
+    //  Modifier un site
     @PutMapping("/{id}")
     public ResponseEntity<Site> updateSite(@PathVariable Long id, @RequestBody Site updatedSite) {
-        return siteService.updateSite(id, updatedSite)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            Site updated = siteService.updateSite(id, updatedSite);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    // ✅ Supprimer un site
+
+    //  Supprimer un site
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSite(@PathVariable Long id) {
         if (siteService.deleteSite(id)) {

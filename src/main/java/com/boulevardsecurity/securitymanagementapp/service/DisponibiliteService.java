@@ -3,6 +3,7 @@ package com.boulevardsecurity.securitymanagementapp.service;
 import com.boulevardsecurity.securitymanagementapp.model.Disponibilite;
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
 import com.boulevardsecurity.securitymanagementapp.repository.DisponibiliteRepository;
+import com.boulevardsecurity.securitymanagementapp.repository.AgentDeSecuriteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,33 +14,48 @@ import java.util.Optional;
 public class DisponibiliteService {
 
     private final DisponibiliteRepository disponibiliteRepository;
+    private final AgentDeSecuriteRepository agentDeSecuriteRepository;
 
     @Autowired
-    public DisponibiliteService(DisponibiliteRepository disponibiliteRepository) {
+    public DisponibiliteService(DisponibiliteRepository disponibiliteRepository, AgentDeSecuriteRepository agentDeSecuriteRepository) {
         this.disponibiliteRepository = disponibiliteRepository;
+        this.agentDeSecuriteRepository = agentDeSecuriteRepository;
     }
 
-    //  Créer une nouvelle disponibilité
+    // 🔹 Ajouter une disponibilité pour un agent
+    public Disponibilite ajouterDisponibilite(Long agentId, Disponibilite disponibilite) {
+        // Vérifier si l'agent existe
+        AgentDeSecurite agent = agentDeSecuriteRepository.findById(agentId)
+                .orElseThrow(() -> new RuntimeException("Agent non trouvé avec l'ID : " + agentId));
+
+        // Associer l'agent à la disponibilité
+        disponibilite.setAgentDeSecurite(agent);
+
+        // Sauvegarder la disponibilité
+        return disponibiliteRepository.save(disponibilite);
+    }
+
+    // 🔹 Créer une nouvelle disponibilité
     public Disponibilite creerDisponibilite(Disponibilite disponibilite) {
         return disponibiliteRepository.save(disponibilite);
     }
 
-    //  Obtenir toutes les disponibilités
+    // 🔹 Obtenir toutes les disponibilités
     public List<Disponibilite> obtenirToutesLesDisponibilites() {
         return disponibiliteRepository.findAll();
     }
 
-    //  Obtenir une disponibilité par son ID
+    // 🔹 Obtenir une disponibilité par son ID
     public Optional<Disponibilite> obtenirDisponibiliteParId(int id) {
         return disponibiliteRepository.findById(id);
     }
 
-    //  Obtenir toutes les disponibilités d'un agent
+    // 🔹 Obtenir toutes les disponibilités d'un agent
     public List<Disponibilite> obtenirDisponibilitesParAgent(Long agentId) {
         return disponibiliteRepository.findByAgentDeSecuriteId(agentId);
     }
 
-    //  Mettre à jour une disponibilité existante
+    // 🔹 Mettre à jour une disponibilité existante
     public Disponibilite mettreAJourDisponibilite(int id, Disponibilite nouvelleDisponibilite) {
         Disponibilite disponibiliteExistante = disponibiliteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Disponibilité non trouvée !"));
@@ -51,7 +67,7 @@ public class DisponibiliteService {
         return disponibiliteRepository.save(disponibiliteExistante);
     }
 
-    // Supprimer une disponibilité par son ID
+    // 🔹 Supprimer une disponibilité par son ID
     public void supprimerDisponibilite(int id) {
         if (disponibiliteRepository.existsById(id)) {
             disponibiliteRepository.deleteById(id);

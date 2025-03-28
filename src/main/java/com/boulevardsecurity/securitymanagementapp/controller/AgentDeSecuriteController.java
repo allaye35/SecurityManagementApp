@@ -1,13 +1,17 @@
 package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
+import com.boulevardsecurity.securitymanagementapp.model.CarteProfessionnelle;
+import com.boulevardsecurity.securitymanagementapp.model.Disponibilite;
 import com.boulevardsecurity.securitymanagementapp.model.Planning;
 import com.boulevardsecurity.securitymanagementapp.service.AgentDeSecuriteService;
+import com.boulevardsecurity.securitymanagementapp.service.DisponibiliteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +23,7 @@ import java.util.Optional;
 public class AgentDeSecuriteController {
 
     private final AgentDeSecuriteService agentDeSecuriteService;
+    private final DisponibiliteService disponibiliteService;
 
     // 🔹 Récupérer tous les agents
     @GetMapping
@@ -85,5 +90,33 @@ public class AgentDeSecuriteController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+    @PostMapping("/{agentId}/disponibilites")
+    public ResponseEntity<Disponibilite> ajouterDisponibilitePourAgent(
+            @PathVariable Long agentId,
+            @RequestBody Disponibilite disponibilite
+    ) {
+        try {
+            Disponibilite nouvelleDisponibilite = disponibiliteService.ajouterDisponibilite(agentId, disponibilite);
+            return ResponseEntity.ok(nouvelleDisponibilite);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    // 🔹 Ajouter une carte professionnelle pour un agent
+    @PostMapping("/{agentId}/cartesProfessionnelles")
+    public ResponseEntity<CarteProfessionnelle> ajouterCarteProfessionnellePourAgent(
+            @PathVariable Long agentId,
+            @RequestBody CarteProfessionnelle carteProfessionnelle
+    ) {
+        try {
+            CarteProfessionnelle nouvelleCarte = agentDeSecuriteService.ajouterCarteProfessionnelle(agentId, carteProfessionnelle);
+            return ResponseEntity.ok(nouvelleCarte);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+
 }
 

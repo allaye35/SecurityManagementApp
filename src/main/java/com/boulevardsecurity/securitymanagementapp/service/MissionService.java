@@ -31,8 +31,8 @@ public class MissionService {
     private final GeolocalisationGPSRepository geolocalisationGPSRepository;
 
     // Pour le géocodage (ex. Google Maps, etc.)
-    private final GeoApiService geoApiService;
     private final GeocodingService geocodingService;
+
 
     // ➜ Service d'envoi de mail + SMS
     private final NotificationService notificationService;
@@ -213,23 +213,23 @@ public class MissionService {
             for (AgentDeSecurite agent : agents) {
                 // Vérifications métier (ex. carte pro, dispo, etc.)
                 if (!verifierZoneTravailAgent(agent, mission)) {
-                    throw new IllegalArgumentException("❌ L'agent " + agent.getNom()
+                    throw new IllegalArgumentException(" L'agent " + agent.getNom()
                             + " n'a pas la zone de travail correspondant au site de la mission.");
                 }
                 if (!verifierDisponibilite(agent, mission)) {
-                    throw new IllegalArgumentException("❌ L'agent " + agent.getNom()
+                    throw new IllegalArgumentException(" L'agent " + agent.getNom()
                             + " n'est pas disponible pendant la période de la mission.");
                 }
                 if (hasScheduleConflict(agent, mission)) {
-                    throw new IllegalArgumentException("❌ L'agent " + agent.getNom()
+                    throw new IllegalArgumentException(" L'agent " + agent.getNom()
                             + " est déjà affecté à une autre mission chevauchant celle-ci.");
                 }
                 if (!verifierCarteProfessionnelle(agent, mission.getTypeMission())) {
-                    throw new IllegalArgumentException("❌ L'agent " + agent.getNom()
+                    throw new IllegalArgumentException(" L'agent " + agent.getNom()
                             + " n'a pas la carte professionnelle valide pour ce type de mission.");
                 }
                 if (!verifierDiplomeSSIAP(agent, mission.getTypeMission())) {
-                    throw new IllegalArgumentException("❌ L'agent " + agent.getNom()
+                    throw new IllegalArgumentException(" L'agent " + agent.getNom()
                             + " n'a pas le diplôme SSIAP requis pour cette mission.");
                 }
 
@@ -264,7 +264,7 @@ public class MissionService {
 
                     if (now.isBefore(missionStart)) {
                         throw new IllegalArgumentException(
-                                "❌ Impossible de rédiger un rapport avant le début de la mission !");
+                                " Impossible de rédiger un rapport avant le début de la mission !");
                     }
                     mission.getRapports().add(rapport);
                     return missionRepository.save(mission);
@@ -309,14 +309,13 @@ public class MissionService {
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // 🔹 Associer une géolocalisation à une mission
-    // ─────────────────────────────────────────────────────────────────────────────
+// 🔹 Associer une géolocalisation à une mission
+// ─────────────────────────────────────────────────────────────────────────────
     public Optional<Mission> assignGeolocalisationToMission(Long missionId) {
-        // Récupérer la mission par son ID
         Optional<Mission> missionOptional = missionRepository.findById(missionId);
 
         if (missionOptional.isEmpty()) {
-            System.out.println("❌ Mission non trouvée pour l'ID : " + missionId);
+            System.out.println("Mission non trouvée pour l'ID : " + missionId);
             return Optional.empty();
         }
 
@@ -324,84 +323,89 @@ public class MissionService {
 
         // Récupérer le site associé à la mission
         Site site = mission.getSite();
-        if (site == null || site.getAdresse() == null || site.getAdresse().isEmpty()) {
-            System.out.println("❌ Aucun site ou adresse associée à cette mission.");
+        if (site == null) {
+            System.out.println("Aucun site associé à cette mission.");
             return Optional.empty();
         }
 
-        String adresse = site.getAdresse();
-        System.out.println("🌍 Adresse du site trouvé : " + adresse);
+        // Construire l'adresse complète
+        StringBuilder adresseBuilder = new StringBuilder();
+        if (site.getNumero() != null) adresseBuilder.append(site.getNumero()).append(" ");
+        if (site.getRue() != null) adresseBuilder.append(site.getRue()).append(", ");
+        if (site.getCodePostal() != null) adresseBuilder.append(site.getCodePostal()).append(" ");
+        if (site.getVille() != null) adresseBuilder.append(site.getVille()).append(", ");
+        if (site.getDepartement() != null) adresseBuilder.append(site.getDepartement()).append(", ");
+        if (site.getRegion() != null) adresseBuilder.append(site.getRegion()).append(", ");
+        if (site.getPays() != null) adresseBuilder.append(site.getPays());
+
+        String adresseComplete = adresseBuilder.toString().trim();
+        if (adresseComplete.isEmpty()) {
+            System.out.println("Aucune adresse valide trouvée pour ce site.");
+            return Optional.empty();
+        }
 
         // Obtenir les coordonnées GPS via le GeocodingService
         GeoPoint geoPoint;
         try {
-            geoPoint = geocodingService.getCoordinatesFromAddress(adresse);
+            geoPoint = geocodingService.getCoordinatesFromAddress(adresseComplete);
         } catch (Exception e) {
-            System.out.println("❌ Erreur lors de la récupération des coordonnées GPS : " + e.getMessage());
+            System.out.println("Erreur lors de la récupération des coordonnées GPS : " + e.getMessage());
             return Optional.empty();
         }
 
-        // Créer une nouvelle entrée GeolocalisationGPS
+        // Supprimer l'ancienne géolocalisation si elle existe
+        if (mission.getGeolocalisationGPS() != null) {
+            geolocalisationGPSRepository.delete(mission.getGeolocalisationGPS());
+        }
+
+        // Créer une nouvelle entrée de géolocalisation
         GeolocalisationGPS geolocalisationGPS = new GeolocalisationGPS();
         geolocalisationGPS.setPosition(geoPoint);
         geolocalisationGPS.setGps_precision(5.0f);
-
-        // Enregistrer la géolocalisation dans la base de données
         geolocalisationGPSRepository.save(geolocalisationGPS);
 
         // Associer la géolocalisation à la mission
         mission.setGeolocalisationGPS(geolocalisationGPS);
         missionRepository.save(mission);
 
-        System.out.println(" Géolocalisation associée avec succès à la mission : " + missionId);
-
         return Optional.of(mission);
     }
 
 
 
-// ─────────────────────────────────────────────────────────────────────────────
-    // ✅ Vérifier la zone de travail (adresse du site) via GeoApiService
+
     // ─────────────────────────────────────────────────────────────────────────────
+//  Vérifier la zone de travail (adresse du site) via GeoApiService
+// ─────────────────────────────────────────────────────────────────────────────
     private boolean verifierZoneTravailAgent(AgentDeSecurite agent, Mission mission) {
         if (mission.getSite() == null) return false;
         Site site = mission.getSite();
-        String adresseSite = site.getAdresse();
 
-        // On utilise l’ancien service geoApiService (communeByCodePostal) pour
-        // vérifier le codeRegion / codePostal, etc.
-        Map<String, Object> communeInfo = geoApiService.getCommuneByCodePostal(adresseSite);
-        if (communeInfo == null || !communeInfo.containsKey("codeRegion")) {
-            return false;
-        }
+        // Obtenir les informations de l'adresse du site
+        String villeSite = site.getVille();
+        String departementSite = site.getDepartement();
+        String codePostalSite = site.getCodePostal();
+        String regionSite = site.getRegion();
+        String paysSite = site.getPays();
 
-        String codeRegionSite = (String) communeInfo.get("codeRegion");
-
+        // Vérifier les zones de travail de l'agent
         return agent.getZonesDeTravail().stream().anyMatch(zone -> {
-            switch (zone.getTypeZone()) {
-                case REGION:
-                    return zone.getNom().equalsIgnoreCase(codeRegionSite);
 
-                case VILLE:
-                    String nomCommune = (String) communeInfo.get("nom");
-                    return zone.getNom().equalsIgnoreCase(nomCommune);
+            // Vérification de chaque critère
+            boolean villeCorrespond = zone.getVille() != null && zone.getVille().equalsIgnoreCase(villeSite);
+            boolean departementCorrespond = zone.getDepartement() != null && zone.getDepartement().equalsIgnoreCase(departementSite);
+            boolean codePostalCorrespond = zone.getCodePostal() != null && zone.getCodePostal().equalsIgnoreCase(codePostalSite);
+            boolean regionCorrespond = zone.getRegion() != null && zone.getRegion().equalsIgnoreCase(regionSite);
+            boolean paysCorrespond = zone.getPays() != null && zone.getPays().equalsIgnoreCase(paysSite);
 
-                case CODE_POSTAL:
-                    String codePostal = (String) communeInfo.get("code");
-                    return zone.getNom().equalsIgnoreCase(codePostal);
-
-                case DEPARTEMENT:
-                    String codeDepartement = (String) communeInfo.get("codeDepartement");
-                    return zone.getNom().equalsIgnoreCase(codeDepartement);
-
-                default:
-                    return false;
-            }
+            // La correspondance est validée si au moins un critère est vérifié
+            return villeCorrespond || departementCorrespond || codePostalCorrespond || regionCorrespond || paysCorrespond;
         });
     }
 
+
     // ─────────────────────────────────────────────────────────────────────────────
-    // ✅ Vérifier la disponibilité (dates + heures)
+    //  Vérifier la disponibilité (dates + heures)
     // ─────────────────────────────────────────────────────────────────────────────
     private boolean verifierDisponibilite(AgentDeSecurite agent, Mission mission) {
         LocalDateTime missionStart = LocalDateTime.of(
@@ -429,7 +433,7 @@ public class MissionService {
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // ✅ Vérifier s'il y a un conflit d’horaire entre la nouvelle mission et
+    //  Vérifier s'il y a un conflit d’horaire entre la nouvelle mission et
     //    les missions existantes de l’agent
     // ─────────────────────────────────────────────────────────────────────────────
     private boolean hasScheduleConflict(AgentDeSecurite agent, Mission newMission) {
@@ -461,7 +465,7 @@ public class MissionService {
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // ✅ Vérifier la carte professionnelle (type mission => carte correspondante)
+    //  Vérifier la carte professionnelle (type mission => carte correspondante)
     // ─────────────────────────────────────────────────────────────────────────────
     private boolean verifierCarteProfessionnelle(AgentDeSecurite agent, TypeMission typeMission) {
         return agent.getCartesProfessionnelles().stream().anyMatch(carte ->
@@ -471,7 +475,7 @@ public class MissionService {
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // ✅ Vérifier le diplôme SSIAP si la mission est de type SSIAP
+    //  Vérifier le diplôme SSIAP si la mission est de type SSIAP
     // ─────────────────────────────────────────────────────────────────────────────
     private boolean verifierDiplomeSSIAP(AgentDeSecurite agent, TypeMission typeMission) {
         if (typeMission.name().startsWith("SSIAP")) {
@@ -512,7 +516,7 @@ public class MissionService {
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // 📣 Méthode utilitaire pour notifier un agent par email et SMS
+    //  Méthode utilitaire pour notifier un agent par email et SMS
     // ─────────────────────────────────────────────────────────────────────────────
     private void envoyerNotificationAgent(AgentDeSecurite agent, String subject, String content) {
         // Email (si l’agent a un email valide)
@@ -522,6 +526,21 @@ public class MissionService {
         // SMS (si l’agent a un numéro de téléphone)
         if (agent.getTelephone() != null && !agent.getTelephone().isEmpty()) {
             notificationService.sendSMS(agent.getTelephone(), content);
+        }
+    }
+
+    public void removeAgentFromMission(Long missionId, Long agentId) {
+        Mission mission = missionRepository.findById(missionId)
+                .orElseThrow(() -> new NoSuchElementException("Mission non trouvée pour l'ID : " + missionId));
+
+        AgentDeSecurite agent = agentRepository.findById(agentId)
+                .orElseThrow(() -> new NoSuchElementException("Agent non trouvé pour l'ID : " + agentId));
+
+        if (mission.getAgents().contains(agent)) {
+            mission.getAgents().remove(agent);
+            missionRepository.save(mission);
+        } else {
+            throw new NoSuchElementException("L'agent n'est pas affecté à cette mission.");
         }
     }
 }
