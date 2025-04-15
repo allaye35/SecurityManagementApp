@@ -1,15 +1,17 @@
 package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.model.Planning;
+import com.boulevardsecurity.securitymanagementapp.service.PdfGeneratorService;
 import com.boulevardsecurity.securitymanagementapp.service.PlanningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/plannings")
@@ -18,6 +20,7 @@ import java.util.List;
 public class PlanningController {
 
     private final PlanningService planningService;
+    private final PdfGeneratorService pdfGeneratorService;
 
     // 🔹 Obtenir tous les plannings
     @GetMapping
@@ -95,5 +98,23 @@ public class PlanningController {
     public ResponseEntity<List<Planning>> getPlanningsByMission(@PathVariable Long missionId) {
         List<Planning> plannings = planningService.getPlanningsByMission(missionId);
         return ResponseEntity.ok(plannings);
+    }
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> printPlanningPdf(@PathVariable Long id) {
+        Optional<Planning> planningOpt = planningService.getPlanningById(id);
+        if (planningOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Planning planning = planningOpt.get();
+        // Générer le PDF via le service
+        byte[] pdfBytes = pdfGeneratorService.generatePlanningPdf(planning);
+
+        // Préparer la réponse HTTP avec les en-têtes adaptés
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        String filename = "planning_" + planning.getId() + ".pdf";
+        headers.setContentDisposition(ContentDisposition.attachment().filename(filename).build());
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }

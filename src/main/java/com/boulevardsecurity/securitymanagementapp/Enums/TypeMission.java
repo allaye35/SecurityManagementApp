@@ -7,7 +7,6 @@ public enum TypeMission {
     SSIAP_2,
     SSIAP_3,
     TELESURVEILLANCE,
-    PATROUILLE,
     SECURITE_EVENEMENTIELLE,
     RONDEUR,
     CONTROLEUR_ACCES,

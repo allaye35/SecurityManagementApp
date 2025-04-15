@@ -1,10 +1,11 @@
 package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.model.RapportIntervention;
+import com.boulevardsecurity.securitymanagementapp.service.PdfGeneratorService;
 import com.boulevardsecurity.securitymanagementapp.service.RapportInterventionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,10 +16,12 @@ import java.util.List;
 public class RapportInterventionController {
 
     private final RapportInterventionService rapportService;
+    private final PdfGeneratorService pdfGeneratorService;
 
     @Autowired
-    public RapportInterventionController(RapportInterventionService rapportService) {
+    public RapportInterventionController(RapportInterventionService rapportService, PdfGeneratorService pdfGeneratorService) {
         this.rapportService = rapportService;
+        this.pdfGeneratorService = pdfGeneratorService;
     }
     // 🔹 Récupérer tous les rapports
     @GetMapping
@@ -57,5 +60,21 @@ public class RapportInterventionController {
     public ResponseEntity<Void> deleteRapport(@PathVariable Long id) {
         rapportService.deleteRapport(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    // --- Nouvel endpoint : Imprimer (générer le PDF) du rapport d'intervention ---
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> printRapportPdf(@PathVariable Long id) {
+        return rapportService.getRapportById(id)
+                .map(rapport -> {
+                    byte[] pdfBytes = pdfGeneratorService.generateRapportInterventionPdf(rapport);
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_PDF);
+                    String filename = "rapport_intervention_" + rapport.getId() + ".pdf";
+                    headers.setContentDisposition(ContentDisposition.attachment().filename(filename).build());
+                    return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }

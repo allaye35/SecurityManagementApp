@@ -93,4 +93,15 @@ public class Mission {
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Pointage> pointages = new ArrayList<>();  //
+
+    @ManyToOne
+    @JoinColumn(name = "devis_id")
+    private Devis devis;
+
+    // ----------------------------------------------
+    // RELATION AVEC Contrat (pour la copie éventuelle)
+    // ----------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "contrat_id")
+    private Contrat contrat;
 }

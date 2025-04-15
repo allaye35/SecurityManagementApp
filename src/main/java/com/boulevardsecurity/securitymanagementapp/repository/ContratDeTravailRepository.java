@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ContratDeTravailRepository extends JpaRepository<ContratDeTravail, Long> {
-    List<ContratDeTravail> findByAgentId(Long agentId);
-    List<ContratDeTravail> findByEntrepriseId(Long entrepriseId);
+    List<ContratDeTravail> findByAgentDeSecuriteId(Long agentId);
 }

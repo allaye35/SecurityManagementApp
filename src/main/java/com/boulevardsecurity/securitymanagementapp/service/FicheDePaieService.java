@@ -1,42 +1,23 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
+
 import com.boulevardsecurity.securitymanagementapp.model.FicheDePaie;
-import com.boulevardsecurity.securitymanagementapp.repository.FicheDePaieRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 
-@Service
-public class FicheDePaieService {
+public interface FicheDePaieService {
 
-    @Autowired
-    private FicheDePaieRepository ficheDePaieRepository;
+    // CREATE
+    FicheDePaie createFicheDePaie(FicheDePaie fiche);
 
-    public List<FicheDePaie> getAllFiches() {
-        return ficheDePaieRepository.findAll();
-    }
+    // READ - un seul
+    FicheDePaie getFicheDePaieById(Long id);
 
-    public Optional<FicheDePaie> getFicheById(Long id) {
-        return ficheDePaieRepository.findById(id);
-    }
+    // READ - liste
+    List<FicheDePaie> getAllFichesDePaie();
 
-    public FicheDePaie createFiche(FicheDePaie ficheDePaie) {
-        return ficheDePaieRepository.save(ficheDePaie);
-    }
+    // UPDATE
+    FicheDePaie updateFicheDePaie(Long id, FicheDePaie ficheData);
 
-    public FicheDePaie updateFiche(Long id, FicheDePaie updatedFiche) {
-        return ficheDePaieRepository.findById(id).map(fiche -> {
-            fiche.setNumeroFiche(updatedFiche.getNumeroFiche());
-            fiche.setSalaireBrut(updatedFiche.getSalaireBrut());
-            fiche.setSalaireNet(updatedFiche.getSalaireNet());
-            fiche.setDateEmise(updatedFiche.getDateEmise());
-            return ficheDePaieRepository.save(fiche);
-        }).orElse(null);
-    }
-
-    public void deleteFiche(Long id) {
-        ficheDePaieRepository.deleteById(id);
-    }
+    // DELETE
+    void deleteFicheDePaie(Long id);
 }

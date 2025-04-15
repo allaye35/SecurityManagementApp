@@ -1,58 +1,65 @@
 package com.boulevardsecurity.securitymanagementapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Représente un contrat de travail liant un agent de sécurité à l'entreprise.
+ */
 @Entity
 @Table(name = "contrats_de_travail")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class ContratDeTravail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    /**
+     * L'agent concerné par ce contrat de travail.
+     * Un agent peut avoir plusieurs contrats successifs (CDD, CDI, etc.).
+     */
+    @ManyToOne
     @JoinColumn(name = "agent_id", nullable = false)
-    private AgentDeSecurite agent;
+    private AgentDeSecurite agentDeSecurite;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "entreprise_id", nullable = false)
-    private Entreprise entreprise;
-
+    /**
+     * Par exemple : CDI, CDD, Interim, Stage, etc.
+     * Tu peux aussi créer un Enum TypeContrat si tu veux limiter les valeurs.
+     */
     @Column(nullable = false)
+    private String typeContrat;  // "CDI", "CDD", ...
+
+    /**
+     * Date de début du contrat.
+     */
     private LocalDate dateDebut;
 
-    @Column(nullable = false)
+    /**
+     * Date de fin du contrat (peut être null pour un CDI).
+     */
     private LocalDate dateFin;
 
-    @OneToOne
-    @JoinColumn(name = "mission_id", nullable = false)
-    private Mission mission;
+    /**
+     * Salaire de base (mensuel ou horaire selon tes besoins).
+     */
+    private Double salaireDeBase;
 
-    @NotBlank(message = "Signature électronique requise")
-    private String signatureElectronique;
-
-    // ✅ Vérifier si le contrat est toujours valide
-    public boolean estActif() {
-        LocalDate today = LocalDate.now();
-        return (dateDebut.isBefore(today) || dateDebut.isEqual(today)) && dateFin.isAfter(today);
-    }
-
-    // ✅ Prolonger la date de fin du contrat
-    public void prolongerContrat(LocalDate nouvelleDateFin) {
-        if (nouvelleDateFin.isAfter(this.dateFin)) {
-            this.dateFin = nouvelleDateFin;
-        } else {
-            throw new IllegalArgumentException("La nouvelle date doit être postérieure à l'ancienne date de fin.");
-        }
-    }
+    /**
+     * Liste des fiches de paie associées à ce contrat.
+     * Plusieurs bulletins peuvent être émis sur la durée du contrat.
+     */
+    @OneToMany(mappedBy = "contratDeTravail", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<FicheDePaie> fichesDePaie = new ArrayList<>();
 }

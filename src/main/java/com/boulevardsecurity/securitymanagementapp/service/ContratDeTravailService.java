@@ -1,54 +1,32 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.model.ContratDeTravail;
-import com.boulevardsecurity.securitymanagementapp.repository.ContratDeTravailRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class ContratDeTravailService {
+public interface ContratDeTravailService {
 
-    private final ContratDeTravailRepository contratRepository;
+    // CREATE
+    ContratDeTravail createContrat(ContratDeTravail contrat);
 
-    @Autowired
-    public ContratDeTravailService(ContratDeTravailRepository contratRepository) {
-        this.contratRepository = contratRepository;
-    }
+    // READ (un seul) - Optional pour gérer 404
+    Optional<ContratDeTravail> getContratById(Long id);
 
-    public List<ContratDeTravail> getAllContrats() {
-        return contratRepository.findAll();
-    }
+    // READ - liste
+    List<ContratDeTravail> getAllContrats();
 
-    public Optional<ContratDeTravail> getContratById(Long id) {
-        return contratRepository.findById(id);
-    }
+    // UPDATE
+    ContratDeTravail updateContrat(Long id, ContratDeTravail updatedContrat);
 
-    public ContratDeTravail createContrat(ContratDeTravail contrat) {
-        return contratRepository.save(contrat);
-    }
+    // DELETE
+    void deleteContrat(Long id);
 
-    public ContratDeTravail updateContrat(Long id, ContratDeTravail updatedContrat) {
-        return contratRepository.findById(id).map(contrat -> {
-            contrat.setDateDebut(updatedContrat.getDateDebut());
-            contrat.setDateFin(updatedContrat.getDateFin());
-            contrat.setSignatureElectronique(updatedContrat.getSignatureElectronique());
-            return contratRepository.save(contrat);
-        }).orElse(null);
-    }
+    // PATCH - prolonger la date de fin
+    boolean prolongerContrat(Long id, LocalDate nouvelleDateFin);
 
-    public void deleteContrat(Long id) {
-        contratRepository.deleteById(id);
-    }
-
-    public boolean prolongerContrat(Long id, LocalDate nouvelleDateFin) {
-        return contratRepository.findById(id).map(contrat -> {
-            contrat.prolongerContrat(nouvelleDateFin);
-            contratRepository.save(contrat);
-            return true;
-        }).orElse(false);
-    }
+    // READ - Trouver tous les contrats d'un Agent
+    // Dans l’interface ContratDeTravailService
+    List<ContratDeTravail> getContratsByAgentId(Long agentId);
 }
+
