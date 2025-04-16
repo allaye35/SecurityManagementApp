@@ -3,7 +3,9 @@ package com.boulevardsecurity.securitymanagementapp.controller;
 import com.boulevardsecurity.securitymanagementapp.model.Contrat;
 import com.boulevardsecurity.securitymanagementapp.model.Devis;
 import com.boulevardsecurity.securitymanagementapp.service.ContratService;
+import com.boulevardsecurity.securitymanagementapp.service.PdfGeneratorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +16,16 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/contrats")
-@RequiredArgsConstructor
 public class ContratController {
 
     private final ContratService contratService;
+    private final PdfGeneratorService pdfGeneratorService;
+
+    @Autowired
+    public ContratController(ContratService contratService, PdfGeneratorService pdfGeneratorService) {
+        this.contratService = contratService;
+        this.pdfGeneratorService = pdfGeneratorService;
+    }
 
     /**
      * CREATE
@@ -80,4 +88,17 @@ public class ContratController {
         Contrat newContrat = contratService.generateFromDevis(devis);
         return ResponseEntity.status(201).body(newContrat);
     }
+
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> generatePdf(@PathVariable Long id) {
+        Contrat contrat = contratService.getContratById(id);
+        byte[] pdf = pdfGeneratorService.generateContratPdf(contrat);
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=contrat-" + id + ".pdf")
+                .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
 }

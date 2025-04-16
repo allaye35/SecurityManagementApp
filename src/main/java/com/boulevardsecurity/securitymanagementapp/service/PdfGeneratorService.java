@@ -34,28 +34,28 @@ public class PdfGeneratorService {
      */
     private String buildFactureHtml(Facture facture) {
         return """
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8"/>
-                <title>Facture</title>
-              </head>
-              <body>
-                <h1>Facture #%s</h1>
-                <p>Date d'émission : %s</p>
-                <p>Statut : %s</p>
-
-                <hr/>
-                <h3>Détails :</h3>
-                <p>Total HT : %s</p>
-                <p>TVA : %s %%</p>
-                <p>Total TTC : %s</p>
-
-                <!-- Exemple : si tu veux afficher le client -->
-                <p>Client : %s</p>
-              </body>
-            </html>
-            """.formatted(
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="UTF-8"/>
+                    <title>Facture</title>
+                  </head>
+                  <body>
+                    <h1>Facture #%s</h1>
+                    <p>Date d'émission : %s</p>
+                    <p>Statut : %s</p>
+                
+                    <hr/>
+                    <h3>Détails :</h3>
+                    <p>Total HT : %s</p>
+                    <p>TVA : %s %%</p>
+                    <p>Total TTC : %s</p>
+                
+                    <!-- Exemple : si tu veux afficher le client -->
+                    <p>Client : %s</p>
+                  </body>
+                </html>
+                """.formatted(
                 facture.getNumeroFacture(),
                 facture.getDateEmission(),
                 facture.getStatut(),
@@ -71,6 +71,7 @@ public class PdfGeneratorService {
 // ========================================================================
     // ==================== PARTIE DEVIS PDF ICI ==============================
     // ========================================================================
+
     /**
      * Génère un PDF (en bytes) pour un devis donné.
      */
@@ -118,36 +119,36 @@ public class PdfGeneratorService {
         }
 
         return """
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8"/>
-                <title>Devis</title>
-              </head>
-              <body>
-                <h1>Devis #%s</h1>
-                <p>Date de création : %s</p>
-                <p>Date de validité : %s</p>
-                <p>Statut : %s</p>
-
-                <hr/>
-                <h3>Détails :</h3>
-                <p>Description : %s</p>
-                <p>Montant : %s €</p>
-                <p>Montant HT : %s €</p>
-                <p>TVA : %s €</p>
-                <p>Montant TTC : %s €</p>
-                <p>Conditions générales : %s</p>
-
-                <hr/>
-                <p>Client : %s</p>
-                <p>Entreprise : %s</p>
-
-                %s <!-- missionsHtml -->
-
-              </body>
-            </html>
-            """.formatted(
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="UTF-8"/>
+                    <title>Devis</title>
+                  </head>
+                  <body>
+                    <h1>Devis #%s</h1>
+                    <p>Date de création : %s</p>
+                    <p>Date de validité : %s</p>
+                    <p>Statut : %s</p>
+                
+                    <hr/>
+                    <h3>Détails :</h3>
+                    <p>Description : %s</p>
+                    <p>Montant : %s €</p>
+                    <p>Montant HT : %s €</p>
+                    <p>TVA : %s €</p>
+                    <p>Montant TTC : %s €</p>
+                    <p>Conditions générales : %s</p>
+                
+                    <hr/>
+                    <p>Client : %s</p>
+                    <p>Entreprise : %s</p>
+                
+                    %s <!-- missionsHtml -->
+                
+                  </body>
+                </html>
+                """.formatted(
                 devis.getReferenceDevis(),
                 devis.getDateCreation(),
                 devis.getDateValidite(),
@@ -195,9 +196,9 @@ public class PdfGeneratorService {
         if (fiche.getContratDeTravail() != null) {
             // Par exemple : afficher ID et typeContrat
             contratInfo = """
-        <p>Contrat ID : %d</p>
-        <p>Type de contrat : %s</p>
-        """.formatted(
+                    <p>Contrat ID : %d</p>
+                    <p>Type de contrat : %s</p>
+                    """.formatted(
                     fiche.getContratDeTravail().getId(),
                     fiche.getContratDeTravail().getTypeContrat()
             );
@@ -216,33 +217,33 @@ public class PdfGeneratorService {
         }
 
         return """
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8"/>
-                <title>Fiche de Paie</title>
-              </head>
-              <body>
-                <h1>Fiche de paie #%s</h1>
-                <p>Date d'émission : %s</p>
-                <p>Période : %s</p>
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="UTF-8"/>
+                    <title>Fiche de Paie</title>
+                  </head>
+                  <body>
+                    <h1>Fiche de paie #%s</h1>
+                    <p>Date d'émission : %s</p>
+                    <p>Période : %s</p>
                 
-                <hr/>
-                <h3>Détails du Salaire :</h3>
-                <p>Salaire Brut : %.2f €</p>
-                <p>Cotisations : %.2f €</p>
-                <p>Salaire Net : %.2f €</p>
+                    <hr/>
+                    <h3>Détails du Salaire :</h3>
+                    <p>Salaire Brut : %.2f €</p>
+                    <p>Cotisations : %.2f €</p>
+                    <p>Salaire Net : %.2f €</p>
                 
-                <hr/>
-                <p>Prime Nuit : %.2f €</p>
-                <p>Prime Transport : %.2f €</p>
+                    <hr/>
+                    <p>Prime Nuit : %.2f €</p>
+                    <p>Prime Transport : %.2f €</p>
                 
-                <hr/>
-                %s <!-- Contrat info -->
+                    <hr/>
+                    %s <!-- Contrat info -->
                 
-              </body>
-            </html>
-            """.formatted(
+                  </body>
+                </html>
+                """.formatted(
                 fiche.getReferenceBulletin(),
                 fiche.getDateEmission() != null ? fiche.getDateEmission() : "N/A",
                 periodeStr,
@@ -291,27 +292,27 @@ public class PdfGeneratorService {
 
         // Construit un HTML simple à personnaliser selon vos besoins
         return """
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8"/>
-                <title>Carte Professionnelle</title>
-                <style>
-                  body { font-family: Arial, sans-serif; }
-                  h1 { color: #333; }
-                  p { font-size: 14px; }
-                </style>
-              </head>
-              <body>
-                <h1>Carte Professionnelle</h1>
-                <p><strong>Type :</strong> %s</p>
-                <p><strong>Numéro :</strong> %s</p>
-                <p><strong>Agent :</strong> %s</p>
-                <p><strong>Date Début :</strong> %s</p>
-                <p><strong>Date Fin :</strong> %s</p>
-              </body>
-            </html>
-            """.formatted(
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="UTF-8"/>
+                    <title>Carte Professionnelle</title>
+                    <style>
+                      body { font-family: Arial, sans-serif; }
+                      h1 { color: #333; }
+                      p { font-size: 14px; }
+                    </style>
+                  </head>
+                  <body>
+                    <h1>Carte Professionnelle</h1>
+                    <p><strong>Type :</strong> %s</p>
+                    <p><strong>Numéro :</strong> %s</p>
+                    <p><strong>Agent :</strong> %s</p>
+                    <p><strong>Date Début :</strong> %s</p>
+                    <p><strong>Date Fin :</strong> %s</p>
+                  </body>
+                </html>
+                """.formatted(
                 carte.getTypeCarte(),    // Par exemple "APS", "SSIAP", etc.
                 carte.getNumeroCarte(),  // Par exemple "CP-2025-001"
                 agentInfo,               // Nom et prénom de l'agent
@@ -319,6 +320,7 @@ public class PdfGeneratorService {
                 dateFin                  // Date de fin (ou "N/A")
         );
     }
+
     /**
      * Génère un PDF (sous forme de tableau d'octets) pour un planning donné.
      *
@@ -368,27 +370,27 @@ public class PdfGeneratorService {
 
         // Création du HTML complet pour le planning
         return """
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8"/>
-                <title>Planning</title>
-                <style>
-                  body { font-family: Arial, sans-serif; margin: 20px; }
-                  h1, h3 { color: #333; }
-                  p { font-size: 14px; }
-                  ul { list-style-type: disc; margin-left: 20px; }
-                </style>
-              </head>
-              <body>
-                <h1>Planning</h1>
-                <p><strong>ID :</strong> %d</p>
-                <p><strong>Date de création :</strong> %s</p>
-                <p><strong>Date de modification :</strong> %s</p>
-                %s
-              </body>
-            </html>
-            """.formatted(
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="UTF-8"/>
+                    <title>Planning</title>
+                    <style>
+                      body { font-family: Arial, sans-serif; margin: 20px; }
+                      h1, h3 { color: #333; }
+                      p { font-size: 14px; }
+                      ul { list-style-type: disc; margin-left: 20px; }
+                    </style>
+                  </head>
+                  <body>
+                    <h1>Planning</h1>
+                    <p><strong>ID :</strong> %d</p>
+                    <p><strong>Date de création :</strong> %s</p>
+                    <p><strong>Date de modification :</strong> %s</p>
+                    %s
+                  </body>
+                </html>
+                """.formatted(
                 planning.getId(),
                 planning.getDateCreation() != null ? planning.getDateCreation().toString() : "N/A",
                 planning.getDateModification() != null ? planning.getDateModification().toString() : "N/A",
@@ -421,31 +423,31 @@ public class PdfGeneratorService {
     private String buildRapportInterventionHtml(RapportIntervention rapport) {
         // Exemple d'affichage des informations du rapport
         return """
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8"/>
-                <title>Rapport d'Intervention</title>
-                <style>
-                  body { font-family: Arial, sans-serif; margin: 20px; }
-                  h1 { color: #333; }
-                  p { font-size: 14px; }
-                </style>
-              </head>
-              <body>
-                <h1>Rapport d'Intervention #%s</h1>
-                <p><strong>Date d'intervention :</strong> %s</p>
-                <p><strong>Description :</strong> %s</p>
-                <p><strong>Agent :</strong> %s</p>
-                <p><strong>Email de l'agent :</strong> %s</p>
-                <p><strong>Téléphone de l'agent :</strong> %s</p>
-                <p><strong>Contenu :</strong> %s</p>
-                <p><strong>Status :</strong> %s</p>
-                <p><strong>Date Création :</strong> %s</p>
-                <p><strong>Date Modification :</strong> %s</p>
-              </body>
-            </html>
-            """.formatted(
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="UTF-8"/>
+                    <title>Rapport d'Intervention</title>
+                    <style>
+                      body { font-family: Arial, sans-serif; margin: 20px; }
+                      h1 { color: #333; }
+                      p { font-size: 14px; }
+                    </style>
+                  </head>
+                  <body>
+                    <h1>Rapport d'Intervention #%s</h1>
+                    <p><strong>Date d'intervention :</strong> %s</p>
+                    <p><strong>Description :</strong> %s</p>
+                    <p><strong>Agent :</strong> %s</p>
+                    <p><strong>Email de l'agent :</strong> %s</p>
+                    <p><strong>Téléphone de l'agent :</strong> %s</p>
+                    <p><strong>Contenu :</strong> %s</p>
+                    <p><strong>Status :</strong> %s</p>
+                    <p><strong>Date Création :</strong> %s</p>
+                    <p><strong>Date Modification :</strong> %s</p>
+                  </body>
+                </html>
+                """.formatted(
                 rapport.getId(),
                 rapport.getDateIntervention() != null ? rapport.getDateIntervention().toString() : "N/A",
                 rapport.getDescription() != null ? rapport.getDescription() : "N/A",
@@ -459,5 +461,112 @@ public class PdfGeneratorService {
         );
     }
 
-    // Vous pouvez conserver les autres méthodes existantes pour les devis, fiches de paie, etc.
+    public byte[] generateContratDeTravailPdf(ContratDeTravail contrat) {
+        String htmlContent = buildContratHtml(contrat);
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.useFastMode();
+            builder.withHtmlContent(htmlContent, null);
+            builder.toStream(outputStream);
+            builder.run();
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la génération du PDF du contrat de travail", e);
+        }
+    }
+
+    private String buildContratHtml(ContratDeTravail contrat) {
+        String agent = contrat.getAgentDeSecurite() != null
+                ? contrat.getAgentDeSecurite().getNom() + " " + contrat.getAgentDeSecurite().getPrenom()
+                : "Inconnu";
+
+        return """
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="UTF-8"/>
+                    <title>Contrat de Travail</title>
+                  </head>
+                  <body>
+                    <h1>Contrat de Travail</h1>
+                    <p><strong>Agent :</strong> %s</p>
+                    <p><strong>Type de contrat :</strong> %s</p>
+                    <p><strong>Date de début :</strong> %s</p>
+                    <p><strong>Date de fin :</strong> %s</p>
+                    <p><strong>Salaire de base :</strong> %.2f €</p>
+                  </body>
+                </html>
+                """.formatted(
+                agent,
+                contrat.getTypeContrat(),
+                contrat.getDateDebut() != null ? contrat.getDateDebut().toString() : "Non renseignée",
+                contrat.getDateFin() != null ? contrat.getDateFin().toString() : "Non renseignée",
+                contrat.getSalaireDeBase() != null ? contrat.getSalaireDeBase() : 0.0
+        );
+    }
+
+
+    public byte[] generateContratPdf(Contrat contrat) {
+        String htmlContent = buildContratHtml(contrat);
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.useFastMode();
+            builder.withHtmlContent(htmlContent, null);
+            builder.toStream(outputStream);
+            builder.run();
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la génération du PDF du contrat", e);
+        }
+    }
+
+    private String buildContratHtml(Contrat contrat) {
+        String client = contrat.getClient() != null
+                ? contrat.getClient().getNom()
+                : "Inconnu";
+
+        String entreprise = contrat.getEntreprise() != null
+                ? contrat.getEntreprise().getNom()
+                : "Inconnue";
+
+        String missionsHtml = "";
+        if (contrat.getMissions() != null && !contrat.getMissions().isEmpty()) {
+            StringBuilder sb = new StringBuilder("<ul>");
+            contrat.getMissions().forEach(m -> sb.append("<li>").append(m.getTitre()).append("</li>"));
+            sb.append("</ul>");
+            missionsHtml = sb.toString();
+        }
+
+        return """
+                <!DOCTYPE html>
+                <html>
+                  <head>
+                    <meta charset="UTF-8"/>
+                    <title>Contrat</title>
+                  </head>
+                  <body>
+                    <h1>Contrat</h1>
+                    <p><strong>Date début :</strong> %s</p>
+                    <p><strong>Date fin :</strong> %s</p>
+                    <p><strong>Montant :</strong> %s €</p>
+                    <p><strong>Client :</strong> %s</p>
+                    <p><strong>Entreprise :</strong> %s</p>
+                    <p><strong>Missions :</strong> %s</p>
+                    <hr/>
+                    <p><strong>Contenu :</strong></p>
+                    <p>%s</p>
+                  </body>
+                </html>
+                """.formatted(
+                contrat.getDateDebut() != null ? contrat.getDateDebut().toString() : "Non renseignée",
+                contrat.getDateFin() != null ? contrat.getDateFin().toString() : "Non renseignée",
+                contrat.getMontant() != null ? contrat.getMontant().toPlainString() : "0.00",
+                client,
+                entreprise,
+                missionsHtml,
+                contrat.getContenuContrat() != null ? contrat.getContenuContrat() : ""
+        );
+    }
 }

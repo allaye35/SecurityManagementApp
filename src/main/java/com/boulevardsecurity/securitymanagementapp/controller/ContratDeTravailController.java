@@ -2,6 +2,7 @@ package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.model.ContratDeTravail;
 import com.boulevardsecurity.securitymanagementapp.service.ContratDeTravailService;
+import com.boulevardsecurity.securitymanagementapp.service.PdfGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +16,12 @@ import java.util.Optional;
 public class ContratDeTravailController {
 
     private final ContratDeTravailService contratService;
+    private PdfGeneratorService pdfGeneratorService;
 
     @Autowired
-    public ContratDeTravailController(ContratDeTravailService contratService) {
+    public ContratDeTravailController(ContratDeTravailService contratService, PdfGeneratorService pdfGeneratorService) {
         this.contratService = contratService;
+        this.pdfGeneratorService = new PdfGeneratorService();
     }
 
     // GET ALL
@@ -76,5 +79,21 @@ public class ContratDeTravailController {
     public List<ContratDeTravail> getContratsByAgent(@PathVariable Long agentId) {
         return contratService.getContratsByAgentId(agentId);
     }
+
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> downloadContratPdf(@PathVariable Long id) {
+        Optional<ContratDeTravail> contratOpt = contratService.getContratById(id);
+        if (contratOpt.isPresent()) {
+            byte[] pdf = pdfGeneratorService.generateContratDeTravailPdf(contratOpt.get());
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=contrat-" + id + ".pdf")
+                    .header("Content-Type", "application/pdf")
+                    .body(pdf);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 }
