@@ -1,0 +1,13 @@
+# Gradle/Java
+.gradle/
+**/build/
+out/
+# Node/Front
+node_modules/
+dist/
+# IDE
+.idea/
+.vscode/
+*.iml
+# Autres
+target/
