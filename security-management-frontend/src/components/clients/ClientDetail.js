@@ -647,4 +647,5 @@ export default function ClientDetail() {
             </Tab.Container>
         </Container>
     );
+    
 }
