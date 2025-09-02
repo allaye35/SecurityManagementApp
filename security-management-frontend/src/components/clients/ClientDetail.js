@@ -23,17 +23,25 @@ export default function ClientDetail() {
     const [contrats, setContrats] = useState([]);
     const [devis, setDevis] = useState([]);
     const [factures, setFactures] = useState([]);
-    const [activite, setActivite] = useState([]);    useEffect(() => {
-        setLoading(true);
-        ClientService.getById(id)
-            .then(data => {
-                // Vérifier si les données existent et sont complètes
+    const [activite, setActivite] = useState([]);
+
+    useEffect(() => {
+        let cancelled = false;
+        const loadClient = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await ClientService.getById(id);
+                // Le service retourne un AxiosResponse (response.data) aujourd'hui.
+                // On garde une compatibilité future si un objet brut est renvoyé directement.
+                const data = response?.data ?? response;
+
                 if (data && data.id) {
                     console.log("Données client reçues:", data);
                     // Normalisation des données pour éviter les problèmes d'affichage
                     const normalizedData = {
                         ...data,
-                        // Ajouter des valeurs par défaut pour les champs qui pourraient être undefined
+                        // Valeurs par défaut pour éviter les undefined
                         nom: data.nom || '',
                         prenom: data.prenom || '',
                         email: data.email || '',
@@ -50,19 +58,25 @@ export default function ClientDetail() {
                         numeroSiret: data.numeroSiret || '',
                         modeContactPrefere: data.modeContactPrefere || ''
                     };
-                    setClient(normalizedData);
-                    // Simulation de chargement de données associées (à remplacer par des appels API réels)
-                    simulateRelatedData(data.id);
+                    if (!cancelled) {
+                        setClient(normalizedData);
+                        // Simulation des données associées (remplacer par de vraies API si besoin)
+                        simulateRelatedData(data.id);
+                    }
                 } else {
                     console.error("Données client incomplètes:", data);
-                    setError("Les données du client sont incomplètes ou invalides.");
+                    if (!cancelled) setError("Les données du client sont incomplètes ou invalides.");
                 }
-            })
-            .catch(err => {
+            } catch (err) {
                 console.error("Erreur lors du chargement du client:", err);
-                setError("Une erreur est survenue lors du chargement des détails du client.");
-            })
-            .finally(() => setLoading(false));
+                if (!cancelled) setError("Une erreur est survenue lors du chargement des détails du client.");
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+
+        loadClient();
+        return () => { cancelled = true; };
     }, [id]);
 
     // Fonction pour simuler le chargement des données associées
