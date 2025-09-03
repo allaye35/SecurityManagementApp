@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link }     from "react-router-dom";
 import PlanningService         from "../../services/PlanningService";
+import AgentService            from "../../services/AgentService";
+import MissionService          from "../../services/MissionService";
 import { Container, Card, Badge, Button, Alert, Spinner, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck, faArrowLeft, faEye, faEdit } from "@fortawesome/free-solid-svg-icons";
@@ -8,23 +10,70 @@ import { faCalendarCheck, faArrowLeft, faEye, faEdit } from "@fortawesome/free-s
 export default function PlanningDetail() {
     const { id } = useParams();
     const [planning, setPlanning] = useState(null);
+    const [agents, setAgents] = useState([]);
+    const [missions, setMissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState("");
 
     useEffect(() => {
         setLoading(true);
-        PlanningService
-            .getPlanningById(id)
-            .then(res => {
-                setPlanning(res.data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Erreur lors du chargement du planning:", error);
-                setErr("Impossible de charger ce planning");
-                setLoading(false);
-            });
+        
+        // Charger le planning, les agents et les missions en parallèle
+        Promise.all([
+            PlanningService.getPlanningById(id),
+            AgentService.getAllAgents(),
+            MissionService.getAllMissions()
+        ])
+        .then(([planningRes, agentsRes, missionsRes]) => {
+            setPlanning(planningRes.data);
+            setAgents(Array.isArray(agentsRes.data) ? agentsRes.data : []);
+            setMissions(Array.isArray(missionsRes.data) ? missionsRes.data : []);
+            setLoading(false);
+        })
+        .catch((error) => {
+            console.error("Erreur lors du chargement du planning:", error);
+            setErr("Impossible de charger ce planning");
+            setLoading(false);
+        });
     }, [id]);
+
+    // Helper pour récupérer les objets missions du planning
+    const getMissionObjects = () => {
+        if (!planning) return [];
+        
+        // Si le backend renvoie déjà planning.missions (objet), on s'en sert
+        if (Array.isArray(planning.missions)) return planning.missions;
+        
+        // Sinon on reconstruit via planning.missionIds
+        const ids = Array.isArray(planning.missionIds) ? planning.missionIds : [];
+        return ids.map(id => missions.find(m => m.id === id)).filter(Boolean);
+    };
+
+    // Helper pour récupérer les agents du planning
+    const getAgentsForPlanning = () => {
+        const missionObjs = getMissionObjects();
+        const allAgents = [];
+        
+        missionObjs.forEach(mission => {
+            if (Array.isArray(mission?.agents)) {
+                // Si la mission a déjà les objets agents complets
+                allAgents.push(...mission.agents);
+            } else if (Array.isArray(mission?.agentIds)) {
+                // Si la mission a seulement les agentIds, récupérer les objets agents
+                const missionAgents = mission.agentIds
+                    .map(agentId => agents.find(a => a.id === agentId))
+                    .filter(Boolean);
+                allAgents.push(...missionAgents);
+            }
+        });
+        
+        // Supprimer les doublons basés sur l'ID
+        const uniqueAgents = allAgents.filter((agent, index, self) => 
+            index === self.findIndex(a => a.id === agent.id)
+        );
+        
+        return uniqueAgents;
+    };
 
     if (err) return (
         <Container className="py-4">
@@ -95,20 +144,20 @@ export default function PlanningDetail() {
                             <Card className="h-100">
                                 <Card.Header className="bg-light">Agents impliqués</Card.Header>
                                 <Card.Body>
-                                    {(planning.missions?.flatMap((m) => m.agents) || []).length === 0 ? (
-                                        <Alert variant="warning">Aucun agent assigné à ce planning</Alert>
-                                    ) : (
-                                        <div className="d-flex flex-wrap gap-1">
-                                            {[...new Set((planning.missions?.flatMap((m) => m.agents) || []).map(a => a.id))].map(agentId => {
-                                                const agent = (planning.missions?.flatMap((m) => m.agents) || []).find(a => a.id === agentId);
-                                                return agent ? (
-                                                    <Badge bg="info" key={`agent-${agentId}`} className="p-2 mb-1">
+                                    {(() => {
+                                        const planningAgents = getAgentsForPlanning();
+                                        return planningAgents.length === 0 ? (
+                                            <Alert variant="warning">Aucun agent assigné à ce planning</Alert>
+                                        ) : (
+                                            <div className="d-flex flex-wrap gap-1">
+                                                {planningAgents.map(agent => (
+                                                    <Badge bg="info" key={`agent-${agent.id}`} className="p-2 mb-1">
                                                         {agent.nom} {agent.prenom}
                                                     </Badge>
-                                                ) : null;
-                                            })}
-                                        </div>
-                                    )}
+                                                ))}
+                                            </div>
+                                        );
+                                    })()}
                                 </Card.Body>
                             </Card>
                         </div>
@@ -119,33 +168,36 @@ export default function PlanningDetail() {
                             <h4 className="mb-0">Missions</h4>
                         </Card.Header>
                         <Card.Body>
-                            {(planning.missions || []).length === 0 ? (
-                                <Alert variant="warning">
-                                    Aucune mission assignée à ce planning
-                                </Alert>
-                            ) : (
-                                <ListGroup>
-                                    {(planning.missions || []).map(m => (
-                                        <ListGroup.Item key={m.id} className="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h5>{m.titre}</h5>
-                                                <p className="mb-0 text-muted">
-                                                    {m.dateDebut && m.dateFin ? (
-                                                        <>Du {new Date(m.dateDebut).toLocaleDateString()} au {new Date(m.dateFin).toLocaleDateString()}</>
-                                                    ) : (
-                                                        "Dates non définies"
-                                                    )}
-                                                </p>
-                                            </div>
-                                            <Link to={`/missions/${m.id}`}>
-                                                <Button variant="outline-primary" size="sm">
-                                                    <FontAwesomeIcon icon={faEye} className="me-1" /> Détails
-                                                </Button>
-                                            </Link>
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            )}
+                            {(() => {
+                                const planningMissions = getMissionObjects();
+                                return planningMissions.length === 0 ? (
+                                    <Alert variant="warning">
+                                        Aucune mission assignée à ce planning
+                                    </Alert>
+                                ) : (
+                                    <ListGroup>
+                                        {planningMissions.map(m => (
+                                            <ListGroup.Item key={m.id} className="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h5>{m.titre}</h5>
+                                                    <p className="mb-0 text-muted">
+                                                        {m.dateDebut && m.dateFin ? (
+                                                            <>Du {new Date(m.dateDebut).toLocaleDateString()} au {new Date(m.dateFin).toLocaleDateString()}</>
+                                                        ) : (
+                                                            "Dates non définies"
+                                                        )}
+                                                    </p>
+                                                </div>
+                                                <Link to={`/missions/${m.id}`}>
+                                                    <Button variant="outline-primary" size="sm">
+                                                        <FontAwesomeIcon icon={faEye} className="me-1" /> Détails
+                                                    </Button>
+                                                </Link>
+                                            </ListGroup.Item>
+                                        ))}
+                                    </ListGroup>
+                                );
+                            })()}
                         </Card.Body>
                     </Card>
 

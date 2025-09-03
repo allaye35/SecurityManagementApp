@@ -15,6 +15,12 @@ const PlanningService = {
   addMissionToPlanning: (plId, mid)    => api.post(`${PATH}/${plId}/missions/${mid}`),
   removeMissionFromPlanning: (plId, mid)=> api.delete(`${PATH}/${plId}/missions/${mid}`),
 
+  // Récupère les plannings avec les détails complets des agents
+  getAllPlanningsWithAgentDetails: async () => {
+    const response = await api.get(PATH);
+    return response;
+  },
+
   // filtres
   getPlanningsByAgent:   aid => api.get(`${PATH}/agents/${aid}`).then(r => r.data),
   getPlanningsByMission: mid => api.get(`${PATH}/missions/${mid}`).then(r => r.data),
