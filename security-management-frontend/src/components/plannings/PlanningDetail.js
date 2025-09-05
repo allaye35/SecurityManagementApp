@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
-import { useParams, Link }     from "react-router-dom";
-import PlanningService         from "../../services/PlanningService";
-import AgentService            from "../../services/AgentService";
-import MissionService          from "../../services/MissionService";
-import { Container, Card, Badge, Button, Alert, Spinner, ListGroup } from "react-bootstrap";
+import { useParams, Link } from "react-router-dom";
+import PlanningService from "../../services/PlanningService";
+import AgentService from "../../services/AgentService";
+import MissionService from "../../services/MissionService";
+import PlanningStats from "./PlanningStats";
+import MissionTimeline from "./MissionTimeline";
+import { Container, Card, Badge, Button, Alert, Spinner, ListGroup, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarCheck, faArrowLeft, faEye, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faCalendarCheck, faArrowLeft, faEye, faEdit, faUsers, faTasks, 
+  faCalendarAlt, faClock, faMapMarkerAlt, faIdCard, faInfoCircle,
+  faCheckCircle, faExclamationTriangle, faHourglassHalf
+} from "@fortawesome/free-solid-svg-icons";
+import "../../styles/PlanningDetail.css";
 
 export default function PlanningDetail() {
     const { id } = useParams();
@@ -49,6 +56,40 @@ export default function PlanningDetail() {
         return ids.map(id => missions.find(m => m.id === id)).filter(Boolean);
     };
 
+    // Helper pour le statut des missions
+    const getMissionStatus = (mission) => {
+        if (!mission.dateDebut || !mission.dateFin) return { status: 'pending', label: 'En attente', icon: faHourglassHalf };
+        
+        const now = new Date();
+        const debut = new Date(mission.dateDebut);
+        const fin = new Date(mission.dateFin);
+        
+        if (now < debut) return { status: 'pending', label: 'À venir', icon: faHourglassHalf };
+        if (now > fin) return { status: 'completed', label: 'Terminée', icon: faCheckCircle };
+        return { status: 'active', label: 'En cours', icon: faCheckCircle };
+    };
+
+    // Helper pour formater les dates
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Non définie';
+        return new Date(dateString).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+    };
+
+    const formatDateTime = (dateString) => {
+        if (!dateString) return 'Non définie';
+        return new Date(dateString).toLocaleString('fr-FR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
     // Helper pour récupérer les agents du planning
     const getAgentsForPlanning = () => {
         const missionObjs = getMissionObjects();
@@ -76,14 +117,17 @@ export default function PlanningDetail() {
     };
 
     if (err) return (
-        <Container className="py-4">
-            <Alert variant="danger">
-                <Alert.Heading>Erreur</Alert.Heading>
-                <p>{err}</p>
+        <Container className="planning-detail-container">
+            <Alert variant="danger" className="error-container">
+                <Alert.Heading>
+                    <FontAwesomeIcon icon={faExclamationTriangle} className="me-2" />
+                    Erreur de chargement
+                </Alert.Heading>
+                <p className="mb-3">{err}</p>
                 <hr />
                 <div className="d-flex justify-content-end">
                     <Link to="/plannings">
-                        <Button variant="outline-danger">
+                        <Button variant="outline-danger" className="back-btn">
                             <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
                             Retour aux plannings
                         </Button>
@@ -94,120 +138,283 @@ export default function PlanningDetail() {
     );
     
     if (loading || !planning) return (
-        <Container className="py-5 text-center">
-            <Spinner animation="border" variant="primary" />
-            <p className="mt-3">Chargement du planning...</p>
+        <Container className="planning-detail-container">
+            <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p className="loading-text">Chargement du planning...</p>
+            </div>
         </Container>
     );
 
+    const planningMissions = getMissionObjects();
+    const planningAgents = getAgentsForPlanning();
+
     return (
-        <Container fluid className="py-4">
-            <Card className="shadow">
-                <Card.Header className="bg-primary text-white">
+        <Container fluid className="planning-detail-container">
+            <Card className="planning-detail-card fade-in">
+                <Card.Header className="planning-detail-header">
                     <div className="d-flex justify-content-between align-items-center">
-                        <h2 className="mb-0">
-                            <FontAwesomeIcon icon={faCalendarCheck} className="me-2" />
-                            Planning #{planning.id}
-                        </h2>
-                        <Link to={`/plannings/edit/${planning.id}`}>
-                            <Button variant="light">
-                                <FontAwesomeIcon icon={faEdit} className="me-1" /> Modifier
-                            </Button>
-                        </Link>
+                        <div className="d-flex align-items-center gap-3">
+                            <h1 className="planning-detail-title">
+                                <FontAwesomeIcon icon={faCalendarCheck} className="me-3" />
+                                Planning
+                            </h1>
+                            <Badge className="planning-id-badge">
+                                #{planning.id}
+                            </Badge>
+                        </div>
+                        <div className="d-flex gap-2">
+                            <OverlayTrigger
+                                placement="bottom"
+                                overlay={<Tooltip>Modifier ce planning</Tooltip>}
+                            >
+                                <Link to={`/plannings/edit/${planning.id}`}>
+                                    <Button className="edit-planning-btn">
+                                        <FontAwesomeIcon icon={faEdit} className="me-2" />
+                                        Modifier
+                                    </Button>
+                                </Link>
+                            </OverlayTrigger>
+                        </div>
                     </div>
                 </Card.Header>
-                <Card.Body>
-                    <div className="row mb-4">
-                        <div className="col-md-6">
-                            <Card className="h-100">
-                                <Card.Header className="bg-light">Informations générales</Card.Header>
-                                <Card.Body>                                    <p className="mb-2">
-                                        <strong>Identifiant:</strong> {planning.id}
-                                    </p>
-                                    <p className="mb-2">
-                                        <strong>Créé le:</strong> {new Date(planning.dateCreation).toLocaleString()}
-                                    </p>
-                                    <p className="mb-2">
-                                        <strong>Dernière modification:</strong> {new Date(planning.dateModification).toLocaleString()}
-                                    </p>
+
+                <Card.Body className="p-4">
+                    {/* Statistiques rapides */}
+                    <PlanningStats 
+                        planning={planning} 
+                        missions={planningMissions} 
+                        agents={planningAgents} 
+                    />
+
+                    {/* Section d'informations générales */}
+                    <Row className="info-section">
+                        <Col lg={6} className="mb-4">
+                            <Card className="info-card slide-in-left">
+                                <Card.Header className="info-card-header">
+                                    <FontAwesomeIcon icon={faInfoCircle} className="me-2 text-primary" />
+                                    Informations générales
+                                </Card.Header>
+                                <Card.Body className="info-card-body">
+                                    <div className="info-item">
+                                        <div className="info-label">
+                                            <FontAwesomeIcon icon={faIdCard} className="info-icon" />
+                                            Identifiant
+                                        </div>
+                                        <div className="info-value">#{planning.id}</div>
+                                    </div>
+                                    
+                                    <div className="info-item">
+                                        <div className="info-label">
+                                            <FontAwesomeIcon icon={faCalendarAlt} className="info-icon" />
+                                            Créé le
+                                        </div>
+                                        <div className="info-value">
+                                            {formatDateTime(planning.dateCreation)}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="info-item">
+                                        <div className="info-label">
+                                            <FontAwesomeIcon icon={faClock} className="info-icon" />
+                                            Modifié le
+                                        </div>
+                                        <div className="info-value">
+                                            {formatDateTime(planning.dateModification)}
+                                        </div>
+                                    </div>
+
                                     {planning.description && (
-                                        <div className="mt-3">
-                                            <strong>Description:</strong>
-                                            <p className="mb-0 text-muted mt-1">{planning.description}</p>
+                                        <div className="info-item">
+                                            <div className="info-label">
+                                                <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
+                                                Description
+                                            </div>
+                                            <div className="info-value">
+                                                {planning.description}
+                                            </div>
                                         </div>
                                     )}
                                 </Card.Body>
                             </Card>
-                        </div>
+                        </Col>
                         
-                        <div className="col-md-6 mt-3 mt-md-0">
-                            <Card className="h-100">
-                                <Card.Header className="bg-light">Agents impliqués</Card.Header>
-                                <Card.Body>
-                                    {(() => {
-                                        const planningAgents = getAgentsForPlanning();
-                                        return planningAgents.length === 0 ? (
-                                            <Alert variant="warning">Aucun agent assigné à ce planning</Alert>
-                                        ) : (
-                                            <div className="d-flex flex-wrap gap-1">
-                                                {planningAgents.map(agent => (
-                                                    <Badge bg="info" key={`agent-${agent.id}`} className="p-2 mb-1">
-                                                        {agent.nom} {agent.prenom}
-                                                    </Badge>
-                                                ))}
-                                            </div>
-                                        );
-                                    })()}
+                        <Col lg={6} className="mb-4">
+                            <Card className="info-card slide-in-right">
+                                <Card.Header className="info-card-header">
+                                    <FontAwesomeIcon icon={faUsers} className="me-2 text-info" />
+                                    Agents impliqués ({planningAgents.length})
+                                </Card.Header>
+                                <Card.Body className="info-card-body">
+                                    {planningAgents.length === 0 ? (
+                                        <div className="no-agents-message">
+                                            <FontAwesomeIcon icon={faUsers} className="me-2" />
+                                            Aucun agent assigné à ce planning
+                                        </div>
+                                    ) : (
+                                        <div className="agents-container">
+                                            {planningAgents.map((agent, index) => (
+                                                <OverlayTrigger
+                                                    key={`agent-${agent.id}`}
+                                                    placement="top"
+                                                    overlay={
+                                                        <Tooltip>
+                                                            <div>
+                                                                <strong>Agent #{agent.id}</strong><br/>
+                                                                {agent.email && `Email: ${agent.email}`}
+                                                            </div>
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <div 
+                                                        className="agent-card"
+                                                        style={{ animationDelay: `${index * 0.1}s` }}
+                                                    >
+                                                        <div className="agent-avatar">
+                                                            {agent.prenom?.charAt(0)?.toUpperCase() || 'A'}
+                                                        </div>
+                                                        <div className="agent-info">
+                                                            <div className="agent-name">
+                                                                {agent.nom} {agent.prenom}
+                                                            </div>
+                                                            <div className="agent-id">
+                                                                Agent #{agent.id}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </OverlayTrigger>
+                                            ))}
+                                        </div>
+                                    )}
                                 </Card.Body>
                             </Card>
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
 
-                    <Card>
-                        <Card.Header className="bg-light">
-                            <h4 className="mb-0">Missions</h4>
+                    {/* Section des missions */}
+                    <Card className="missions-section">
+                        <Card.Header className="missions-header">
+                            <h4 className="missions-title">
+                                <FontAwesomeIcon icon={faTasks} />
+                                Missions assignées
+                                <Badge className="missions-count">
+                                    {planningMissions.length}
+                                </Badge>
+                            </h4>
                         </Card.Header>
-                        <Card.Body>
-                            {(() => {
-                                const planningMissions = getMissionObjects();
-                                return planningMissions.length === 0 ? (
-                                    <Alert variant="warning">
-                                        Aucune mission assignée à ce planning
-                                    </Alert>
-                                ) : (
-                                    <ListGroup>
-                                        {planningMissions.map(m => (
-                                            <ListGroup.Item key={m.id} className="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h5>{m.titre}</h5>
-                                                    <p className="mb-0 text-muted">
-                                                        {m.dateDebut && m.dateFin ? (
-                                                            <>Du {new Date(m.dateDebut).toLocaleDateString()} au {new Date(m.dateFin).toLocaleDateString()}</>
-                                                        ) : (
-                                                            "Dates non définies"
+                        
+                        <Card.Body className="missions-body">
+                            {planningMissions.length === 0 ? (
+                                <div className="no-missions-message">
+                                    <FontAwesomeIcon icon={faTasks} className="no-missions-icon" />
+                                    <h5>Aucune mission assignée</h5>
+                                    <p>Ce planning ne contient aucune mission pour le moment.</p>
+                                </div>
+                            ) : (
+                                <ListGroup variant="flush">
+                                    {planningMissions.map((mission, index) => {
+                                        const status = getMissionStatus(mission);
+                                        return (
+                                            <ListGroup.Item 
+                                                key={mission.id} 
+                                                className="mission-item"
+                                                style={{ animationDelay: `${index * 0.1}s` }}
+                                            >
+                                                <div className="mission-content">
+                                                    <div className="mission-info">
+                                                        <div className="mission-title">
+                                                            <Badge className="mission-badge">
+                                                                #{mission.id}
+                                                            </Badge>
+                                                            {mission.titre || 'Mission sans titre'}
+                                                        </div>
+                                                        
+                                                        {mission.description && (
+                                                            <div className="mission-description">
+                                                                {mission.description}
+                                                            </div>
                                                         )}
-                                                    </p>
+                                                        
+                                                        <div className="mission-dates">
+                                                            {mission.dateDebut && (
+                                                                <div className="mission-date">
+                                                                    <FontAwesomeIcon icon={faCalendarAlt} className="mission-date-icon" />
+                                                                    Début: {formatDate(mission.dateDebut)}
+                                                                </div>
+                                                            )}
+                                                            {mission.dateFin && (
+                                                                <div className="mission-date">
+                                                                    <FontAwesomeIcon icon={faCalendarAlt} className="mission-date-icon" />
+                                                                    Fin: {formatDate(mission.dateFin)}
+                                                                </div>
+                                                            )}
+                                                            {mission.lieu && (
+                                                                <div className="mission-date">
+                                                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="mission-date-icon" />
+                                                                    {mission.lieu}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        
+                                                        <div className="mission-status">
+                                                            <Badge className={`status-badge status-${status.status}`}>
+                                                                <FontAwesomeIcon icon={status.icon} className="me-1" />
+                                                                {status.label}
+                                                            </Badge>
+                                                            {mission.priorite && (
+                                                                <Badge 
+                                                                    bg={mission.priorite === 'haute' ? 'danger' : 
+                                                                        mission.priorite === 'moyenne' ? 'warning' : 'secondary'}
+                                                                    className="ms-2"
+                                                                >
+                                                                    Priorité {mission.priorite}
+                                                                </Badge>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className="mission-actions">
+                                                        <OverlayTrigger
+                                                            placement="top"
+                                                            overlay={<Tooltip>Voir les détails de la mission</Tooltip>}
+                                                        >
+                                                            <Link to={`/missions/${mission.id}`}>
+                                                                <Button className="mission-detail-btn">
+                                                                    <FontAwesomeIcon icon={faEye} className="me-2" />
+                                                                    Détails
+                                                                </Button>
+                                                            </Link>
+                                                        </OverlayTrigger>
+                                                    </div>
                                                 </div>
-                                                <Link to={`/missions/${m.id}`}>
-                                                    <Button variant="outline-primary" size="sm">
-                                                        <FontAwesomeIcon icon={faEye} className="me-1" /> Détails
-                                                    </Button>
-                                                </Link>
                                             </ListGroup.Item>
-                                        ))}
-                                    </ListGroup>
-                                );
-                            })()}
+                                        );
+                                    })}
+                                </ListGroup>
+                            )}
                         </Card.Body>
                     </Card>
 
-                    <div className="mt-3">
+                    {/* Timeline des missions */}
+                    <MissionTimeline missions={planningMissions} />
+
+                    {/* Navigation */}
+                    <div className="navigation-section">
                         <Link to="/plannings">
-                            <Button variant="secondary">
-                                <FontAwesomeIcon icon={faArrowLeft} className="me-2" /> 
+                            <Button className="back-btn">
+                                <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
                                 Retour aux plannings
                             </Button>
                         </Link>
+                        
+                        <div className="d-flex gap-2">
+                            <Link to={`/plannings/edit/${planning.id}`}>
+                                <Button variant="warning" className="px-4">
+                                    <FontAwesomeIcon icon={faEdit} className="me-2" />
+                                    Modifier
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
                 </Card.Body>
             </Card>

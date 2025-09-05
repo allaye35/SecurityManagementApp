@@ -10,7 +10,7 @@ export default function LoginPage() {
   const { login }               = useAuth();
   const navigate                = useNavigate();
   const location                = useLocation();
-  const redirectTo              = location.state?.from?.pathname || "/";
+  const redirectTo              = location.state?.from?.pathname || "/home";
 
   const handleSubmit = async (e) => {
     e.preventDefault();

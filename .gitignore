@@ -292,3 +292,13 @@ Thumbs.db
 node_modules/
 **/node_modules/
 dist/
+node_modules
+build
+dist
+.git
+.gitignore
+Dockerfile
+docker-compose*.yml
+README.md
+npm-debug.log*
+yarn-error.log*

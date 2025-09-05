@@ -5,12 +5,14 @@ import PlanningService from "../../services/PlanningService";
 import MissionService from "../../services/MissionService";
 import AgentService from "../../services/AgentService";
 import {
-  Table, Button, Container, Row, Col, Form, Card, Badge, InputGroup, Alert, Modal
+  Table, Button, Container, Row, Col, Form, Card, Badge, InputGroup, Alert, Modal, Tooltip, OverlayTrigger
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCalendarPlus, faEye, faEdit, faTrash, faPlus, faTimes, faSearch, faFilter
+  faCalendarPlus, faEye, faEdit, faTrash, faPlus, faTimes, faSearch, faFilter, 
+  faUsers, faTasks, faCalendarAlt, faExclamationTriangle, faTable, faThLarge
 } from "@fortawesome/free-solid-svg-icons";
+import "../../styles/PlanningList.css";
 
 export default function PlanningList() {
   const [plannings, setPlannings] = useState([]);
@@ -22,6 +24,7 @@ export default function PlanningList() {
   const [error, setError] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [planningToDelete, setPlanningToDelete] = useState(null);
+  const [viewMode, setViewMode] = useState('table'); // 'table' ou 'cards'
 
   // Map rapide missionId -> mission
   const missionById = useMemo(() => {
@@ -223,41 +226,79 @@ export default function PlanningList() {
   };
 
   return (
-    <Container fluid className="py-4">
-      <Card className="shadow">
-        <Card.Header className="bg-primary text-white">
-          <h2 className="mb-0 d-flex justify-content-between align-items-center">
-            <span>
-              <FontAwesomeIcon icon={faCalendarPlus} className="me-2" /> Plannings
-            </span>
+    <Container fluid className="planning-list-container">
+      <Card className="planning-card fade-in">
+        <Card.Header className="planning-header">
+          <div className="d-flex justify-content-between align-items-center">
+            <h2 className="planning-title">
+              <FontAwesomeIcon icon={faCalendarPlus} className="me-3" /> 
+              Gestion des Plannings
+            </h2>
             <Link to="/plannings/create">
-              <Button variant="light">
-                <FontAwesomeIcon icon={faPlus} className="me-1" /> Nouveau planning
+              <Button className="new-planning-btn">
+                <FontAwesomeIcon icon={faPlus} className="me-2" /> 
+                Nouveau Planning
               </Button>
             </Link>
-          </h2>
+            
+            {/* Boutons de changement de vue */}
+            <div className="d-flex gap-2 ms-3">
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Vue tableau</Tooltip>}
+              >
+                <Button
+                  variant={viewMode === 'table' ? 'light' : 'outline-light'}
+                  size="sm"
+                  onClick={() => setViewMode('table')}
+                >
+                  <FontAwesomeIcon icon={faTable} />
+                </Button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Vue cartes</Tooltip>}
+              >
+                <Button
+                  variant={viewMode === 'cards' ? 'light' : 'outline-light'}
+                  size="sm"
+                  onClick={() => setViewMode('cards')}
+                >
+                  <FontAwesomeIcon icon={faThLarge} />
+                </Button>
+              </OverlayTrigger>
+            </div>
+          </div>
         </Card.Header>
 
-        <Card.Body>
+        <Card.Body className="p-4">
           {error && (
-            <Alert variant="danger" dismissible onClose={() => setError("")}>
+            <Alert variant="danger" dismissible onClose={() => setError("")} className="fade-in">
+              <FontAwesomeIcon icon={faExclamationTriangle} className="me-2" />
               {error}
             </Alert>
           )}
 
-          {/* Filtres */}
-          <Card className="mb-4 border-light">
-            <Card.Header className="bg-light">
-              <FontAwesomeIcon icon={faFilter} className="me-2" /> Filtres
+          {/* Filtres améliorés */}
+          <Card className="filters-card slide-in">
+            <Card.Header className="filters-header">
+              <h5 className="mb-0">
+                <FontAwesomeIcon icon={faFilter} className="me-2 text-primary" /> 
+                Filtres de recherche
+              </h5>
             </Card.Header>
-            <Card.Body>
+            <Card.Body className="filter-controls">
               <Form>
                 <Row className="mb-3">
                   <Col md={3}>
                     <Form.Group>
-                      <Form.Label>ID Agent</Form.Label>
+                      <Form.Label className="fw-semibold">
+                        <FontAwesomeIcon icon={faUsers} className="me-1 text-info" />
+                        ID Agent
+                      </Form.Label>
                       <Form.Control
-                        placeholder="Identifiant de l'agent"
+                        className="filter-input"
+                        placeholder="Ex: 123"
                         value={filters.agent}
                         onChange={(e) => setFilters({ ...filters, agent: e.target.value })}
                       />
@@ -265,9 +306,13 @@ export default function PlanningList() {
                   </Col>
                   <Col md={3}>
                     <Form.Group>
-                      <Form.Label>ID Mission</Form.Label>
+                      <Form.Label className="fw-semibold">
+                        <FontAwesomeIcon icon={faTasks} className="me-1 text-success" />
+                        ID Mission
+                      </Form.Label>
                       <Form.Control
-                        placeholder="Identifiant de la mission"
+                        className="filter-input"
+                        placeholder="Ex: 456"
                         value={filters.mission}
                         onChange={(e) => setFilters({ ...filters, mission: e.target.value })}
                       />
@@ -275,8 +320,12 @@ export default function PlanningList() {
                   </Col>
                   <Col md={3}>
                     <Form.Group>
-                      <Form.Label>Date de début</Form.Label>
+                      <Form.Label className="fw-semibold">
+                        <FontAwesomeIcon icon={faCalendarAlt} className="me-1 text-warning" />
+                        Date de début
+                      </Form.Label>
                       <Form.Control
+                        className="filter-input"
                         type="date"
                         value={filters.d1}
                         onChange={(e) => setFilters({ ...filters, d1: e.target.value })}
@@ -285,8 +334,12 @@ export default function PlanningList() {
                   </Col>
                   <Col md={3}>
                     <Form.Group>
-                      <Form.Label>Date de fin</Form.Label>
+                      <Form.Label className="fw-semibold">
+                        <FontAwesomeIcon icon={faCalendarAlt} className="me-1 text-warning" />
+                        Date de fin
+                      </Form.Label>
                       <Form.Control
+                        className="filter-input"
                         type="date"
                         value={filters.d2}
                         onChange={(e) => setFilters({ ...filters, d2: e.target.value })}
@@ -294,146 +347,444 @@ export default function PlanningList() {
                     </Form.Group>
                   </Col>
                 </Row>
-                <div className="d-flex justify-content-end gap-2">
-                  <Button variant="secondary" onClick={resetFilters}>
+                <div className="d-flex justify-content-end filter-buttons">
+                  <Button variant="outline-secondary" onClick={resetFilters} className="filter-btn">
+                    <FontAwesomeIcon icon={faTimes} className="me-2" />
                     Réinitialiser
                   </Button>
-                  <Button variant="primary" onClick={runFilter}>
-                    <FontAwesomeIcon icon={faSearch} className="me-2" /> Rechercher
+                  <Button variant="primary" onClick={runFilter} className="filter-btn">
+                    <FontAwesomeIcon icon={faSearch} className="me-2" /> 
+                    Rechercher
                   </Button>
                 </div>
               </Form>
             </Card.Body>
           </Card>
 
-          {/* Tableau des plannings */}
+          {/* Tableau des plannings amélioré */}
           {loading ? (
-            <div className="text-center py-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Chargement...</span>
-              </div>
-              <p className="mt-2">Chargement des plannings...</p>
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <h5 className="text-muted">Chargement des plannings...</h5>
+              <p className="text-muted">Veuillez patienter</p>
             </div>
           ) : plannings.length === 0 ? (
-            <Alert variant="info">Aucun planning trouvé. Créez-en un nouveau ou modifiez vos filtres.</Alert>
+            <div className="empty-state">
+              <FontAwesomeIcon icon={faCalendarPlus} className="empty-state-icon" />
+              <h4>Aucun planning trouvé</h4>
+              <p className="text-muted">
+                Créez votre premier planning ou modifiez vos critères de recherche.
+              </p>
+              <Link to="/plannings/create">
+                <Button variant="primary" size="lg">
+                  <FontAwesomeIcon icon={faPlus} className="me-2" />
+                  Créer un planning
+                </Button>
+              </Link>
+            </div>
           ) : (
-            <Table responsive hover striped className="align-middle">
-              <thead className="table-light">
-                <tr>
-                  <th>ID</th>
-                  <th>Créé le</th>
-                  <th>Dernière modification</th>
-                  <th>Agents</th>
-                  <th>Missions</th>
-                  <th className="text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {plannings.map((p) => {
-                  const missionObjs = getMissionObjects(p);
-                  const agents = getAgentsForPlanning(p);
+            <>
+              {viewMode === 'table' ? (
+                // Vue tableau
+                <div className="planning-table">
+                  <Table responsive hover className="align-middle mb-0">
+                    <thead className="table-header">
+                      <tr>
+                        <th className="text-center">ID</th>
+                        <th>Date de création</th>
+                        <th>Dernière modification</th>
+                        <th className="text-center">Agents assignés</th>
+                        <th style={{ minWidth: '350px' }}>Missions</th>
+                        <th className="text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {plannings.map((p, index) => {
+                        const missionObjs = getMissionObjects(p);
+                        const agents = getAgentsForPlanning(p);
 
-                  return (
-                    <tr key={p.id}>
-                      <td>{p.id}</td>
-                      <td>{new Date(p.dateCreation).toLocaleString()}</td>
-                      <td>{new Date(p.dateModification).toLocaleString()}</td>
-
-                      {/* Agents */}
-                      <td>
-                        {agents.length === 0 ? (
-                          <Badge bg="warning">Aucun agent</Badge>
-                        ) : (
-                          agents.map((a) => (
-                            <Badge bg="info" className="me-1 mb-1" key={`agent-${p.id}-${a.id}`}>
-                              {a.nom} {a.prenom}
-                            </Badge>
-                          ))
-                        )}
-                      </td>
-
-                      {/* Missions */}
-                      <td>
-                        <div className="mb-2">
-                          {missionObjs.length === 0 ? (
-                            <Badge bg="warning">Aucune mission</Badge>
-                          ) : (
-                            missionObjs.map((m) => (
-                              <div className="d-flex align-items-center mb-1" key={`mis-${m.id}`}>
-                                <Badge bg="success" className="me-2">{m.titre}</Badge>
-                                <Button
-                                  variant="danger"
-                                  size="sm"
-                                  onClick={() => removeMission(p.id, m.id)}
-                                >
-                                  <FontAwesomeIcon icon={faTimes} />
-                                </Button>
+                        return (
+                          <tr key={p.id} className="table-row planning-row-card fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                            <td className="text-center">
+                              <Badge bg="primary" className="fs-6">#{p.id}</Badge>
+                            </td>
+                            <td>
+                              <div className="d-flex flex-column">
+                                <span className="fw-semibold">
+                                  {new Date(p.dateCreation).toLocaleDateString('fr-FR')}
+                                </span>
+                                <small className="text-muted">
+                                  {new Date(p.dateCreation).toLocaleTimeString('fr-FR')}
+                                </small>
                               </div>
-                            ))
-                          )}
-                        </div>
+                            </td>
+                            <td>
+                              <div className="d-flex flex-column">
+                                <span className="fw-semibold">
+                                  {new Date(p.dateModification).toLocaleDateString('fr-FR')}
+                                </span>
+                                <small className="text-muted">
+                                  {new Date(p.dateModification).toLocaleTimeString('fr-FR')}
+                                </small>
+                              </div>
+                            </td>
 
-                        <InputGroup size="sm">
-                          <Form.Select
-                            value={selection[p.id] ?? ""}
-                            onChange={(e) =>
-                              setSelection({ ...selection, [p.id]: Number(e.target.value) })
-                            }
-                          >
-                            <option value="">— Sélectionner une mission —</option>
-                            {missions.map((m) => (
-                              <option key={m.id} value={m.id}>
-                                {m.titre}
-                              </option>
-                            ))}
-                          </Form.Select>
-                          <Button variant="outline-primary" onClick={() => addMission(p.id)}>
-                            <FontAwesomeIcon icon={faPlus} />
-                          </Button>
-                        </InputGroup>
-                      </td>
+                            {/* Agents améliorés */}
+                            <td>
+                              <div className="text-center">
+                                {agents.length === 0 ? (
+                                  <Badge className="no-agent-badge">
+                                    <FontAwesomeIcon icon={faUsers} className="me-1" />
+                                    Aucun agent
+                                  </Badge>
+                                ) : (
+                                  <div>
+                                    <div className="mb-2">
+                                      <Badge bg="info" className="fs-6">
+                                        {agents.length} agent{agents.length > 1 ? 's' : ''}
+                                      </Badge>
+                                    </div>
+                                    <div style={{ maxHeight: '100px', overflowY: 'auto' }}>
+                                      {agents.map((a) => (
+                                        <OverlayTrigger
+                                          key={`agent-${p.id}-${a.id}`}
+                                          placement="top"
+                                          overlay={<Tooltip>Agent #{a.id}</Tooltip>}
+                                        >
+                                          <Badge className="agent-badge">
+                                            {a.nom} {a.prenom}
+                                          </Badge>
+                                        </OverlayTrigger>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
 
-                      {/* Actions */}
-                      <td>
-                        <div className="d-flex justify-content-center gap-2">
-                          <Link to={`/plannings/${p.id}`}>
-                            <Button variant="info" size="sm">
-                              <FontAwesomeIcon icon={faEye} />
-                            </Button>
-                          </Link>
-                          <Link to={`/plannings/edit/${p.id}`}>
-                            <Button variant="warning" size="sm">
-                              <FontAwesomeIcon icon={faEdit} />
-                            </Button>
-                          </Link>
-                          <Button variant="danger" size="sm" onClick={() => confirmDelete(p.id)}>
-                            <FontAwesomeIcon icon={faTrash} />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+                            {/* Missions considérablement améliorées */}
+                            <td>
+                              <div className="mission-container">
+                                <div className="mb-3">
+                                  {missionObjs.length === 0 ? (
+                                    <div className="text-center">
+                                      <Badge className="no-mission-badge">
+                                        <FontAwesomeIcon icon={faTasks} className="me-1" />
+                                        Aucune mission assignée
+                                      </Badge>
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      <div className="d-flex justify-content-between align-items-center mb-2">
+                                        <small className="text-muted fw-semibold">
+                                          <FontAwesomeIcon icon={faTasks} className="me-1" />
+                                          {missionObjs.length} mission{missionObjs.length > 1 ? 's' : ''} assignée{missionObjs.length > 1 ? 's' : ''}
+                                        </small>
+                                      </div>
+                                      {missionObjs.map((m) => (
+                                        <div className="mission-item slide-in" key={`mis-${m.id}`}>
+                                          <div className="d-flex align-items-center flex-grow-1">
+                                            <OverlayTrigger
+                                              placement="top"
+                                              overlay={
+                                                <Tooltip>
+                                                  <div>
+                                                    <strong>Mission #{m.id}</strong><br/>
+                                                    Titre: {m.titre}<br/>
+                                                    {m.description && `Description: ${m.description.substring(0, 50)}...`}
+                                                  </div>
+                                                </Tooltip>
+                                              }
+                                            >
+                                              <Badge className="mission-badge">
+                                                <FontAwesomeIcon icon={faTasks} className="me-1" />
+                                                {m.titre}
+                                              </Badge>
+                                            </OverlayTrigger>
+                                          </div>
+                                          <OverlayTrigger
+                                            placement="top"
+                                            overlay={<Tooltip>Retirer cette mission</Tooltip>}
+                                          >
+                                            <Button
+                                              className="remove-mission-btn"
+                                              size="sm"
+                                              onClick={() => removeMission(p.id, m.id)}
+                                            >
+                                              <FontAwesomeIcon icon={faTimes} />
+                                            </Button>
+                                          </OverlayTrigger>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Sélecteur de mission amélioré */}
+                                <div className="mission-selector">
+                                  <Form.Select
+                                    className="mission-select"
+                                    value={selection[p.id] ?? ""}
+                                    onChange={(e) =>
+                                      setSelection({ ...selection, [p.id]: Number(e.target.value) })
+                                    }
+                                  >
+                                    <option value="">— Ajouter une mission —</option>
+                                    {missions
+                                      .filter(m => !missionObjs.some(existing => existing.id === m.id))
+                                      .map((m) => (
+                                        <option key={m.id} value={m.id}>
+                                          #{m.id} - {m.titre}
+                                        </option>
+                                      ))}
+                                  </Form.Select>
+                                  <OverlayTrigger
+                                    placement="top"
+                                    overlay={<Tooltip>Ajouter la mission sélectionnée</Tooltip>}
+                                  >
+                                    <Button 
+                                      className="add-mission-btn" 
+                                      onClick={() => addMission(p.id)}
+                                      disabled={!selection[p.id]}
+                                    >
+                                      <FontAwesomeIcon icon={faPlus} />
+                                    </Button>
+                                  </OverlayTrigger>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Actions améliorées */}
+                            <td>
+                              <div className="action-buttons">
+                                <OverlayTrigger
+                                  placement="top"
+                                  overlay={<Tooltip>Voir les détails</Tooltip>}
+                                >
+                                  <Link to={`/plannings/${p.id}`}>
+                                    <Button className="action-btn view-btn" size="sm">
+                                      <FontAwesomeIcon icon={faEye} />
+                                    </Button>
+                                  </Link>
+                                </OverlayTrigger>
+                                <OverlayTrigger
+                                  placement="top"
+                                  overlay={<Tooltip>Modifier le planning</Tooltip>}
+                                >
+                                  <Link to={`/plannings/edit/${p.id}`}>
+                                    <Button className="action-btn edit-btn" size="sm">
+                                      <FontAwesomeIcon icon={faEdit} />
+                                    </Button>
+                                  </Link>
+                                </OverlayTrigger>
+                                <OverlayTrigger
+                                  placement="top"
+                                  overlay={<Tooltip>Supprimer le planning</Tooltip>}
+                                >
+                                  <Button 
+                                    className="action-btn delete-btn" 
+                                    size="sm" 
+                                    onClick={() => confirmDelete(p.id)}
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                  </Button>
+                                </OverlayTrigger>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </Table>
+                </div>
+              ) : (
+                // Vue cartes
+                <Row className="g-4">
+                  {plannings.map((p, index) => {
+                    const missionObjs = getMissionObjects(p);
+                    const agents = getAgentsForPlanning(p);
+
+                    return (
+                      <Col key={p.id} lg={6} xl={4} className="fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                        <Card className="h-100 planning-card-view">
+                          <Card.Header className="d-flex justify-content-between align-items-center">
+                            <div>
+                              <h5 className="mb-0">
+                                <Badge bg="primary">Planning #{p.id}</Badge>
+                              </h5>
+                            </div>
+                            <div className="action-buttons">
+                              <OverlayTrigger
+                                placement="top"
+                                overlay={<Tooltip>Voir les détails</Tooltip>}
+                              >
+                                <Link to={`/plannings/${p.id}`}>
+                                  <Button className="action-btn view-btn" size="sm">
+                                    <FontAwesomeIcon icon={faEye} />
+                                  </Button>
+                                </Link>
+                              </OverlayTrigger>
+                              <OverlayTrigger
+                                placement="top"
+                                overlay={<Tooltip>Modifier</Tooltip>}
+                              >
+                                <Link to={`/plannings/edit/${p.id}`}>
+                                  <Button className="action-btn edit-btn" size="sm">
+                                    <FontAwesomeIcon icon={faEdit} />
+                                  </Button>
+                                </Link>
+                              </OverlayTrigger>
+                              <OverlayTrigger
+                                placement="top"
+                                overlay={<Tooltip>Supprimer</Tooltip>}
+                              >
+                                <Button 
+                                  className="action-btn delete-btn" 
+                                  size="sm" 
+                                  onClick={() => confirmDelete(p.id)}
+                                >
+                                  <FontAwesomeIcon icon={faTrash} />
+                                </Button>
+                              </OverlayTrigger>
+                            </div>
+                          </Card.Header>
+                          
+                          <Card.Body>
+                            {/* Informations de dates */}
+                            <div className="mb-3">
+                              <small className="text-muted d-block">
+                                <FontAwesomeIcon icon={faCalendarAlt} className="me-1" />
+                                Créé le {new Date(p.dateCreation).toLocaleDateString('fr-FR')}
+                              </small>
+                              <small className="text-muted d-block">
+                                <FontAwesomeIcon icon={faCalendarAlt} className="me-1" />
+                                Modifié le {new Date(p.dateModification).toLocaleDateString('fr-FR')}
+                              </small>
+                            </div>
+
+                            {/* Agents */}
+                            <div className="mb-3">
+                              <h6 className="mb-2">
+                                <FontAwesomeIcon icon={faUsers} className="me-1 text-info" />
+                                Agents ({agents.length})
+                              </h6>
+                              {agents.length === 0 ? (
+                                <Badge className="no-agent-badge">
+                                  Aucun agent assigné
+                                </Badge>
+                              ) : (
+                                <div>
+                                  {agents.map((a) => (
+                                    <Badge key={`agent-card-${p.id}-${a.id}`} className="agent-badge">
+                                      {a.nom} {a.prenom}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Missions */}
+                            <div className="mb-3">
+                              <h6 className="mb-2">
+                                <FontAwesomeIcon icon={faTasks} className="me-1 text-success" />
+                                Missions ({missionObjs.length})
+                              </h6>
+                              {missionObjs.length === 0 ? (
+                                <Badge className="no-mission-badge">
+                                  Aucune mission assignée
+                                </Badge>
+                              ) : (
+                                <div className="missions-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                  {missionObjs.map((m) => (
+                                    <div key={`mission-card-${m.id}`} className="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                      <div>
+                                        <Badge className="mission-badge">
+                                          <FontAwesomeIcon icon={faTasks} className="me-1" />
+                                          {m.titre}
+                                        </Badge>
+                                        {m.description && (
+                                          <div>
+                                            <small className="text-muted">
+                                              {m.description.substring(0, 50)}...
+                                            </small>
+                                          </div>
+                                        )}
+                                      </div>
+                                      <Button
+                                        className="remove-mission-btn"
+                                        size="sm"
+                                        onClick={() => removeMission(p.id, m.id)}
+                                      >
+                                        <FontAwesomeIcon icon={faTimes} />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Ajouter une mission */}
+                            <div className="mission-selector">
+                              <Form.Select
+                                className="mission-select mb-2"
+                                value={selection[p.id] ?? ""}
+                                onChange={(e) =>
+                                  setSelection({ ...selection, [p.id]: Number(e.target.value) })
+                                }
+                              >
+                                <option value="">— Ajouter une mission —</option>
+                                {missions
+                                  .filter(m => !missionObjs.some(existing => existing.id === m.id))
+                                  .map((m) => (
+                                    <option key={m.id} value={m.id}>
+                                      #{m.id} - {m.titre}
+                                    </option>
+                                  ))}
+                              </Form.Select>
+                              <Button 
+                                className="add-mission-btn w-100" 
+                                onClick={() => addMission(p.id)}
+                                disabled={!selection[p.id]}
+                              >
+                                <FontAwesomeIcon icon={faPlus} className="me-2" />
+                                Ajouter la mission
+                              </Button>
+                            </div>
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    );
+                  })}
+                </Row>
+              )}
+            </>
           )}
         </Card.Body>
       </Card>
 
-      {/* Modal de confirmation de suppression */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+      {/* Modal de confirmation de suppression amélioré */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} className="custom-modal">
         <Modal.Header closeButton>
-          <Modal.Title>Confirmation de suppression</Modal.Title>
+          <Modal.Title>
+            <FontAwesomeIcon icon={faExclamationTriangle} className="me-2 text-warning" />
+            Confirmation de suppression
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Êtes-vous sûr de vouloir supprimer ce planning ? Cette action est irréversible.
+        <Modal.Body className="text-center py-4">
+          <FontAwesomeIcon icon={faTrash} className="text-danger mb-3" size="3x" />
+          <h5>Êtes-vous sûr de vouloir supprimer ce planning ?</h5>
+          <p className="text-muted">
+            Cette action est irréversible et supprimera définitivement le planning #{planningToDelete}.
+          </p>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+        <Modal.Footer className="justify-content-center">
+          <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>
+            <FontAwesomeIcon icon={faTimes} className="me-2" />
             Annuler
           </Button>
           <Button variant="danger" onClick={deletePlanning}>
-            Supprimer
+            <FontAwesomeIcon icon={faTrash} className="me-2" />
+            Supprimer définitivement
           </Button>
         </Modal.Footer>
       </Modal>

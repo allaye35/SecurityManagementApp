@@ -27,7 +27,7 @@ export default function NavBarBootstrap() {
     return (
         <Navbar bg="primary" variant="dark" expand="lg" sticky="top" className="navbar-custom">
             <Container fluid>
-                <Navbar.Brand as={Link} to="/" className="me-4">
+                <Navbar.Brand as={Link} to="/home" className="me-4">
                     <img 
                         src="/logo192.png" 
                         width="30" 
@@ -40,7 +40,7 @@ export default function NavBarBootstrap() {
                 <Navbar.Toggle aria-controls="navbar-nav" />
                 <Navbar.Collapse id="navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link as={Link} to="/" className="me-2">Accueil</Nav.Link>
+                        <Nav.Link as={Link} to="/home" className="me-2">Accueil</Nav.Link>
                         
                         {/* Menu Ressources Humaines */}
                         <NavDropdown 

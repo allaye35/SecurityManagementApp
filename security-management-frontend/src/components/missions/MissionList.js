@@ -1,21 +1,25 @@
 // src/components/missions/MissionList.jsx
 import React, { useEffect, useState } from "react";
 // Fonction utilitaire pour confirmation et appel d'action
-function askAndCall(message, action, ...args) {
-  if (window.confirm(`Voulez-vous vraiment ${message} ?`)) {
-    action(...args);
-  }
-}
 import { useNavigate } from "react-router-dom";
 import MissionService from "../../services/MissionService";
 import SiteService from "../../services/SiteService";
 import ContratService from "../../services/ContratService";
 import DevisService from "../../services/DevisService";
 import AgentService from "../../services/AgentService";
+import PlanningService from "../../services/PlanningService";
 import "../../styles/MissionList.css";
 import { Table, Button, Badge, Card, Container, Row, Col, Dropdown, Form, InputGroup, Modal } from 'react-bootstrap';
 import FactureService from '../../services/FactureService';
 import AssocierFactureModal from './AssocierFactureModal';
+
+
+function askAndCall(message, action, ...args) {
+  if (window.confirm(`Voulez-vous vraiment ${message} ?`)) {
+    action(...args);
+  }
+}
+
 
 export default function MissionList() {
   const [missions, setMissions] = useState([]);
@@ -36,6 +40,10 @@ export default function MissionList() {
   const [showSiteModal, setShowSiteModal] = useState(false);
   const [selectedMissionId, setSelectedMissionId] = useState(null);
   const [selectedSiteId, setSelectedSiteId] = useState("");
+  // Pour plannings
+  const [allPlannings, setAllPlannings] = useState([]);
+  const [showPlanningModal, setShowPlanningModal] = useState(false);
+  const [selectedPlanningId, setSelectedPlanningId] = useState("");
   // Pour agents
   const [allAgents, setAllAgents] = useState([]);
   const [showAgentModal, setShowAgentModal] = useState(false);
@@ -113,6 +121,14 @@ export default function MissionList() {
       })
       .catch(() => setAllAgents([]));
 
+    // Charger tous les plannings pour le sélecteur
+    PlanningService.getAllPlannings && PlanningService.getAllPlannings()
+      .then(res => {
+        if (Array.isArray(res.data)) setAllPlannings(res.data);
+        else if (res.data && Array.isArray(res.data.content)) setAllPlannings(res.data.content);
+      })
+      .catch(() => setAllPlannings([]));
+
     // Charger toutes les factures pour le sélecteur
     FactureService.getAll()
       .then(res => {
@@ -176,6 +192,40 @@ export default function MissionList() {
           }
         });
         handleSiteModalClose();
+      })
+      .catch(e => alert("Erreur : " + (e.response?.data?.message || e.message)));
+  };
+
+  // Modal pour associer un planning
+  const handleShowPlanningModal = (missionId) => {
+    setSelectedMissionId(missionId);
+    setSelectedPlanningId("");
+    setShowPlanningModal(true);
+  };
+
+  const handlePlanningModalClose = () => {
+    setShowPlanningModal(false);
+    setSelectedMissionId(null);
+    setSelectedPlanningId("");
+  };
+
+  const handlePlanningModalSubmit = () => {
+    if (!selectedPlanningId || !selectedMissionId) return;
+    MissionService.assignPlanning(selectedMissionId, selectedPlanningId)
+      .then(() => {
+        alert("Planning associé !");
+        MissionService.getAllMissions().then(({ data }) => {
+          if (Array.isArray(data)) {
+            setMissions(data);
+            setFilteredMissions(data.filter(mission =>
+              (mission.titre && mission.titre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+              (mission.description && mission.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+              (mission.statutMission && mission.statutMission?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+              (mission.typeMission && mission.typeMission?.toLowerCase().includes(searchTerm.toLowerCase()))
+            ));
+          }
+        });
+        handlePlanningModalClose();
       })
       .catch(e => alert("Erreur : " + (e.response?.data?.message || e.message)));
   };
@@ -513,7 +563,7 @@ export default function MissionList() {
                             <Dropdown.Item onClick={() => handleShowRetirerAgentModal(m.id)}>
                               <i className="bi bi-person-dash"></i> Retirer agent
                             </Dropdown.Item>
-                          <Dropdown.Item onClick={() => askAndCall("Associer planning", MissionService.assignPlanning, m.id)}>
+                          <Dropdown.Item onClick={() => handleShowPlanningModal(m.id)}>
                             <i className="bi bi-calendar-plus"></i> Associer planning
                           </Dropdown.Item>
                           <Dropdown.Item onClick={() => handleShowSiteModal(m.id)}>
@@ -671,6 +721,36 @@ export default function MissionList() {
         <Button variant="primary" onClick={handleSiteModalSubmit} disabled={!selectedSiteId}>Associer</Button>
       </Modal.Footer>
     </Modal>
+
+    {/* Modal de sélection de planning */}
+    <Modal show={showPlanningModal} onHide={handlePlanningModalClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Associer un planning à la mission</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group controlId="selectPlanning">
+            <Form.Label>Choisir un planning</Form.Label>
+            <Form.Select
+              value={selectedPlanningId}
+              onChange={e => setSelectedPlanningId(e.target.value)}
+            >
+              <option value="">-- Sélectionner un planning --</option>
+              {allPlannings.map(planning => (
+                <option key={planning.id} value={planning.id}>
+                  {planning.nom || planning.name || planning.titre || `Planning #${planning.id}`}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handlePlanningModalClose}>Annuler</Button>
+        <Button variant="primary" onClick={handlePlanningModalSubmit} disabled={!selectedPlanningId}>Associer</Button>
+      </Modal.Footer>
+    </Modal>
+
     {/* Modal d'association de facture(s) */}
     <AssocierFactureModal
       show={showFactureModal}

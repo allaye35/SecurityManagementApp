@@ -1,6 +1,6 @@
 // src/App.js
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,11 +10,13 @@ import "./styles/Layout.css";
 
 // Layout Components
 import MainLayout from "./components/layout/MainLayout";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 /* ─── Pages publiques (auth & home) ─────────────────────────── */
 import Home          from "./pages/Home";
 import LoginPage     from "./pages/LoginPage";
 import RegisterPage  from "./pages/RegisterPage";
+import Unauthorized  from "./pages/Unauthorized";
 
 
 /* ─── Pointages ─────────────────────────────────────────────── */
@@ -169,19 +171,25 @@ export default function App() {
     return (
         <BrowserRouter>
             <Routes>
+                {/* Redirection de la racine vers login */}
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                
                 {/* Routes publiques (sans NavBar) */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
-                  {/* Routes protégées avec AppLayout */}
-                <Route element={<AppLayout />}>
-                    <Route path="/" element={<Home />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
+                
+                {/* Routes protégées avec AppLayout */}
+                <Route element={<ProtectedRoute />}>
+                    <Route element={<AppLayout />}>
+                        <Route path="/home" element={<Home />} />
 
-                    {/* Agents */}
-                    <Route path="/agents"            element={<AgentList />} />
-                    <Route path="/agents/create"     element={<AgentCreate />} />
-                    <Route path="/agents/edit/:id"   element={<AgentEdit />} />
-                    <Route path="/agents/delete/:id" element={<DeleteAgent />} />
-                    <Route path="/agents/:id"        element={<AgentDetail />} />                    {/* Entreprises */}
+                        {/* Agents */}
+                        <Route path="/agents"            element={<AgentList />} />
+                        <Route path="/agents/create"     element={<AgentCreate />} />
+                        <Route path="/agents/edit/:id"   element={<AgentEdit />} />
+                        <Route path="/agents/delete/:id" element={<DeleteAgent />} />
+                        <Route path="/agents/:id"        element={<AgentDetail />} />                    {/* Entreprises */}
                     <Route path="/entreprises"            element={<EntrepriseList />} />
                     <Route path="/entreprises/create"     element={<CreateEntreprise />} />
                     <Route path="/entreprises/edit/:id"   element={<EditEntreprise />} />
@@ -317,7 +325,11 @@ export default function App() {
                 <Route path="/tarifs/create"     element={<TarifMissionForm />} />
                 <Route path="/tarifs/edit/:id"   element={<TarifMissionForm />} />
                 <Route path="/tarifs/:id"        element={<TarifMissionDetail />} />
+                    </Route>
                 </Route>
+                
+                {/* Route de fallback : toute URL non définie redirige vers login */}
+                <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
         </BrowserRouter>
     );

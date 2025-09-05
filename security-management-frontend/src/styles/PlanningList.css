@@ -1,0 +1,567 @@
+/* PlanningList.css - Design amélioré pour la liste des plannings */
+
+.planning-list-container {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.planning-card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.planning-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.planning-header {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border: none;
+  padding: 20px 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.planning-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.planning-header:hover::before {
+  left: 100%;
+}
+
+.planning-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.8rem;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.new-planning-btn {
+  background: white;
+  color: #007bff;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.new-planning-btn:hover {
+  background: transparent;
+  color: white;
+  border-color: white;
+  transform: scale(1.05);
+}
+
+/* Filtres améliorés */
+.filters-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+}
+
+.filters-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: none;
+  border-radius: 12px 12px 0 0;
+  padding: 15px 20px;
+}
+
+.filter-controls {
+  padding: 20px;
+}
+
+.filter-input {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.filter-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.filter-buttons {
+  gap: 10px;
+}
+
+.filter-btn {
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Table améliorée */
+.planning-table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.table-header {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.table-row {
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.table-row:hover {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  transform: scale(1.01);
+}
+
+/* Missions et agents améliorés */
+.mission-container {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.mission-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mission-container::-webkit-scrollbar-track {
+  background: #e9ecef;
+  border-radius: 3px;
+}
+
+.mission-container::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 3px;
+}
+
+.mission-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.mission-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mission-badge {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3);
+  border: none;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agent-badge {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  margin: 2px;
+  display: inline-block;
+  box-shadow: 0 2px 5px rgba(23, 162, 184, 0.3);
+  transition: all 0.3s ease;
+}
+
+.agent-badge:hover {
+  transform: scale(1.05);
+}
+
+.no-mission-badge, .no-agent-badge {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #212529;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* Sélecteur de mission amélioré */
+.mission-selector {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.mission-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.mission-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.1);
+}
+
+.add-mission-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 15px;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+}
+
+.add-mission-btn:hover {
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+  transform: scale(1.05);
+}
+
+.remove-mission-btn {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+  border-radius: 6px;
+  padding: 5px 8px;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
+}
+
+.remove-mission-btn:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+  transform: scale(1.1);
+}
+
+/* Actions améliorées */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.action-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.view-btn {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #212529;
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+}
+
+/* Loading et états vides */
+.loading-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+/* Modal amélioré */
+.custom-modal .modal-content {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.custom-modal .modal-header {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  border-radius: 15px 15px 0 0;
+}
+
+.custom-modal .modal-footer {
+  border: none;
+  padding: 20px 30px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .planning-header {
+    padding: 15px 20px;
+  }
+  
+  .planning-title {
+    font-size: 1.5rem;
+  }
+  
+  .mission-container {
+    max-height: 200px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .filter-controls {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .planning-list-container {
+    padding: 10px 0;
+  }
+  
+  .mission-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .mission-selector {
+    flex-direction: column;
+  }
+}
+
+/* Animations d'apparition */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Effets de survol pour les cartes */
+.planning-row-card {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin-bottom: 5px;
+}
+
+.planning-row-card:hover {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles pour MissionCard */
+.mission-card {
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.mission-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.mission-card .card-header {
+  border-bottom: 1px solid #e9ecef;
+  padding: 12px 15px;
+}
+
+.mission-card .card-body {
+  padding: 15px;
+}
+
+.mission-details {
+  border-left: 3px solid #007bff;
+  padding-left: 10px;
+  margin: 10px 0;
+}
+
+.mission-status-badge {
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  border-radius: 12px;
+}
+
+/* Vue en grille pour les missions */
+.missions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+/* Amélioration responsive pour les missions */
+@media (max-width: 768px) {
+  .missions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .mission-container {
+    padding: 10px;
+  }
+}
+
+/* Vue cartes pour les plannings */
+.planning-card-view {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.planning-card-view:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.planning-card-view .card-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 2px solid #e9ecef;
+  padding: 15px 20px;
+}
+
+.planning-card-view .card-body {
+  padding: 20px;
+}
+
+.missions-list {
+  border-radius: 8px;
+}
+
+.missions-list .mission-item {
+  border: 1px solid #e9ecef;
+  margin-bottom: 8px;
+}
+
+/* Boutons de changement de vue */
+.view-toggle-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.view-toggle-buttons .btn {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.view-toggle-buttons .btn:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive pour la vue cartes */
+@media (max-width: 992px) {
+  .planning-card-view {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .planning-card-view .card-header {
+    padding: 10px 15px;
+  }
+  
+  .planning-card-view .card-body {
+    padding: 15px;
+  }
+  
+  .action-buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 5px;
+  }
+}
