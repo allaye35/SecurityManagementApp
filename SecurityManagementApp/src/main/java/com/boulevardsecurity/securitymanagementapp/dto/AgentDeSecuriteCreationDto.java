@@ -1,4 +1,3 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/dto/AgentDeSecuriteCreationDto.java
 package com.boulevardsecurity.securitymanagementapp.dto;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.Role;
@@ -9,16 +8,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-/**
- * DTO utilisé **uniquement** lors de la création :
- * le mot de passe est présent et sera hashé côté service.
- */
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class AgentDeSecuriteCreationDto {
     private String nom;
     private String prenom;
     private String email;
-    private String password;
+    private String password;     // sera hashé
     private String telephone;
     private String adresse;
     private LocalDate dateNaissance;

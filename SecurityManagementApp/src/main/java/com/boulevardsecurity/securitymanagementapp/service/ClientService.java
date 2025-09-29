@@ -22,5 +22,8 @@ public interface ClientService {
     ClientDto updateClient(Long id, ClientDto dto);
 
     void deleteClient(Long id);
+    // --- nouveaux pour l’approbation admin ---
+    List<ClientDto> getPendingApprovalClients(); // emailVerified = true && adminApproved = false
+    ClientDto approveClient(Long id);
 
 }

@@ -78,7 +78,7 @@ public class Mission {
     private GeolocalisationGPS geolocalisationGPS;
 
     // Relation avec RapportIntervention (une mission peut avoir plusieurs rapports)
-    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    @JsonManagedReference      //
 //    @JsonIgnoreProperties("mission")
 //    @JsonIgnore
@@ -97,7 +97,7 @@ public class Mission {
     // ----------------------------------------------
     // RELATION AVEC Contrat (pour la copie éventuelle)
     // ----------------------------------------------
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "contrat_id")
     private Contrat contrat;
 
@@ -125,7 +125,7 @@ public class Mission {
     @Builder.Default
     private List<Facture> factures = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<ContratDeTravail> contratsDeTravail = new ArrayList<>();
 

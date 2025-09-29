@@ -1,53 +1,64 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+/**
+ * Service de notification (email + SMS).
+ * - Utilise app.mail.from comme adresse d’expéditeur si renseignée.
+ * - Sinon, laisse Gmail définir l’expéditeur (compte SMTP).
+ * - Envoi SMS via Textbelt (clé dans textbelt.api.key).
+ */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationService {
 
     private final JavaMailSender mailSender;
 
-    // Récupération de la clé Textbelt depuis application.properties
-    @Value("${textbelt.api.key}")
+    /** Adresse d’expéditeur par défaut, ex: Boulevard Sécurité <allaye35@gmail.com> */
+    @Value("${app.mail.from:}")
+    private String defaultFrom;
+
+    /** Clé Textbelt (gratuite par défaut = "textbelt", limité) */
+    @Value("${textbelt.api.key:textbelt}")
     private String textbeltApiKey;
 
     /**
-     * Envoi d’un email de notification.
-     * @param to       destinataire
-     * @param subject  sujet
-     * @param content  contenu
+     * Envoi d’un email en texte brut.
+     * Si app.mail.from est renseigné, on fait message.setFrom(defaultFrom)
+     * (Gmail acceptera un alias "Send As" validé ; sinon il remplacera par le compte SMTP).
      */
     public void sendEmail(String to, String subject, String content) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            if (StringUtils.hasText(defaultFrom)) {
+                message.setFrom(defaultFrom);
+            }
             message.setTo(to);
             message.setSubject(subject);
             message.setText(content);
 
             mailSender.send(message);
-
-            System.out.println("✅ Email envoyé à " + to);
+            log.info("✅ Email envoyé à {}", to);
         } catch (Exception e) {
-            System.err.println("❌ Erreur envoi email : " + e.getMessage());
+            log.error("❌ Erreur envoi email: {}", e.getMessage(), e);
         }
     }
 
     /**
-     * Envoi d’un SMS via Textbelt (limitation : ~1 SMS gratuit/jour).
-     * @param phoneNumber numéro de téléphone (format international, ex: "+33123456789")
-     * @param message     contenu du SMS
+     * Envoi d’un SMS avec Textbelt (1 SMS gratuit / jour avec la clé "textbelt").
+     * Pour la prod, achète une clé sur https://textbelt.com/.
      */
     public void sendSMS(String phoneNumber, String message) {
-        // Construction du JSON pour l’API Textbelt
-        // cf. https://textbelt.com/
         String apiUrl = "https://textbelt.com/text";
 
         WebClient webClient = WebClient.builder().baseUrl(apiUrl).build();
@@ -64,11 +75,9 @@ public class NotificationService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .onErrorResume(ex -> {
-                    System.err.println("❌ Erreur envoi SMS : " + ex.getMessage());
+                    log.error("❌ Erreur envoi SMS: {}", ex.getMessage());
                     return Mono.empty();
                 })
-                .subscribe(response -> {
-                    System.out.println("Réponse de Textbelt : " + response);
-                });
+                .subscribe(response -> log.info("Réponse Textbelt: {}", response));
     }
 }

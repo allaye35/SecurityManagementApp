@@ -1,10 +1,11 @@
+// src/services/auth/AuthService.js
 import api, { plain } from "../api";
 import { tokenService } from "./tokenService";
 
 const AuthService = {
+  // --- Auth ---------------------------------------------------
   async login(email, password) {
     const { data } = await plain.post("/auth/login", { email, password });
-    // data = { accessToken, refreshToken, userId, role, userType, email, nom, prenom }
     tokenService.setTokens({
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
@@ -20,22 +21,57 @@ const AuthService = {
     return data;
   },
 
-    async register({ username, email, password }) {
-      const { data } = await plain.post("/auth/register", { username, email, password });
-      return data;
-    },
-
   async refresh() {
     const refreshToken = tokenService.getRefresh();
     if (!refreshToken) return null;
     const { data } = await plain.post("/auth/refresh", { refreshToken });
-    if (data?.accessToken) tokenService.setTokens({ accessToken: data.accessToken });
+    if (data?.accessToken) {
+      tokenService.setTokens({ accessToken: data.accessToken });
+    }
     return data?.accessToken ?? null;
   },
 
   async logout() {
-    try { await api.post("/auth/logout"); } catch {}
+    try {
+      await api.post("/auth/logout");
+    } catch {}
     tokenService.clear();
+  },
+
+  // --- Register ------------------------------------------------
+  async registerAgent(dto) {
+    const { data } = await plain.post("/auth/register-agent", dto);
+    return data;
+  },
+
+  async registerClient(dto) {
+    const { data } = await plain.post("/auth/register-client", dto);
+    return data;
+  },
+
+  // --- Email verification -------------------------------------
+  // Vérif par lien ?token=...
+  verifyEmailByToken(token) {
+    return plain.get("/auth/verify-email", { params: { token } });
+  },
+
+  // Vérif par code (email + code)
+  verifyEmailByCode(email, code) {
+    return plain.post("/auth/verify-email/code", { email, code });
+  },
+
+  // Renvoyer l'email de vérification
+  resendVerifyEmail(email) {
+    return plain.post("/auth/verify-email/resend", { email });
+  },
+
+  // --- Password reset -----------------------------------------
+  requestPasswordReset(email) {
+    return plain.post("/auth/password-reset/request", { email });
+  },
+
+  confirmPasswordReset(token, newPassword) {
+    return plain.post("/auth/password-reset/confirm", { token, newPassword });
   },
 };
 

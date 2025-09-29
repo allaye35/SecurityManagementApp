@@ -11,6 +11,7 @@ import com.boulevardsecurity.securitymanagementapp.repository.MissionRepository;
 import com.boulevardsecurity.securitymanagementapp.service.GeolocalisationGpsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GeolocalisationGpsServiceImpl implements GeolocalisationGpsService {
 
     private final GeolocalisationGPSRepository gpsRepository;

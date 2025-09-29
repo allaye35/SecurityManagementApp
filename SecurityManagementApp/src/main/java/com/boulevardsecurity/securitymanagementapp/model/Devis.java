@@ -60,13 +60,14 @@ public class Devis {
     /** Contrat associé (le cas échéant) */
     @OneToOne(mappedBy = "devis",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     private Contrat contrat;
 
     /** Missions liées à ce devis */
     @OneToMany(
             mappedBy = "devis",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER
     )
     @Builder.Default
     private List<Mission> missions = new ArrayList<>();

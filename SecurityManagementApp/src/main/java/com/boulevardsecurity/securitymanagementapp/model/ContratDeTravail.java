@@ -58,22 +58,22 @@ public class ContratDeTravail {
     private PeriodiciteSalaire periodiciteSalaire;
 
     /* ---------- relations ---------- */
-    @ManyToOne( fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agent_id")
     private AgentDeSecurite agentDeSecurite;
 
-    @ManyToOne( fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "entreprise_id")
     private Entreprise entreprise;
 
     /** Facultatif : pour un CDD / intérim rattaché à UNE mission précise */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mission_id")
     private Mission mission;
 
     /** Bulletins de paie émis dans le cadre de ce contrat */
     @OneToMany(mappedBy = "contratDeTravail",
-            cascade = CascadeType.ALL)
+            cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<FicheDePaie> fichesDePaie = new ArrayList<>();
 
@@ -86,7 +86,7 @@ public class ContratDeTravail {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy="contratDeTravail", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="contratDeTravail", cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<ArticleContratTravail> clauses = new ArrayList<>();
 

@@ -28,7 +28,7 @@ public class Site {
     private String region;
     private String pays;
 
-    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<Mission> missions = new ArrayList<>();
 }

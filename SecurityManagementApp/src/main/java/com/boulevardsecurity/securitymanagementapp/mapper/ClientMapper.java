@@ -1,3 +1,4 @@
+// src/main/java/com/boulevardsecurity/securitymanagementapp/mapper/ClientMapper.java
 package com.boulevardsecurity.securitymanagementapp.mapper;
 
 import com.boulevardsecurity.securitymanagementapp.dto.ClientCreateDto;
@@ -20,7 +21,7 @@ public class ClientMapper {
     private final DevisRepository devisRepo;
     private final GestionnaireNotificationsRepository notifRepo;
 
-    /** === ENTITÉ ➜ DTO de lecture === */
+    /** ENTITÉ ➜ DTO */
     public ClientDto toDto(Client c) {
         return ClientDto.builder()
                 .id(c.getId())
@@ -39,16 +40,14 @@ public class ClientMapper {
                 .ville(c.getVille())
                 .pays(c.getPays())
                 .modeContactPrefere(c.getModeContactPrefere())
-                .devisIds(c.getDevisList().stream()
-                        .map(Devis::getId)
-                        .collect(Collectors.toList()))
-                .notificationIds(c.getNotifications().stream()
-                        .map(GestionnaireNotifications::getId)
-                        .collect(Collectors.toList()))
+                .emailVerified(c.isEmailVerified())
+                .adminApproved(c.isAdminApproved())
+                .devisIds(c.getDevisList().stream().map(Devis::getId).collect(Collectors.toList()))
+                .notificationIds(c.getNotifications().stream().map(GestionnaireNotifications::getId).collect(Collectors.toList()))
                 .build();
     }
 
-    /** === DTO de création ➜ ENTITÉ === */
+    /** DTO création ➜ ENTITÉ */
     public Client toEntity(ClientCreateDto dto) {
         Client c = Client.builder()
                 .password(dto.getPassword())
@@ -84,13 +83,11 @@ public class ClientMapper {
                 c.getNotifications().add(n);
             });
         }
-
         return c;
     }
 
-    /** === DTO lecture / update ➜ ENTITÉ existante === */
+    /** DTO update ➜ ENTITÉ existante (ne touche pas aux drapeaux de sécurité) */
     public void updateEntityFromDto(ClientDto dto, Client c) {
-        // mise à jour des champs simples
         c.setNom(dto.getNom());
         c.setPrenom(dto.getPrenom());
         c.setSiege(dto.getSiege());
@@ -104,16 +101,12 @@ public class ClientMapper {
         c.setPays(dto.getPays());
         c.setModeContactPrefere(dto.getModeContactPrefere());
 
-        // —— DEVIS — ne jamais appeler c.setDevisList(...) sur une entité déjà gérée
+        // DEVIS
         if (dto.getDevisIds() != null) {
-            // vider ou maintenir
             if (dto.getDevisIds().isEmpty()) {
                 c.getDevisList().clear();
             } else {
-                Set<Long> existants = c.getDevisList().stream()
-                        .map(Devis::getId)
-                        .collect(Collectors.toSet());
-                // ajout des nouveaux
+                Set<Long> existants = c.getDevisList().stream().map(Devis::getId).collect(Collectors.toSet());
                 for (Long id : dto.getDevisIds()) {
                     if (!existants.contains(id)) {
                         Devis d = devisRepo.findById(id)
@@ -122,19 +115,17 @@ public class ClientMapper {
                         c.getDevisList().add(d);
                     }
                 }
-                // suppression de ceux non mentionnés
                 c.getDevisList().removeIf(d -> !dto.getDevisIds().contains(d.getId()));
             }
         }
 
-        // —— NOTIFICATIONS — même principe
+        // NOTIFICATIONS
         if (dto.getNotificationIds() != null) {
             if (dto.getNotificationIds().isEmpty()) {
                 c.getNotifications().clear();
             } else {
                 Set<Long> existants = c.getNotifications().stream()
-                        .map(GestionnaireNotifications::getId)
-                        .collect(Collectors.toSet());
+                        .map(GestionnaireNotifications::getId).collect(Collectors.toSet());
                 for (Long id : dto.getNotificationIds()) {
                     if (!existants.contains(id)) {
                         GestionnaireNotifications n = notifRepo.findById(id)

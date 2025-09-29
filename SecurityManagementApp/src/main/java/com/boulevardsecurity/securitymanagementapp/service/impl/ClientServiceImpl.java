@@ -7,66 +7,61 @@ import com.boulevardsecurity.securitymanagementapp.mapper.ClientMapper;
 import com.boulevardsecurity.securitymanagementapp.model.Client;
 import com.boulevardsecurity.securitymanagementapp.repository.ClientRepository;
 import com.boulevardsecurity.securitymanagementapp.service.ClientService;
+import com.boulevardsecurity.securitymanagementapp.util.EmailUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository repo;
-    private final ClientMapper    mapper;
+    private final ClientMapper mapper;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override
     public ClientDto createClient(ClientCreateDto dto) {
-        // conversion DTO ➜ ENTITÉ (on conserve le mot de passe tel quel)
         Client ent = mapper.toEntity(dto);
+        ent.setEmail(EmailUtil.normalize(ent.getEmail()));
         ent.setPassword(passwordEncoder.encode(ent.getPassword()));
+        ent.setEmailVerified(false);
+        ent.setAdminApproved(false); // attente validation admin
+        ent.setPasswordChangedAt(Instant.now());
         Client saved = repo.save(ent);
         return mapper.toDto(saved);
     }
 
-    @Override
+    @Override @Transactional(readOnly = true)
     public List<ClientDto> getAllClients() {
-        return repo.findAll()
-                .stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+        return repo.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    @Override
+    @Override @Transactional(readOnly = true)
     public Optional<ClientDto> getClientById(Long id) {
-        return repo.findById(id)
-                .map(mapper::toDto);
+        return repo.findById(id).map(mapper::toDto);
     }
 
-    @Override
+    @Override @Transactional(readOnly = true)
     public Optional<ClientDto> getClientByEmail(String email) {
-        return repo.findByEmail(email)
-                .map(mapper::toDto);
+        return repo.findByEmail(EmailUtil.normalize(email)).map(mapper::toDto);
     }
 
-    @Override
+    @Override @Transactional(readOnly = true)
     public Optional<ClientDto> getClientByNom(String nom) {
-        return repo.findByNom(nom)
-                .map(mapper::toDto);
+        return repo.findByNom(nom).map(mapper::toDto);
     }
 
     @Override
     public ClientDto updateClient(Long id, ClientDto dto) {
         Client existing = repo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Client introuvable : " + id));
-        // mise à jour des champs (hors mot de passe)
-        // si tu ajoutes la possibilité de changer le mdp via un DTO dédié, encode-le ici
-        // existing.setPassword(passwordEncoder.encode(nouveauMdp));
         mapper.updateEntityFromDto(dto, existing);
         Client saved = repo.save(existing);
         return mapper.toDto(saved);
@@ -74,9 +69,22 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public void deleteClient(Long id) {
-        if (!repo.existsById(id)) {
-            throw new EntityNotFoundException("Client introuvable : " + id);
-        }
+        if (!repo.existsById(id)) throw new EntityNotFoundException("Client introuvable : " + id);
         repo.deleteById(id);
+    }
+
+    // ---- approbation admin ----
+    @Override @Transactional(readOnly = true)
+    public List<ClientDto> getPendingApprovalClients() {
+        return repo.findByEmailVerifiedIsTrueAndAdminApprovedIsFalse()
+                .stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public ClientDto approveClient(Long id) {
+        Client c = repo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Client introuvable : " + id));
+        c.setAdminApproved(true);
+        return mapper.toDto(repo.save(c));
     }
 }

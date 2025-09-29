@@ -1,3 +1,4 @@
+// src/main/java/com/boulevardsecurity/securitymanagementapp/model/Client.java
 package com.boulevardsecurity.securitymanagementapp.model;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.ModeContactPrefere;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,46 +24,62 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /* --------- Auth / Rôle --------- */
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    /**
-     * Stocké en base mais jamais exposé en JSON
-     */
+    /** Stocké en base mais jamais exposé en JSON */
     @Column(nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    /** Role (CLIENT / ADMIN / etc.) */
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Role role = Role.CLIENT;
 
-    /** Particulier ou Entreprise */
+    /* --------- Typologie --------- */
     @Enumerated(EnumType.STRING)
-    private TypeClient typeClient;
+    private TypeClient typeClient; // PARTICULIER / ENTREPRISE
 
-    /** ==== Si c’est un particulier ==== */
+    /* --------- Si particulier --------- */
     private String nom;
     private String prenom;
 
-    /** ==== Si c’est une entreprise ==== */
+    /* --------- Si entreprise --------- */
     private String siege;
     private String representant;
     private String numeroSiret;
 
-    /** ==== Coordonnées de contact ==== */
-    @Column(nullable = false, unique = true)
-    private String email;
+    /* --------- Coordonnées --------- */
     private String telephone;
     private String adresse;
+    private String numeroRue;
     private String codePostal;
     private String ville;
     private String pays;
-    private String numeroRue;
 
     @Enumerated(EnumType.STRING)
     private ModeContactPrefere modeContactPrefere;
 
-    /** Relations vers Devis */
+    /* --------- Sécurité / activation --------- */
+    /** L’email a été confirmé (lien ou code) */
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean emailVerified = false;
+
+    /** Le compte a été validé par un administrateur */
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean adminApproved = false;
+
+    /** Horodatage & référence d’admin lors de l’approbation (pour l’audit) */
+    private Instant adminApprovedAt;
+    private Long adminApprovedById;
+
+    /** MAJ à chaque changement de mot de passe (invalide les anciens tokens si nécessaire) */
+    private Instant passwordChangedAt;
+
+    /* --------- Relations --------- */
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @JsonIgnore
@@ -70,5 +88,4 @@ public class Client {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<GestionnaireNotifications> notifications = new ArrayList<>();
-
 }

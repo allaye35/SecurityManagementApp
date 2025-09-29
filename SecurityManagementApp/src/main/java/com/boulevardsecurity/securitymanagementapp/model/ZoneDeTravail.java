@@ -49,7 +49,7 @@ public class ZoneDeTravail {
     private String pays;  // Pays (ex: France)
 
     //  Lien avec les agents qui peuvent travailler dans cette zone
-    @ManyToMany(mappedBy = "zonesDeTravail")
+    @ManyToMany(mappedBy = "zonesDeTravail", fetch = FetchType.EAGER)
     @Builder.Default
     private Set<AgentDeSecurite> agents = new HashSet<>();
 }

@@ -1,3 +1,4 @@
+// src/main/java/com/boulevardsecurity/securitymanagementapp/model/AgentDeSecurite.java
 package com.boulevardsecurity.securitymanagementapp.model;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.Role;
@@ -6,19 +7,15 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "agents_de_securite")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 @ToString(exclude = {"missions", "disponibilites"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -29,11 +26,8 @@ public class AgentDeSecurite {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(nullable = false)
-    private String nom;
-
-    @Column(nullable = false)
-    private String prenom;
+    @Column(nullable = false)  private String nom;
+    @Column(nullable = false)  private String prenom;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -42,19 +36,35 @@ public class AgentDeSecurite {
     @Column(nullable = false)
     private String password;
 
-
-    @Column(nullable = true, unique = true)
-    private String telephone;
-
+    @Column(unique = true)   private String telephone;
     private String adresse;
-
     private LocalDate dateNaissance;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
     private StatutAgent statut; // EN_SERVICE, EN_CONGE, ABSENT
 
-    @ManyToMany
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.AGENT_SECURITE;
+
+    /* ─── Sécurité / activation ───────────────────────── */
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean emailVerified = false;
+
+    /** ➕ Validation par un administrateur (nouveau) */
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean adminApproved = false;
+
+    private Instant adminApprovedAt;
+    private Long adminApprovedById;
+
+    /** Maj à chaque changement de mot de passe */
+    private Instant passwordChangedAt;
+
+    /* ─── Relations ───────────────────────────────────── */
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "agents_zones",
             joinColumns = @JoinColumn(name = "agent_id"),
@@ -63,34 +73,27 @@ public class AgentDeSecurite {
     @Builder.Default
     private Set<ZoneDeTravail> zonesDeTravail = new HashSet<>();
 
-    @ManyToMany(mappedBy = "agents")
+    @ManyToMany(mappedBy = "agents", fetch = FetchType.EAGER)
     @Builder.Default
     private Set<Mission> missions = new HashSet<>();
 
-    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<Disponibilite> disponibilites = new ArrayList<>();
 
-    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<CarteProfessionnelle> cartesProfessionnelles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<DiplomeSSIAP> diplomesSSIAP = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private Role role = Role.AGENT_SECURITE;
-
-    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<ContratDeTravail> contratsDeTravail = new ArrayList<>();
 
-    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "agentDeSecurite", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<GestionnaireNotifications> notifications = new ArrayList<>();
-
-
-
 }

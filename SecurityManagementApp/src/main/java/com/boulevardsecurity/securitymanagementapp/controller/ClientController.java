@@ -51,10 +51,7 @@ public class ClientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClientDto> update(
-            @PathVariable Long id,
-            @RequestBody ClientDto dto
-    ) {
+    public ResponseEntity<ClientDto> update(@PathVariable Long id, @RequestBody ClientDto dto) {
         ClientDto updated = service.updateClient(id, dto);
         return ResponseEntity.ok(updated);
     }
@@ -63,5 +60,18 @@ public class ClientController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteClient(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /* ====== Nouveaux endpoints Admin ====== */
+    /** Liste les clients en attente d’approbation (email vérifié mais non approuvé) */
+    @GetMapping("/pending")
+    public ResponseEntity<List<ClientDto>> listPending() {
+        return ResponseEntity.ok(service.getPendingApprovalClients());
+    }
+
+    /** Approuver un compte client (ADMIN) */
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<ClientDto> approve(@PathVariable Long id) {
+        return ResponseEntity.ok(service.approveClient(id));
     }
 }

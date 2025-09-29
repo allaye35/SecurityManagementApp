@@ -1,61 +1,90 @@
+// src/services/api.js
 import axios from "axios";
 import { tokenService } from "./auth/tokenService";
 
-const BASE_URL = process.env.REACT_APP_API_BASE || "http://localhost:8080/api";
+// ----- Base URL de l’API Spring -----
+// Tu peux changer ici ou via .env => REACT_APP_API_URL
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 
-// --- instance principale
-const api = axios.create({ baseURL: BASE_URL, timeout: 20000 });
+// Instance SANS auth pour login/refresh/verify, etc.
+export const plain = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: false,
+});
 
-// --- instance "nue" pour refresh
-const plain = axios.create({ baseURL: BASE_URL, timeout: 20000 });
+// Instance AVEC auth pour toutes les routes protégées
+const api = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: false,
+});
 
-// REQUEST: Content-Type + Authorization
+// --- Intercepteur: ajoute le Bearer token à chaque requête ---
 api.interceptors.request.use((config) => {
-  if (config.data instanceof FormData) {
-    delete config.headers["Content-Type"];
-  } else {
-    config.headers["Content-Type"] = "application/json";
-  }
   const access = tokenService.getAccess();
-  if (access && !config.headers.Authorization) {
+  if (access) {
+    config.headers = config.headers ?? {};
     config.headers.Authorization = `Bearer ${access}`;
   }
   return config;
 });
 
-// RESPONSE: refresh auto sur 401 (une seule tentative)
-let refreshPromise = null;
+// --- Intercepteur: si 401, tente un refresh une seule fois puis rejoue la requête ---
+let isRefreshing = false;
+let pending = [];
+
+const runPending = (token) => {
+  pending.forEach(({ resolve, reject, config }) => {
+    if (token) {
+      config.headers = config.headers ?? {};
+      config.headers.Authorization = `Bearer ${token}`;
+      resolve(api(config));
+    } else {
+      reject(new axios.Cancel("Refresh token failed"));
+    }
+  });
+  pending = [];
+};
 
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
+    const original = error?.config;
     const status = error?.response?.status;
-    const original = error.config;
 
-    const isAuthUrl =
-      original?.url?.includes("/auth/login") ||
-      original?.url?.includes("/auth/refresh");
-
-    if (status === 401 && !original?._retry && !isAuthUrl) {
+    if (status === 401 && !original?._retry) {
       original._retry = true;
 
-      if (!refreshPromise) {
-        const refreshToken = tokenService.getRefresh();
-        refreshPromise = plain
-          .post("/auth/refresh", { refreshToken })
-          .then((r) => r.data?.accessToken)
-          .catch(() => null)
-          .finally(() => { setTimeout(() => (refreshPromise = null), 0); });
+      const refreshToken = tokenService.getRefresh();
+      if (!refreshToken) {
+        // pas de refresh => logout côté appelant
+        return Promise.reject(error);
       }
 
-      const newAccess = await refreshPromise;
-      if (newAccess) {
-        tokenService.setTokens({ accessToken: newAccess });
-        original.headers.Authorization = `Bearer ${newAccess}`;
-        return api(original); // rejoue la requête
-      } else {
-        tokenService.clear();
-         window.location.replace("/login");
+      // File d’attente si un refresh est déjà en cours
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          pending.push({ resolve, reject, config: original });
+        });
+      }
+
+      try {
+        isRefreshing = true;
+        const { data } = await plain.post("/auth/refresh", { refreshToken });
+        const newAccess = data?.accessToken;
+        if (newAccess) {
+          tokenService.setTokens({ accessToken: newAccess });
+          original.headers = original.headers ?? {};
+          original.headers.Authorization = `Bearer ${newAccess}`;
+          runPending(newAccess);
+          return api(original);
+        }
+        runPending(null);
+        return Promise.reject(error);
+      } catch (e) {
+        runPending(null);
+        return Promise.reject(e);
+      } finally {
+        isRefreshing = false;
       }
     }
 
@@ -64,4 +93,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-export { plain };

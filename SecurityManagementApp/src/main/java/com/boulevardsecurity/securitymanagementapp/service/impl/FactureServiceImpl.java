@@ -56,16 +56,19 @@ public class FactureServiceImpl implements FactureService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FactureDto> findAll() {
         return repo.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<FactureDto> findById(Long id) {
         return repo.findById(id).map(mapper::toDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<FactureDto> findByReference(String reference) {
         return repo.findByReferenceFacture(reference).map(mapper::toDto);
     }

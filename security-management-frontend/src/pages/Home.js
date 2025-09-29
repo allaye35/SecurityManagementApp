@@ -1,23 +1,15 @@
+// src/pages/Home.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.jpg";
-import { 
-  FaUserShield, 
-  FaTasks, 
-  FaCalendarAlt, 
-  FaBuilding, 
-  FaIndustry, 
-  FaRegFileAlt, 
-  FaMapMarkerAlt, 
-  FaMapMarkedAlt 
-} from "react-icons/fa";
-import "../styles/Home.css"; 
+import { useAuth } from "../context/AuthContext";
+import "../styles/Home.css";
 
-const Home = () => {
+export default function Home() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="home-container">
-
-
       <header className="home-header">
         <img src={logo} alt="Boulevard Sécurité Logo" className="logo" />
         <h1>Bienvenue sur Boulevard Sécurité</h1>
@@ -27,10 +19,14 @@ const Home = () => {
         </p>
       </header>
 
-
-     
+      {/* Si NON connecté : afficher les CTA. Si connecté : ne rien afficher ici. */}
+      {!isAuthenticated && (
+        <div className="home-cta">
+          <Link to="/login" className="btn-primary">Se connecter</Link>
+          <span className="cta-sep">ou</span>
+          <Link to="/register" className="btn-link">Créer un compte</Link>
+        </div>
+      )}
     </div>
   );
-};
-
-export default Home;
+}

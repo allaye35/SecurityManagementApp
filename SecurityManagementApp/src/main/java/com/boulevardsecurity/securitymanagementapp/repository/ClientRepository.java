@@ -4,6 +4,7 @@ import com.boulevardsecurity.securitymanagementapp.model.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,5 +14,10 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     /* ➜ à ajouter pour le contrôleur Register */
     boolean existsByEmail(String email);
+    /** Comptes dont l’email est vérifié mais en attente d’approbation admin */
+    List<Client> findByEmailVerifiedIsTrueAndAdminApprovedIsFalse();
+    
+
+    
 }
 

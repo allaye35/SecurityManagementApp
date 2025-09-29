@@ -8,9 +8,11 @@ import {
 import { 
     BsSearch, BsPersonPlus, BsEye, BsPencil, BsTrash, 
     BsPersonBadge, BsCalendarCheck, BsShield, BsDiagram2, 
-    BsGeoAlt, BsCreditCard2Front, BsAward, BsThreeDots
+    BsGeoAlt, BsCreditCard2Front, BsAward, BsThreeDots,
+    BsCheckCircle
 } from "react-icons/bs";
 import AgentService from "../../services/AgentService";
+import adminAccountsService from "../../services/adminAccountsService";
 import "../../styles/AgentList.css";
 
 const AgentList = () => {
@@ -24,6 +26,10 @@ const AgentList = () => {
     const [selectedRole, setSelectedRole] = useState("");
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [message, setMessage] = useState({ text: "", type: "" });
+    const [showConfirmValidation, setShowConfirmValidation] = useState(false);
+    // États pour la pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const agentsPerPage = 10;
 
     // Options de rôles
     const roles = ["AGENT_SECURITE", "CHEF_EQUIPE", "MANAGER", "ADMIN"];
@@ -32,6 +38,11 @@ const AgentList = () => {
         setLoading(true);
         AgentService.getAllAgents()
             .then(res => {
+                console.log("Agents data received:", res.data); // Debug temporaire
+                // Debug pour voir la structure d'un agent
+                if (res.data.length > 0) {
+                    console.log("Premier agent:", res.data[0]);
+                }
                 setAgents(res.data);
                 setFilteredAgents(res.data);
                 setLoading(false);
@@ -62,6 +73,8 @@ const AgentList = () => {
         } else {
             setFilteredAgents(agents);
         }
+        // Réinitialiser à la première page lors du filtrage
+        setCurrentPage(1);
     }, [filter, agents]);
 
     const handleDeleteAgent = (agent) => {
@@ -106,25 +119,74 @@ const AgentList = () => {
             });
     };
 
+    const handleValidateAccount = (agent) => {
+        setSelectedAgent(agent);
+        setShowConfirmValidation(true);
+    };
+
+    const confirmValidateAccount = () => {
+        adminAccountsService.approveAgent(selectedAgent.id)
+            .then(() => {
+                // Recharger la liste des agents après validation
+                loadAgents();
+                setMessage({ 
+                    text: `Compte de ${selectedAgent.nom} ${selectedAgent.prenom} validé avec succès`, 
+                    type: "success" 
+                });
+                setShowConfirmValidation(false);
+            })
+            .catch(err => {
+                console.error("Erreur lors de la validation du compte:", err);
+                setMessage({ 
+                    text: "Une erreur est survenue lors de la validation du compte", 
+                    type: "danger" 
+                });
+                setShowConfirmValidation(false);
+            });
+    };
+
     const formatDate = (dateString) => {
         if (!dateString) return "–";
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('fr-FR').format(date);
     };
 
-    const getStatusBadge = (status) => {
+    const getStatusBadge = (agent) => {
+        console.log(`Agent ${agent.nom} - adminApproved:`, agent.adminApproved, typeof agent.adminApproved); // Debug
+        
+        // Si le compte n'est pas approuvé par l'admin
+        // Considérer false, 0, null, undefined comme non approuvé
+        const isApproved = agent.adminApproved === true || agent.adminApproved === 1;
+        
+        if (!isApproved) {
+            return <Badge bg="warning">En attente validation admin</Badge>;
+        }
+        
+        // Si approuvé, utiliser le statut normal
+        const status = agent.statut;
         if (!status) return <Badge bg="secondary">Non défini</Badge>;
         
         const statusColors = {
             EN_SERVICE: "success",
             EN_CONGE: "info",
             ABSENT: "warning",
-            SUSPENDU: "danger"
+            SUSPENDU: "danger",
+            HORS_SERVICE: "secondary",
+            "Non défini": "secondary"
+        };
+        
+        const statusLabels = {
+            EN_SERVICE: "EN SERVICE",
+            EN_CONGE: "EN CONGE",
+            ABSENT: "ABSENT",
+            SUSPENDU: "SUSPENDU",
+            HORS_SERVICE: "HORS SERVICE",
+            "Non défini": "Non défini"
         };
         
         return (
             <Badge bg={statusColors[status] || "secondary"}>
-                {status.replace("_", " ")}
+                {statusLabels[status] || status}
             </Badge>
         );
     };
@@ -147,6 +209,16 @@ const AgentList = () => {
     };
 
     if (error) return <Alert variant="danger">{error}</Alert>;
+
+    // Calculs pour la pagination
+    const indexOfLastAgent = currentPage * agentsPerPage;
+    const indexOfFirstAgent = indexOfLastAgent - agentsPerPage;
+    const currentAgents = filteredAgents.slice(indexOfFirstAgent, indexOfLastAgent);
+    const totalPages = Math.ceil(filteredAgents.length / agentsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     return (
         <Container fluid className="agent-list-container my-4">
@@ -223,9 +295,9 @@ const AgentList = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredAgents.map((agent, index) => (
+                                    {currentAgents.map((agent, index) => (
                                         <tr key={agent.id}>
-                                            <td className="text-center">{index + 1}</td>
+                                            <td className="text-center">{indexOfFirstAgent + index + 1}</td>
                                             <td>
                                                 <div className="d-flex align-items-center">
                                                     <div className="avatar-circle">
@@ -243,7 +315,7 @@ const AgentList = () => {
                                                 <div><small><i className="bi bi-envelope"></i> {agent.email}</small></div>
                                                 <div><small><i className="bi bi-telephone"></i> {agent.telephone || "–"}</small></div>
                                             </td>
-                                            <td>{getStatusBadge(agent.statut)}</td>
+                                            <td>{getStatusBadge(agent)}</td>
                                             <td>{getRoleBadge(agent.role)}</td>
                                             <td className="text-center">
                                                 {(agent.zonesDeTravailIds?.length > 0) ? (
@@ -288,6 +360,11 @@ const AgentList = () => {
                                                             <Dropdown.Item onClick={() => handleChangeRole(agent)}>
                                                                 <BsPersonBadge className="me-2" />Changer le rôle
                                                             </Dropdown.Item>
+                                                            {(agent.adminApproved !== true && agent.adminApproved !== 1) && (
+                                                                <Dropdown.Item onClick={() => handleValidateAccount(agent)}>
+                                                                    <BsCheckCircle className="me-2" />Valider le compte
+                                                                </Dropdown.Item>
+                                                            )}
                                                             <Link to={`/agents/${agent.id}/planning`} className="dropdown-item">
                                                                 <BsCalendarCheck className="me-2" />Voir le planning
                                                             </Link>
@@ -311,11 +388,57 @@ const AgentList = () => {
                         </div>
                     )}
                 </Card.Body>
-                <Card.Footer className="d-flex justify-content-between align-items-center">
-                    <div className="text-muted">
-                        Total: {filteredAgents.length} agent(s)
-                    </div>
-                </Card.Footer>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <Card.Footer>
+                        <div className="d-flex justify-content-between align-items-center">
+                            <div className="text-muted">
+                                Affichage de {indexOfFirstAgent + 1} à {Math.min(indexOfLastAgent, filteredAgents.length)} sur {filteredAgents.length} agent(s)
+                            </div>
+                            <div className="d-flex justify-content-center align-items-center">
+                                <Button
+                                    variant="outline-primary"
+                                    size="sm"
+                                    className="me-2"
+                                    disabled={currentPage === 1}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                >
+                                    Précédent
+                                </Button>
+                                {[...Array(totalPages)].map((_, idx) => (
+                                    <Button
+                                        key={idx + 1}
+                                        variant={currentPage === idx + 1 ? "primary" : "outline-primary"}
+                                        size="sm"
+                                        className="mx-1"
+                                        onClick={() => handlePageChange(idx + 1)}
+                                    >
+                                        {idx + 1}
+                                    </Button>
+                                ))}
+                                <Button
+                                    variant="outline-primary"
+                                    size="sm"
+                                    className="ms-2"
+                                    disabled={currentPage === totalPages}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                >
+                                    Suivant
+                                </Button>
+                            </div>
+                        </div>
+                    </Card.Footer>
+                )}
+                
+                {/* Footer sans pagination si une seule page */}
+                {totalPages <= 1 && (
+                    <Card.Footer className="d-flex justify-content-between align-items-center">
+                        <div className="text-muted">
+                            Total: {filteredAgents.length} agent(s)
+                        </div>
+                    </Card.Footer>
+                )}
             </Card>
 
             {/* Modal pour changer le rôle */}
@@ -371,6 +494,37 @@ const AgentList = () => {
                     </Button>
                     <Button variant="danger" onClick={confirmDelete}>
                         Supprimer
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Modal de confirmation de validation de compte */}
+            <Modal show={showConfirmValidation} onHide={() => setShowConfirmValidation(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Valider le compte</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedAgent && (
+                        <div>
+                            <p>
+                                Êtes-vous sûr de vouloir valider le compte de l'agent
+                                <strong> {selectedAgent.nom} {selectedAgent.prenom} </strong>?
+                            </p>
+                            <p className="text-info">
+                                <small>
+                                    <strong>Note:</strong> Cette action activera définitivement son compte et lui permettra d'accéder à l'application. 
+                                    L'agent pourra alors se connecter avec ses identifiants.
+                                </small>
+                            </p>
+                        </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowConfirmValidation(false)}>
+                        Annuler
+                    </Button>
+                    <Button variant="success" onClick={confirmValidateAccount}>
+                        Valider le compte
                     </Button>
                 </Modal.Footer>
             </Modal>        </Container>

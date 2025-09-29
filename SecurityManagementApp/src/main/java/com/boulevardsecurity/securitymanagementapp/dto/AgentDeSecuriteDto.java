@@ -1,4 +1,3 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/dto/AgentDeSecuriteDto.java
 package com.boulevardsecurity.securitymanagementapp.dto;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.Role;
@@ -9,9 +8,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-/**
- * DTO « plat » pour lecture / update : on n’exporte pas le mot de passe.
- */
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class AgentDeSecuriteDto {
     private Long id;
@@ -23,6 +19,12 @@ public class AgentDeSecuriteDto {
     private LocalDate dateNaissance;
     private StatutAgent statut;
     private Role role;
+
+    /** Pour l'UI : savoir si l'email est confirmé */
+    private boolean emailVerified;
+    
+    /** Pour l'UI : savoir si le compte est approuvé par un admin */
+    private boolean adminApproved;
 
     /* Identifiants des relations */
     private Set<Long> zonesDeTravailIds;

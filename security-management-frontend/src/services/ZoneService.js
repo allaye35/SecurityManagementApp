@@ -1,60 +1,90 @@
 // src/services/ZoneService.js
-import api from "./api";
+import api, { plain } from "./api";
+
+/**
+ * Normalise le payload pour la création/màj d'une zone.
+ * - Garantit que agentIds est un tableau.
+ * - Clone l'objet pour éviter toute mutation.
+ */
+function normalizeZoneDto(dto = {}) {
+  const data = { ...dto };
+  if (data.agentIds && !Array.isArray(data.agentIds)) {
+    data.agentIds = [data.agentIds];
+  } else if (!data.agentIds) {
+    data.agentIds = [];
+  }
+  return data;
+}
 
 const ZoneService = {
-    getAll : ()          => api.get('/zones'),
-    getById: (id)        => api.get(`/zones/${id}`),
-    create : (dto)       => {
-        // Copier l'objet pour éviter de modifier l'original
-        const data = { ...dto };
-        
-        // S'assurer que les données sont au bon format
-        if (data.agentIds) {
-            if (!Array.isArray(data.agentIds)) {
-                data.agentIds = [data.agentIds];
-            }
-        } else {
-            data.agentIds = []; // Assurer qu'il y a toujours un tableau vide
-        }
-        
-        console.log("API CREATE - Données envoyées:", JSON.stringify(data, null, 2));
-        return api.post('/zones', data);
-    },
-    createWithAgents: (dto) => {
-        // Copier l'objet pour éviter de modifier l'original
-        const data = { ...dto };
-        
-        // S'assurer que dto.agentIds est un tableau
-        if (data.agentIds && !Array.isArray(data.agentIds)) {
-            data.agentIds = [data.agentIds];
-        } else if (!data.agentIds) {
-            data.agentIds = []; // Assurer qu'il y a toujours un tableau vide
-        }
-        
-        console.log("API CREATE WITH AGENTS - Données envoyées:", JSON.stringify(data, null, 2));
-        return api.post('/zones', data);
-    },
-    update : (id, dto)   => api.put(`/zones/${id}`, dto),
-    remove : (id)        => api.delete(`/zones/${id}`),
+  // ───────────────────────────
+  // LECTURE PUBLIQUE (sans auth)
+  // ───────────────────────────
+  /** Liste toutes les zones (publique) */
+  getAllPublic: () => plain.get("/zones"),
+  /** Alias rétro-compat pour ton code : getAllZones() */
+  getAllZones: () => plain.get("/zones"),
 
-    /* filtrage optionnel */
-    searchByName: (nom)      => api.get('/zones/recherche', { params: { nom } }),
-    searchByType: (typeZone) => api.get(`/zones/type/${typeZone}`),
-    
-    /* récupération des agents rattachés à une zone */
-    getAgentsForZone: (zoneId) => api.get(`/zones/${zoneId}/agents`),
-    
-    /* Nouvelles méthodes pour assigner/retirer des agents - URLs corrigées */
-    assignAgentToZone: (zoneId, agentId) => api.put(`/agents/${agentId}/zone/${zoneId}`),
-    removeAgentFromZone: (zoneId, agentId) => api.delete(`/zones/${zoneId}/agents/${agentId}`),
-    
-    /* Méthode pour assigner plusieurs agents en une seule fois */
-    assignMultipleAgentsToZone: (zoneId, agentIds) => {
-        if (!Array.isArray(agentIds)) {
-            agentIds = [agentIds];
-        }
-        return api.put(`/zones/${zoneId}/agents`, { agentIds });
-    }
+  /** Détail d'une zone (publique) */
+  getByIdPublic: (id) => plain.get(`/zones/${id}`),
+
+  /** Recherche publique par nom */
+  searchByNamePublic: (nom) =>
+    plain.get("/zones/recherche", { params: { nom } }),
+
+  /** Recherche publique par type */
+  searchByTypePublic: (typeZone) => plain.get(`/zones/type/${typeZone}`),
+
+  // ───────────────────────────
+  // LECTURE / ÉCRITURE AUTH
+  // ───────────────────────────
+  /** Liste toutes les zones (authentifié) */
+  getAll: () => api.get("/zones"),
+
+  /** Détail d'une zone (authentifié) */
+  getById: (id) => api.get(`/zones/${id}`),
+
+  /** Crée une zone (authentifié) */
+  create: (dto) => {
+    const data = normalizeZoneDto(dto);
+    // console.log("ZoneService.create payload:", data);
+    return api.post("/zones", data);
+  },
+
+  /** Variante explicite pour créer et lier des agents (authentifié) */
+  createWithAgents: (dto) => {
+    const data = normalizeZoneDto(dto);
+    // console.log("ZoneService.createWithAgents payload:", data);
+    return api.post("/zones", data);
+  },
+
+  /** Met à jour une zone (authentifié) */
+  update: (id, dto) => api.put(`/zones/${id}`, dto),
+
+  /** Supprime une zone (authentifié) */
+  remove: (id) => api.delete(`/zones/${id}`),
+
+  // ── filtres (authentifié) ─────────────────────────
+  searchByName: (nom) => api.get("/zones/recherche", { params: { nom } }),
+  searchByType: (typeZone) => api.get(`/zones/type/${typeZone}`),
+
+  // ── relations Agents <-> Zone (authentifié) ───────
+  /** Récupère les agents de la zone */
+  getAgentsForZone: (zoneId) => api.get(`/zones/${zoneId}/agents`),
+
+  /** Assigne 1 agent à une zone (selon tes contrôleurs) */
+  assignAgentToZone: (zoneId, agentId) =>
+    api.put(`/agents/${agentId}/zone/${zoneId}`),
+
+  /** Retire 1 agent d'une zone */
+  removeAgentFromZone: (zoneId, agentId) =>
+    api.delete(`/zones/${zoneId}/agents/${agentId}`),
+
+  /** Assigne plusieurs agents d'un coup */
+  assignMultipleAgentsToZone: (zoneId, agentIds) => {
+    const list = Array.isArray(agentIds) ? agentIds : [agentIds];
+    return api.put(`/zones/${zoneId}/agents`, { agentIds: list });
+  },
 };
 
 export default ZoneService;

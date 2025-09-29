@@ -48,7 +48,7 @@ public class FicheDePaie {
     private Double netAPayer;
 
     // Relations
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "agent_id")
     private AgentDeSecurite agentDeSecurite;
 
@@ -58,11 +58,11 @@ public class FicheDePaie {
     private byte[] documentPdf;
 
     // Cotisations détaillées par ligne (optionnel mais recommandé si tu veux détailler chaque cotisation)
-    @OneToMany(mappedBy = "ficheDePaie", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ficheDePaie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Builder.Default
     private List<LigneCotisation> lignesCotisation = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "contrat_de_travail_id")
     private ContratDeTravail contratDeTravail;
 

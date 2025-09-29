@@ -8,6 +8,7 @@ import com.boulevardsecurity.securitymanagementapp.repository.GestionnaireNotifi
 import com.boulevardsecurity.securitymanagementapp.service.GestionnaireNotificationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ public class GestionnaireNotificationsServiceImpl implements GestionnaireNotific
     private final GestionnaireNotificationsMapper mapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<GestionnaireNotificationsDto> getAll() {
         return repo.findAll().stream()
                 .map(mapper::toDto)
@@ -28,11 +30,13 @@ public class GestionnaireNotificationsServiceImpl implements GestionnaireNotific
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<GestionnaireNotificationsDto> getById(Long id) {
         return repo.findById(id).map(mapper::toDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GestionnaireNotificationsDto> getByAgent(Long agentId) {
         return repo.findByAgentDeSecuriteId(agentId).stream()
                 .map(mapper::toDto)
@@ -40,6 +44,7 @@ public class GestionnaireNotificationsServiceImpl implements GestionnaireNotific
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GestionnaireNotificationsDto> getByClient(Long clientId) {
         return repo.findByClientId(clientId).stream()
                 .map(mapper::toDto)
