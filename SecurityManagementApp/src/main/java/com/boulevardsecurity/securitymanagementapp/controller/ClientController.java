@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/clients")
@@ -53,6 +54,20 @@ public class ClientController {
     @PutMapping("/{id}")
     public ResponseEntity<ClientDto> update(@PathVariable Long id, @RequestBody ClientDto dto) {
         ClientDto updated = service.updateClient(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{id}/role")
+    public ResponseEntity<ClientDto> updateRole(@PathVariable Long id, @RequestBody Map<String, String> roleData) {
+        // Récupérer le rôle depuis le body
+        String newRole = roleData.get("role");
+        
+        // Validation des rôles autorisés
+        if (newRole == null || (!newRole.equals("ADMIN") && !newRole.equals("CLIENT") && !newRole.equals("AGENT_SECURITE"))) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        ClientDto updated = service.updateClientRole(id, newRole);
         return ResponseEntity.ok(updated);
     }
 

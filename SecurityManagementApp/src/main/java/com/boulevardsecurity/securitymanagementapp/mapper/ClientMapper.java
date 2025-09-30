@@ -11,7 +11,6 @@ import com.boulevardsecurity.securitymanagementapp.repository.GestionnaireNotifi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -88,6 +87,11 @@ public class ClientMapper {
 
     /** DTO update ➜ ENTITÉ existante (ne touche pas aux drapeaux de sécurité) */
     public void updateEntityFromDto(ClientDto dto, Client c) {
+        // Mise à jour du rôle (ajouté pour permettre le changement de rôle par l'admin)
+        if (dto.getRole() != null) {
+            c.setRole(dto.getRole());
+        }
+        
         c.setNom(dto.getNom());
         c.setPrenom(dto.getPrenom());
         c.setSiege(dto.getSiege());
@@ -101,41 +105,29 @@ public class ClientMapper {
         c.setPays(dto.getPays());
         c.setModeContactPrefere(dto.getModeContactPrefere());
 
-        // DEVIS
-        if (dto.getDevisIds() != null) {
-            if (dto.getDevisIds().isEmpty()) {
-                c.getDevisList().clear();
-            } else {
-                Set<Long> existants = c.getDevisList().stream().map(Devis::getId).collect(Collectors.toSet());
-                for (Long id : dto.getDevisIds()) {
-                    if (!existants.contains(id)) {
-                        Devis d = devisRepo.findById(id)
-                                .orElseThrow(() -> new IllegalArgumentException("Devis id=" + id + " introuvable"));
-                        d.setClient(c);
-                        c.getDevisList().add(d);
-                    }
-                }
-                c.getDevisList().removeIf(d -> !dto.getDevisIds().contains(d.getId()));
-            }
-        }
+        // NE PAS mettre à jour les collections pour éviter les problèmes de lazy loading
+        // Les collections (devis et notifications) ne sont mises à jour que si explicitement demandé
+    }
 
-        // NOTIFICATIONS
-        if (dto.getNotificationIds() != null) {
-            if (dto.getNotificationIds().isEmpty()) {
-                c.getNotifications().clear();
-            } else {
-                Set<Long> existants = c.getNotifications().stream()
-                        .map(GestionnaireNotifications::getId).collect(Collectors.toSet());
-                for (Long id : dto.getNotificationIds()) {
-                    if (!existants.contains(id)) {
-                        GestionnaireNotifications n = notifRepo.findById(id)
-                                .orElseThrow(() -> new IllegalArgumentException("Notification id=" + id + " introuvable"));
-                        n.setClient(c);
-                        c.getNotifications().add(n);
-                    }
-                }
-                c.getNotifications().removeIf(n -> !dto.getNotificationIds().contains(n.getId()));
-            }
+    /** Méthode spécifique pour la mise à jour simple (sans collections) */
+    public void updateBasicFieldsFromDto(ClientDto dto, Client c) {
+        // Mise à jour du rôle
+        if (dto.getRole() != null) {
+            c.setRole(dto.getRole());
         }
+        
+        // Mise à jour des champs simples uniquement
+        if (dto.getNom() != null) c.setNom(dto.getNom());
+        if (dto.getPrenom() != null) c.setPrenom(dto.getPrenom());
+        if (dto.getSiege() != null) c.setSiege(dto.getSiege());
+        if (dto.getRepresentant() != null) c.setRepresentant(dto.getRepresentant());
+        if (dto.getNumeroSiret() != null) c.setNumeroSiret(dto.getNumeroSiret());
+        if (dto.getTelephone() != null) c.setTelephone(dto.getTelephone());
+        if (dto.getAdresse() != null) c.setAdresse(dto.getAdresse());
+        if (dto.getNumeroRue() != null) c.setNumeroRue(dto.getNumeroRue());
+        if (dto.getCodePostal() != null) c.setCodePostal(dto.getCodePostal());
+        if (dto.getVille() != null) c.setVille(dto.getVille());
+        if (dto.getPays() != null) c.setPays(dto.getPays());
+        if (dto.getModeContactPrefere() != null) c.setModeContactPrefere(dto.getModeContactPrefere());
     }
 }

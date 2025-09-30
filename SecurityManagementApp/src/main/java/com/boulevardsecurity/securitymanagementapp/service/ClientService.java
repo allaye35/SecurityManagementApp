@@ -20,6 +20,9 @@ public interface ClientService {
     Optional<ClientDto> getClientByNom(String nom);
 
     ClientDto updateClient(Long id, ClientDto dto);
+    
+    // Méthode spécifique pour changer le rôle (évite les problèmes de lazy loading)
+    ClientDto updateClientRole(Long id, String newRole);
 
     void deleteClient(Long id);
     // --- nouveaux pour l’approbation admin ---

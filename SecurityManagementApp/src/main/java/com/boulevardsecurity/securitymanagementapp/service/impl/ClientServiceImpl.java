@@ -5,6 +5,7 @@ import com.boulevardsecurity.securitymanagementapp.dto.ClientCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.ClientDto;
 import com.boulevardsecurity.securitymanagementapp.mapper.ClientMapper;
 import com.boulevardsecurity.securitymanagementapp.model.Client;
+import com.boulevardsecurity.securitymanagementapp.Enums.Role;
 import com.boulevardsecurity.securitymanagementapp.repository.ClientRepository;
 import com.boulevardsecurity.securitymanagementapp.service.ClientService;
 import com.boulevardsecurity.securitymanagementapp.util.EmailUtil;
@@ -59,10 +60,22 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @Transactional
     public ClientDto updateClient(Long id, ClientDto dto) {
         Client existing = repo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Client introuvable : " + id));
         mapper.updateEntityFromDto(dto, existing);
+        Client saved = repo.save(existing);
+        return mapper.toDto(saved);
+    }
+
+    @Override
+    @Transactional
+    public ClientDto updateClientRole(Long id, String newRole) {
+        Client existing = repo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Client introuvable : " + id));
+        // Mise à jour directe du rôle pour éviter les problèmes de lazy loading
+        existing.setRole(Role.valueOf(newRole));
         Client saved = repo.save(existing);
         return mapper.toDto(saved);
     }

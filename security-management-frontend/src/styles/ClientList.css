@@ -8,6 +8,40 @@
   background-color: rgba(0, 123, 255, 0.05);
 }
 
+.badge.cursor-pointer:hover {
+  background-color: rgba(255, 193, 7, 0.8) !important;
+  transform: scale(1.05);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Style pour le menu dropdown d'actions */
+.dropdown-menu {
+  min-width: 200px;
+}
+
+.dropdown-header {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-item.text-success:hover {
+  background-color: #d4edda;
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: #f8d7da;
+}
+
 .table-responsive {
   overflow-x: auto;
   min-height: 300px;
@@ -27,6 +61,41 @@
 .badge {
   font-weight: 500;
   padding: 0.5em 0.85em;
+}
+
+/* Style pour le statut de validation */
+.status-cell {
+  min-width: 120px;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+}
+
+.status-validated {
+  background-color: #d1e7dd;
+  border: 1px solid #badbcc;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+}
+
+.validate-btn {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+  }
 }
 
 /* Style pour les boutons d'action */

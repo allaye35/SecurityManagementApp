@@ -3,17 +3,24 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
   Container, Row, Col, Card, Table, Button, Form, 
-  InputGroup, Pagination, Badge, Spinner, Alert 
+  InputGroup, Pagination, Badge, Spinner, Alert, Dropdown
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
   faUserTie, faSearch, faPlus, faEdit, faTrashAlt, 
-  faEye, faSort, faSortUp, faSortDown, faFilter, faSync
+  faEye, faSort, faSortUp, faSortDown, faFilter, faSync, faCheckCircle,
+  faEllipsisV, faUserShield, faUserTag, faUserGear
 } from "@fortawesome/free-solid-svg-icons";
 import ClientService from "../../services/ClientService";
+import adminAccountsService from "../../services/adminAccountsService";
+import { useAuth } from "../../context/AuthContext";
 import "../../styles/ClientList.css";
 
 export default function ClientList() {
+  /* ─── context ──────────────────────────────────────────── */
+  const { user } = useAuth();
+  const isAdmin = user && user.role === 'ADMIN';
+
   /* ─── state ────────────────────────────────────────────── */
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +36,9 @@ export default function ClientList() {
   const [sortField, setSortField] = useState('id');
   const [sortDirection, setSortDirection] = useState('asc');
   const [filterType, setFilterType] = useState('');
+  const [filterStatus, setFilterStatus] = useState(''); // Nouveau filtre pour le statut
   const [clientTypes, setClientTypes] = useState([]);
+  const [pendingCount, setPendingCount] = useState(0); // Compteur des comptes en attente
 
   /* ─── fetch data with pagination ───────────────────────── */
   useEffect(() => {
@@ -51,6 +60,13 @@ export default function ClientList() {
             }
           });
           setClientTypes(Array.from(types));
+          
+          // Calculer le nombre de comptes en attente
+          const pendingClients = allClients.filter(client => 
+            client.accountValidated === false || client.accountValidated === undefined
+          );
+          setPendingCount(pendingClients.length);
+          
           // Appliquer les filtres et le tri
           let filteredClients = applyFiltersAndSort(allClients);
           setTotalItems(filteredClients.length);
@@ -71,7 +87,8 @@ export default function ClientList() {
       });
 
     return () => (mounted = false);             // clean up
-  }, [currentPage, itemsPerPage, searchTerm, sortField, sortDirection, filterType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, itemsPerPage, searchTerm, sortField, sortDirection, filterType, filterStatus]);
   // Fonction pour normaliser les données des clients
   const normalizeClientData = (client) => {
     return {
@@ -87,13 +104,16 @@ export default function ClientList() {
       codePostal: client.codePostal || '',
       ville: client.ville || '',
       pays: client.pays || 'France',
-      role: client.role || 'USER',
+      role: client.role || 'CLIENT',
       typeClient: client.typeClient || 'CLIENT',
       siege: client.siege || '',
       representant: client.representant || '',
       numeroSiret: client.numeroSiret || '',
       modeContactPrefere: client.modeContactPrefere || '',
-      username: client.username || ''
+      username: client.username || '',
+      // Correction: utiliser le bon champ du backend
+      accountValidated: client.adminApproved === true,
+      emailVerified: client.emailVerified === true
     };
   };
 
@@ -116,6 +136,15 @@ export default function ClientList() {
     // Filtrage par type
     if (filterType) {
       result = result.filter(client => client.typeClient === filterType);
+    }
+    
+    // Filtrage par statut de validation
+    if (filterStatus) {
+      if (filterStatus === 'validated') {
+        result = result.filter(client => client.accountValidated === true);
+      } else if (filterStatus === 'pending') {
+        result = result.filter(client => client.accountValidated === false);
+      }
     }
     
     // Tri
@@ -149,6 +178,12 @@ export default function ClientList() {
                     // Re-appliquer les filtres et tri
           let filteredClients = applyFiltersAndSort(allClients);
           
+          // Calculer le nombre de comptes en attente
+          const pendingClients = allClients.filter(client => 
+            client.accountValidated === false || client.accountValidated === undefined
+          );
+          setPendingCount(pendingClients.length);
+          
           // Ajuster la page courante si nécessaire
           const maxPage = Math.ceil(filteredClients.length / itemsPerPage);
           const newCurrentPage = currentPage > maxPage ? maxPage || 1 : currentPage;
@@ -172,6 +207,144 @@ export default function ClientList() {
       console.error("Erreur lors de la suppression:", err);
       setError("Une erreur s'est produite lors de la suppression du client.");
       setLoading(false);
+    }
+  };
+  
+  /* ─── validate client account ──────────────────────────── */
+  const handleValidateAccount = async (clientId, clientName) => {
+    if (!window.confirm(`Êtes-vous sûr de vouloir valider le compte de ${clientName} ?`)) return;
+    
+    try {
+      setLoading(true);
+      await adminAccountsService.approveClient(clientId);
+      
+      // Rafraîchir la liste après validation
+      ClientService.getAll()
+        .then(response => {
+          const allClients = response.data;
+          if (allClients) {
+            // Extraire les types de clients uniques pour le filtre
+            const types = new Set();
+            allClients.forEach(client => {
+              if (client.typeClient) {
+                types.add(client.typeClient);
+              }
+            });
+            setClientTypes(Array.from(types));
+            
+            // Calculer le nombre de comptes en attente
+            const pendingClients = allClients.filter(client => 
+              client.accountValidated === false || client.accountValidated === undefined
+            );
+            setPendingCount(pendingClients.length);
+            
+            // Appliquer les filtres et le tri
+            let filteredClients = applyFiltersAndSort(allClients);
+            setTotalItems(filteredClients.length);
+            
+            // Pagination
+            const indexOfLastItem = currentPage * itemsPerPage;
+            const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+            const currentItems = filteredClients.slice(indexOfFirstItem, indexOfLastItem);
+            
+            setClients(currentItems);
+            setLoading(false);
+            
+            // Message de succès (optionnel)
+            alert(`Le compte de ${clientName} a été validé avec succès !`);
+          }
+        })
+        .catch(err => {
+          console.error("Erreur lors du rafraîchissement des clients:", err);
+          setError("Une erreur s'est produite lors de la mise à jour de la liste.");
+          setLoading(false);
+        });
+        
+    } catch (err) {
+      console.error("Erreur lors de la validation du compte:", err);
+      setError("Une erreur s'est produite lors de la validation du compte client.");
+      setLoading(false);
+      alert("Erreur lors de la validation du compte. Veuillez réessayer.");
+    }
+  };
+  
+  /* ─── change client role ───────────────────────────────── */
+  const handleChangeRole = async (clientId, clientName, newRole) => {
+    if (!window.confirm(`Êtes-vous sûr de vouloir changer le rôle de ${clientName} vers ${newRole} ?`)) return;
+    
+    try {
+      setLoading(true);
+      console.log(`Tentative de changement de rôle pour le client ${clientId} vers ${newRole}`);
+      
+      // Utiliser le nouvel endpoint spécialisé pour éviter les problèmes de lazy loading
+      console.log("Envoi de la mise à jour du rôle...");
+      await adminAccountsService.changeClientRole(clientId, newRole);
+      console.log("Mise à jour réussie !");
+      
+      // Rafraîchir la liste après modification
+      const allClientsResponse = await ClientService.getAll();
+      const allClients = allClientsResponse.data;
+      
+      if (allClients) {
+        // Extraire les types de clients uniques pour le filtre
+        const types = new Set();
+        allClients.forEach(client => {
+          if (client.typeClient) {
+            types.add(client.typeClient);
+          }
+        });
+        setClientTypes(Array.from(types));
+        
+        // Calculer le nombre de comptes en attente
+        const pendingClients = allClients.filter(client => 
+          client.adminApproved === false || client.adminApproved === undefined
+        );
+        setPendingCount(pendingClients.length);
+        
+        // Appliquer les filtres et le tri
+        let filteredClients = applyFiltersAndSort(allClients);
+        setTotalItems(filteredClients.length);
+        
+        // Pagination
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        const currentItems = filteredClients.slice(indexOfFirstItem, indexOfLastItem);
+        
+        setClients(currentItems);
+        setLoading(false);
+        
+        alert(`Le rôle de ${clientName} a été changé vers ${newRole} avec succès !`);
+      }
+        
+    } catch (err) {
+      console.error("Erreur détaillée lors du changement de rôle:", err);
+      console.error("Response data:", err.response?.data);
+      console.error("Response status:", err.response?.status);
+      console.error("Response headers:", err.response?.headers);
+      
+      // Message d'erreur plus spécifique selon le type d'erreur
+      let errorMessage = "Une erreur s'est produite lors du changement de rôle.";
+      if (err.response) {
+        switch (err.response.status) {
+          case 404:
+            errorMessage = "Client non trouvé.";
+            break;
+          case 403:
+            errorMessage = "Vous n'avez pas les droits pour effectuer cette action.";
+            break;
+          case 500:
+            errorMessage = "Erreur serveur. Veuillez réessayer plus tard.";
+            break;
+          default:
+            errorMessage = `Erreur ${err.response.status}: ${err.response.data?.message || 'Erreur inconnue'}`;
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
+      setLoading(false);
+      alert(`Erreur: ${errorMessage}`);
     }
   };
   
@@ -202,6 +375,7 @@ export default function ClientList() {
   const handleResetFilters = () => {
     setSearchTerm('');
     setFilterType('');
+    setFilterStatus('');
     setSortField('id');
     setSortDirection('asc');
     setCurrentPage(1);
@@ -370,24 +544,56 @@ export default function ClientList() {
       <Card className="shadow-sm border-0">
         <Card.Body className="p-4">
           <Card.Title className="d-flex justify-content-between align-items-center mb-4">
-            <h4 className="mb-0">
-              <FontAwesomeIcon icon={faUserTie} className="me-2" />
-              Liste des Clients
-            </h4>
-            <Button 
-              as={Link} 
-              to="/clients/create" 
-              variant="primary"
-              className="d-flex align-items-center"
-            >
-              <FontAwesomeIcon icon={faPlus} className="me-2" />
-              Nouveau client
-            </Button>
+            <div className="d-flex align-items-center">
+              <h4 className="mb-0 me-3">
+                <FontAwesomeIcon icon={faUserTie} className="me-2" />
+                Liste des Clients
+              </h4>
+              {isAdmin && pendingCount > 0 && (
+                <Badge 
+                  bg="warning" 
+                  text="dark" 
+                  className="fs-6 cursor-pointer" 
+                  title="Cliquer pour voir uniquement les comptes en attente"
+                  onClick={() => {
+                    setFilterStatus('pending');
+                    setCurrentPage(1);
+                  }}
+                >
+                  {pendingCount} en attente de validation
+                </Badge>
+              )}
+            </div>
+            <div className="d-flex gap-2">
+              {isAdmin && (
+                <Button 
+                  variant="outline-warning"
+                  size="sm"
+                  onClick={() => {
+                    setFilterStatus('pending');
+                    setCurrentPage(1);
+                  }}
+                  title="Voir seulement les comptes en attente"
+                >
+                  <FontAwesomeIcon icon={faFilter} className="me-1" />
+                  En attente
+                </Button>
+              )}
+              <Button 
+                as={Link} 
+                to="/clients/create" 
+                variant="primary"
+                className="d-flex align-items-center"
+              >
+                <FontAwesomeIcon icon={faPlus} className="me-2" />
+                Nouveau client
+              </Button>
+            </div>
           </Card.Title>
           
           {/* Filtres et recherche */}
           <Row className="mb-4 g-3">
-            <Col md={6} lg={5}>
+            <Col md={6} lg={4}>
               <InputGroup>
                 <InputGroup.Text>
                   <FontAwesomeIcon icon={faSearch} />
@@ -407,7 +613,7 @@ export default function ClientList() {
                 )}
               </InputGroup>
             </Col>
-            <Col md={3} lg={3}>
+            <Col md={3} lg={2}>
               <Form.Group>
                 <Form.Select
                   value={filterType}
@@ -423,6 +629,23 @@ export default function ClientList() {
                 </Form.Select>
               </Form.Group>
             </Col>
+            {isAdmin && (
+              <Col md={3} lg={2}>
+                <Form.Group>
+                  <Form.Select
+                    value={filterStatus}
+                    onChange={e => {
+                      setFilterStatus(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <option value="">Tous les statuts</option>
+                    <option value="validated">Validés</option>
+                    <option value="pending">En attente</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            )}
             <Col md={3} lg={2}>
               <Form.Group>
                 <Form.Select 
@@ -449,7 +672,7 @@ export default function ClientList() {
           </Row>
           
           {/* Message si aucun résultat avec les filtres */}
-          {clients.length === 0 && (searchTerm || filterType) && (
+          {clients.length === 0 && (searchTerm || filterType || filterStatus) && (
             <Alert variant="info">
               Aucun client ne correspond à vos critères de recherche.
               <Button 
@@ -517,6 +740,7 @@ export default function ClientList() {
                       >
                         Tél. {renderSortIcon('telephone')}
                       </th>
+                      <th>Statut</th>
                       <th>Adresse</th>
                       <th className="text-center">Actions</th>
                     </tr>
@@ -530,10 +754,11 @@ export default function ClientList() {
                           <Badge 
                             bg={
                               client.role === 'ADMIN' ? 'danger' : 
-                              client.role === 'USER' ? 'primary' : 'secondary'
+                              client.role === 'CLIENT' ? 'primary' : 
+                              client.role === 'AGENT_SECURITE' ? 'success' : 'secondary'
                             }
                           >
-                            {client.role || "—"}
+                            {client.role === 'AGENT_SECURITE' ? 'AGENT SÉCURITÉ' : client.role || "—"}
                           </Badge>
                         </td>
                         <td>
@@ -550,6 +775,24 @@ export default function ClientList() {
                         <td>{client.nom || "—"}</td>
                         <td>{client.prenom || "—"}</td>
                         <td>{client.telephone || "—"}</td>
+                        <td className="status-cell">
+                          {client.accountValidated ? (
+                            <div className="status-validated">
+                              <Badge bg="success">
+                                <FontAwesomeIcon icon={faCheckCircle} className="me-1" />
+                                Validé
+                              </Badge>
+                            </div>
+                          ) : (
+                            <div className="status-pending">
+                              <div className="d-flex align-items-center gap-2">
+                                <Badge bg="warning" text="dark">
+                                  En attente validation admin
+                                </Badge>
+                              </div>
+                            </div>
+                          )}
+                        </td>
                         <td>
                           {[client.adresse, client.codePostal, client.ville]
                             .filter(Boolean)
@@ -557,6 +800,7 @@ export default function ClientList() {
                         </td>
                         <td>
                           <div className="d-flex justify-content-center gap-2">
+                            {/* Boutons d'action normaux */}
                             <Button 
                               as={Link} 
                               to={`/clients/${client.id}`}
@@ -583,6 +827,76 @@ export default function ClientList() {
                             >
                               <FontAwesomeIcon icon={faTrashAlt} />
                             </Button>
+                            
+                            {/* Menu d'actions admin */}
+                            {isAdmin && (
+                              <Dropdown>
+                                <Dropdown.Toggle 
+                                  variant="outline-secondary" 
+                                  size="sm"
+                                  id={`dropdown-${client.id}`}
+                                  title="Actions administrateur"
+                                >
+                                  <FontAwesomeIcon icon={faEllipsisV} />
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                  {!client.accountValidated && (
+                                    <>
+                                      <Dropdown.Item
+                                        className="text-success"
+                                        onClick={() => handleValidateAccount(
+                                          client.id, 
+                                          `${client.prenom} ${client.nom}`.trim() || client.email
+                                        )}
+                                      >
+                                        <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                                        Valider le compte
+                                      </Dropdown.Item>
+                                      <Dropdown.Divider />
+                                    </>
+                                  )}
+                                  <Dropdown.Header>Changer le rôle</Dropdown.Header>
+                                  {client.role !== 'CLIENT' && (
+                                    <Dropdown.Item
+                                      onClick={() => handleChangeRole(
+                                        client.id, 
+                                        `${client.prenom} ${client.nom}`.trim() || client.email,
+                                        'CLIENT'
+                                      )}
+                                    >
+                                      <FontAwesomeIcon icon={faUserTag} className="me-2" />
+                                      Définir comme Client
+                                    </Dropdown.Item>
+                                  )}
+                                  {client.role !== 'AGENT_SECURITE' && (
+                                    <Dropdown.Item
+                                      onClick={() => handleChangeRole(
+                                        client.id, 
+                                        `${client.prenom} ${client.nom}`.trim() || client.email,
+                                        'AGENT_SECURITE'
+                                      )}
+                                    >
+                                      <FontAwesomeIcon icon={faUserGear} className="me-2" />
+                                      Définir comme Agent de Sécurité
+                                    </Dropdown.Item>
+                                  )}
+                                  {client.role !== 'ADMIN' && (
+                                    <Dropdown.Item
+                                      className="text-danger"
+                                      onClick={() => handleChangeRole(
+                                        client.id, 
+                                        `${client.prenom} ${client.nom}`.trim() || client.email,
+                                        'ADMIN'
+                                      )}
+                                    >
+                                      <FontAwesomeIcon icon={faUserShield} className="me-2" />
+                                      Définir comme Admin
+                                    </Dropdown.Item>
+                                  )}
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            )}
                           </div>
                         </td>
                       </tr>
