@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+// Repository JPA
 public interface RapportInterventionRepository extends JpaRepository<RapportIntervention, Long> {
-    // 🔹 Récupérer tous les rapports d'une mission spécifique
     List<RapportIntervention> findByMissionId(Long missionId);}

@@ -71,9 +71,6 @@ public class PointageController {
         }
     }
 
-    /**
-     * Endpoint pour la prise de service
-     */
     @PostMapping("/prise-service")
     public ResponseEntity<?> priseDeService(@RequestBody PointageCreateDto dto) {
         try {
@@ -88,9 +85,6 @@ public class PointageController {
         }
     }
 
-    /**
-     * Endpoint pour la fin de service
-     */
     @PostMapping("/fin-service")
     public ResponseEntity<?> finDeService(@RequestBody PointageCreateDto dto) {
         try {
@@ -105,9 +99,6 @@ public class PointageController {
         }
     }
 
-    /**
-     * Récupérer les agents actuellement en service pour une mission
-     */
     @GetMapping("/mission/{idMission}/agents-en-service")
     public ResponseEntity<List<AgentDeSecuriteDto>> getAgentsEnService(@PathVariable Long idMission) {
         try {

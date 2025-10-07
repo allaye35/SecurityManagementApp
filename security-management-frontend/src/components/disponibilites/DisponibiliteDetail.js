@@ -29,18 +29,15 @@ const DisponibiliteDetail = () => {
             try {
                 setLoading(true);
                 
-                // Récupérer les détails de la disponibilité
                 const dispoResponse = await DisponibiliteService.getById(id);
                 const dispoData = dispoResponse.data;
                 setDisponibilite(dispoData);
                 
-                // Récupérer les informations de l'agent associé
                 if (dispoData.agentId) {
                     const agentResponse = await AgentService.getAgentById(dispoData.agentId);
                     setAgent(agentResponse.data);
                 }
                 
-                // Vérifier les chevauchements avec d'autres disponibilités
                 const allDispoResponse = await DisponibiliteService.getAll();
                 const allDispo = allDispoResponse.data;
                 const conflicts = allDispo.filter(d => 
@@ -432,7 +429,7 @@ const DisponibiliteDetail = () => {
                 </Row>
             )}
 
-            {/* Modal de confirmation de suppression */}
+            {}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
                 <Modal.Header closeButton className="bg-danger text-white">
                     <Modal.Title className="d-flex align-items-center">

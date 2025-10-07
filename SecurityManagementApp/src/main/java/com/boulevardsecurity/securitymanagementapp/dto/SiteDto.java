@@ -17,7 +17,6 @@ public class SiteDto {
     private String region;
     private String pays;
 
-    /** Liste simplifiée des missions (id) rattachées à ce site */
     private List<Long> missionsIds;
 }
 

@@ -18,7 +18,7 @@ const CreateEntreprise = () => {
     rue: "",
     codePostal: "",
     ville: "",
-    pays: "France", // Valeur par défaut
+    pays: "France",
     telephone: "",
     email: "",
     devisIds: [],
@@ -35,12 +35,11 @@ const CreateEntreprise = () => {
   const [selectedDevis, setSelectedDevis] = useState([]);
   const [devisLoading, setDevisLoading] = useState(false);
   
-  const navigate = useNavigate();  // Chargement des contrats de travail disponibles
+  const navigate = useNavigate();
   useEffect(() => {
     setContratsLoading(true);
     ContratDeTravailService.getAll()
       .then(response => {
-        // Tous les contrats doivent être disponibles pour la création
         setContratsDeTravail(response.data);
         setContratsLoading(false);
       })
@@ -49,12 +48,10 @@ const CreateEntreprise = () => {
         setContratsLoading(false);
       });
   }, []);
-    // Chargement des devis disponibles
   useEffect(() => {
     setDevisLoading(true);
     DevisService.getAll()
       .then(response => {
-        // Filtrer pour n'inclure que les devis qui ne sont pas déjà associés à une entreprise
         const filteredDevis = response.data.filter(devis => !devis.entrepriseId);
         setDevis(filteredDevis);
         setDevisLoading(false);
@@ -72,7 +69,6 @@ const CreateEntreprise = () => {
       [name]: value
     });
   };
-    // Gérer la sélection des contrats
   const handleContratsChange = (selectedOptions) => {
     const selectedIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
     setSelectedContrats(selectedIds);
@@ -83,7 +79,6 @@ const CreateEntreprise = () => {
     });
   };
   
-  // Gérer la sélection des devis
   const handleDevisChange = (selectedOptions) => {
     const selectedIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
     setSelectedDevis(selectedIds);
@@ -94,12 +89,10 @@ const CreateEntreprise = () => {
     });
   };
 
-  // Formatage automatique du SIRET
   const handleSiretChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ''); // Enlever tous les caractères non numériques
-    if (value.length > 14) value = value.slice(0, 14); // Limiter à 14 chiffres
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 14) value = value.slice(0, 14);
     
-    // Formater avec des espaces
     if (value.length > 9) {
       value = value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6, 9) + ' ' + value.slice(9);
     } else if (value.length > 6) {
@@ -114,12 +107,10 @@ const CreateEntreprise = () => {
     });
   };
 
-  // Formatage automatique du téléphone
   const handlePhoneChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ''); // Enlever tous les caractères non numériques
-    if (value.length > 10) value = value.slice(0, 10); // Limiter à 10 chiffres
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 10) value = value.slice(0, 10);
     
-    // Formater avec des espaces
     if (value.length > 8) {
       value = value.slice(0, 2) + ' ' + value.slice(2, 4) + ' ' + value.slice(4, 6) + ' ' + value.slice(6, 8) + ' ' + value.slice(8);
     } else if (value.length > 6) {
@@ -145,24 +136,19 @@ const CreateEntreprise = () => {
     }    setLoading(true);
     setError(null);    
     
-    // S'assurer que les contratsDeTravailIds sont inclus dans les données envoyées
-    // Convertir les valeurs en nombre si nécessaire et s'assurer qu'il n'y a pas de valeurs nulles
     const contratIds = selectedContrats.filter(id => id !== null).map(id => Number(id) || id);
     
-    // S'assurer que les devisIds sont inclus dans les données envoyées
     const devisIds = selectedDevis.filter(id => id !== null).map(id => Number(id) || id);
     
-    // Enlever les espaces du numéro de téléphone car il semble y avoir une contrainte d'unicité
     const formattedTelephone = entreprise.telephone ? entreprise.telephone.replace(/\s+/g, '') : '';
     
     const entrepriseToCreate = {
       ...entreprise,
       telephone: formattedTelephone,
-      contratsDeTravailIds: contratIds, // Inclure les contrats sélectionnés
-      devisIds: devisIds                // Inclure les devis sélectionnés
+      contratsDeTravailIds: contratIds,
+      devisIds: devisIds
     };
     
-    // Vérifier que l'objet est correctement formaté avant envoi
     console.log("Données entreprise envoyées:", entrepriseToCreate);
     
     EntrepriseService.createEntreprise(entrepriseToCreate)

@@ -1,5 +1,5 @@
 // src/services/SiteService.js
-import api from "./api";       // axios.create({ baseURL:"http://localhost:8080/api" })
+import api from "./api";
 
 const SiteService = {
   getAllSites: () => {

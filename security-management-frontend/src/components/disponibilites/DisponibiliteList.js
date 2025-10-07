@@ -10,7 +10,7 @@ import {
 } from 'react-icons/fa';
 import DisponibiliteService from "../../services/DisponibiliteService";
 import AgentService from "../../services/AgentService";
-import "../../styles/AgentList.css"; // reprend styles existants
+import "../../styles/AgentList.css";
 
 const DisponibiliteList = () => {
     const [list, setList] = useState([]);
@@ -23,20 +23,17 @@ const DisponibiliteList = () => {
     const [filterStatus, setFilterStatus] = useState('all');
     const [sortField, setSortField] = useState('dateDebut');
     const [sortDirection, setSortDirection] = useState('asc');
-    const [viewMode, setViewMode] = useState('table'); // 'table', 'grid', 'stats'
+    const [viewMode, setViewMode] = useState('table');
     const [showExportOptions, setShowExportOptions] = useState(false);
     const [selectedAgent, setSelectedAgent] = useState('all');
     const [showNotification, setShowNotification] = useState(false);
     const [notification, setNotification] = useState({ message: '', variant: 'success' });
 
-    // Fonction pour trier la liste
     const sortedList = () => {
         return [...list].filter(d => {
-            // Filtre par recherche
             const agentInfo = getAgentInfo(d.agentId).toLowerCase();
             const searchMatch = searchTerm === '' || agentInfo.includes(searchTerm.toLowerCase());
             
-            // Filtre par statut
             const status = getDisponibiliteStatus(d.dateDebut, d.dateFin).status;
             const statusMatch = filterStatus === 'all' || status === filterStatus;
             
@@ -63,31 +60,25 @@ const DisponibiliteList = () => {
         });
     };
 
-    // Fonction pour charger les données
     const loadData = () => {
         setLoading(true);
         setError(null);
 
-        // Chargement des disponibilités
         DisponibiliteService.getAll()
             .then(res => {
                 setList(res.data);
                 setLoading(false);
-                // Afficher une notification de succès
                 showTemporaryNotification('Données chargées avec succès', 'success');
             })
             .catch(err => {
                 console.error("Erreur lors du chargement des disponibilités", err);
                 setError("Impossible de charger les disponibilités.");
                 setLoading(false);
-                // Afficher une notification d'erreur
                 showTemporaryNotification('Erreur lors du chargement des données', 'danger');
             });
         
-        // Chargement des agents pour avoir les détails
         AgentService.getAllAgents()
             .then(res => {
-                // Créer un index des agents par ID pour faciliter la recherche
                 const agentsIndex = {};
                 res.data.forEach(agent => {
                     agentsIndex[agent.id] = agent;
@@ -104,14 +95,12 @@ const DisponibiliteList = () => {
         loadData();
     }, []);
 
-    // Fonction pour afficher une notification temporaire
     const showTemporaryNotification = (message, variant = 'success') => {
         setNotification({ message, variant });
         setShowNotification(true);
-        setTimeout(() => setShowNotification(false), 3000); // Disparaît après 3 secondes
+        setTimeout(() => setShowNotification(false), 3000);
     };
 
-    // Fonction pour exporter les données en CSV
     const exportToCSV = () => {
         const headers = ['Agent', 'Statut', 'Date de début', 'Date de fin', 'Durée', 'Conflits'];
         
@@ -146,13 +135,11 @@ const DisponibiliteList = () => {
         showTemporaryNotification('Export CSV effectué avec succès', 'success');
     };
 
-    // Fonction pour imprimer la liste des disponibilités
     const printList = () => {
         window.print();
         showTemporaryNotification('Impression lancée', 'info');
     };
 
-    // Statistiques des disponibilités
     const getDisponibiliteStats = () => {
         const total = sortedList().length;
         const active = sortedList().filter(d => getDisponibiliteStatus(d.dateDebut, d.dateFin).status === 'active').length;
@@ -173,7 +160,6 @@ const DisponibiliteList = () => {
         };
     };
 
-    // Filtre par agent spécifique
     const getAgentOptions = () => {
         const agentIds = [...new Set(list.map(d => d.agentId))];
         return [
@@ -189,7 +175,6 @@ const DisponibiliteList = () => {
         return sortedList().filter(d => selectedAgent === 'all' || d.agentId.toString() === selectedAgent);
     };
 
-    // Gestionnaire pour la confirmation de suppression
     const handleDelete = () => {
         if (deleteId) {
             DisponibiliteService.delete(deleteId)
@@ -205,7 +190,6 @@ const DisponibiliteList = () => {
         }
     };
 
-    // Fonction pour changer l'ordre de tri
     const toggleSort = (field) => {
         if (sortField === field) {
             setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -215,14 +199,12 @@ const DisponibiliteList = () => {
         }
     };
 
-    // Fonction pour obtenir les informations d'un agent à partir de son ID
     const getAgentInfo = (agentId) => {
         const agent = agents[agentId];
         if (!agent) return `Agent #${agentId}`;
         return `${agent.nom} ${agent.prenom}${agent.email ? ` - ${agent.email}` : ""}`;
     };
 
-    // Fonction pour calculer la durée d'une disponibilité
     const calculateDuration = (dateDebut, dateFin) => {
         const start = new Date(dateDebut);
         const end = new Date(dateFin);
@@ -238,7 +220,6 @@ const DisponibiliteList = () => {
         }
     };
 
-    // Fonction pour déterminer le statut d'une disponibilité
     const getDisponibiliteStatus = (dateDebut, dateFin) => {
         const now = new Date();
         const start = new Date(dateDebut);
@@ -253,7 +234,6 @@ const DisponibiliteList = () => {
         }
     };
 
-    // Fonction pour vérifier les chevauchements avec d'autres disponibilités du même agent
     const checkOverlap = (disponibilite) => {
         const overlaps = list.filter(d => 
             d.id !== disponibilite.id && 
@@ -267,7 +247,6 @@ const DisponibiliteList = () => {
             { hasOverlap: false };
     };
 
-    // Rendu du tooltip pour les informations supplémentaires
     const renderTooltip = (text) => (
         <Tooltip id="button-tooltip">
             {text}
@@ -276,7 +255,7 @@ const DisponibiliteList = () => {
 
     return (
         <Container fluid className="py-4">
-            {/* Notification temporaire */}
+            {}
             {showNotification && (
                 <Alert 
                     variant={notification.variant} 
@@ -319,7 +298,7 @@ const DisponibiliteList = () => {
                 </Card.Header>
 
                 <Card.Body className="p-0">
-                    {/* Onglets de navigation */}
+                    {}
                     <Nav variant="tabs" className="border-0 bg-light">
                         <Nav.Item>
                             <Nav.Link 
@@ -357,7 +336,7 @@ const DisponibiliteList = () => {
                             </Alert>
                         )}
 
-                        {/* Action button flottant pour mobile */}
+                        {}
                         <div className="d-block d-md-none position-fixed" style={{ bottom: '20px', right: '20px', zIndex: 1000 }}>
                             <Link 
                                 to="/disponibilites/create" 
@@ -368,7 +347,7 @@ const DisponibiliteList = () => {
                             </Link>
                         </div>
 
-                        {/* Filtres et recherche */}
+                        {}
                         <Row className="mb-4 g-3">
                             <Col md={3}>
                                 <div className="shadow-sm rounded">
@@ -486,7 +465,7 @@ const DisponibiliteList = () => {
                             </Col>
                         </Row>
 
-                        {/* Contenu principal selon le mode de vue */}
+                        {}
                         {loading ? (
                             <div className="text-center py-5">
                                 <Spinner animation="border" variant="primary" />
@@ -494,7 +473,7 @@ const DisponibiliteList = () => {
                             </div>
                         ) : (
                             <>
-                                {/* Mode tableau */}
+                                {}
                                 {viewMode === 'table' && (
                                     <div className="table-responsive">
                                         <Table hover className="align-middle border shadow-sm bg-white">
@@ -725,7 +704,7 @@ const DisponibiliteList = () => {
                                     </div>
                                 )}
 
-                                {/* Mode grille (cartes) */}
+                                {}
                                 {viewMode === 'grid' && (
                                     <>
                                         {filteredList().length > 0 ? (
@@ -821,7 +800,7 @@ const DisponibiliteList = () => {
                                     </>
                                 )}
 
-                                {/* Mode statistiques */}
+                                {}
                                 {viewMode === 'stats' && (
                                     <div className="py-3">
                                         <Row className="mb-5">
@@ -960,7 +939,7 @@ const DisponibiliteList = () => {
                 </Card.Body>
             </Card>
 
-            {/* Modal de confirmation de suppression */}
+            {}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered animation={true}>
                 <Modal.Header closeButton className="bg-danger text-white">
                     <Modal.Title>
@@ -982,7 +961,7 @@ const DisponibiliteList = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* Styles CSS pour les animations */}            <style jsx>{`
+            {}            <style jsx>{`
                 @keyframes fadeIn {
                     from { opacity: 0; transform: translateY(-10px); }
                     to { opacity: 1; transform: translateY(0); }

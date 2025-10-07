@@ -13,7 +13,6 @@ export default function EditSite() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // 1) État local pour le site (avec missionsIds, même nom que dans SiteCreateDto)
     const [site, setSite] = useState({
         nom: "",
         numero: "",
@@ -26,7 +25,6 @@ export default function EditSite() {
         missionsIds: []
     });
 
-    // 2) Les options pour React‑Select
     const [missionsOptions, setMissionsOptions] = useState([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -40,7 +38,6 @@ export default function EditSite() {
         const fetchData = async () => {
             setInitialLoading(true);
             try {
-                // a) Charger le site existant
                 const siteResponse = await SiteService.getSiteById(id);
                 const dto = siteResponse.data;
                 const siteData = {
@@ -52,13 +49,12 @@ export default function EditSite() {
                     departement: dto.departement,
                     region: dto.region,
                     pays: dto.pays,
-                    missionsIds: dto.missionsIds || [] // <-- impératif : missionsIds
+                    missionsIds: dto.missionsIds || []
                 };
                 
                 setSite(siteData);
-                setSiteOriginal(JSON.stringify(siteData)); // Garder une copie de l'original pour détecter les changements
+                setSiteOriginal(JSON.stringify(siteData));
 
-                // b) Charger toutes les missions pour peupler le select
                 const missionsResponse = await MissionService.getAllMissions();
                 const opts = missionsResponse.data.map(m => ({
                     value: m.id,
@@ -77,7 +73,6 @@ export default function EditSite() {
         fetchData();
     }, [id, navigate]);
 
-    // Vérifier si le formulaire a changé par rapport à l'original
     useEffect(() => {
         if (siteOriginal) {
             const currentSite = JSON.stringify(site);
@@ -85,15 +80,12 @@ export default function EditSite() {
         }
     }, [site, siteOriginal]);
 
-    // Handler pour les champs texte
     const handleChange = e => {
         const { name, value } = e.target;
         setSite(s => ({ ...s, [name]: value }));
-        // Réinitialiser le message d'erreur lorsque l'utilisateur commence à modifier un champ
         if (error) setError("");
     };
 
-    // Handler pour React‑Select (multi)
     const handleMissionsChange = selectedOptions => {
         setSite(s => ({
             ...s,
@@ -103,10 +95,8 @@ export default function EditSite() {
         }));
     };
 
-    // Récupération automatique du code postal et ville via une API (simulé)
     const handlePostalCodeBlur = () => {
         if (site.codePostal && site.codePostal.length === 5 && !site.ville) {
-            // Simule une recherche du nom de la ville basée sur le code postal
             setTimeout(() => {
                 if (site.codePostal.startsWith('75')) {
                     setSite(s => ({...s, ville: 'Paris', departement: 'Paris', region: 'Île-de-France'}));
@@ -119,12 +109,10 @@ export default function EditSite() {
         }
     };
 
-    // Soumission du formulaire
     const handleSubmit = e => {
         e.preventDefault();
         const form = e.currentTarget;
         
-        // Validation du formulaire
         setValidated(true);
         if (form.checkValidity() === false) {
             e.stopPropagation();
@@ -137,7 +125,6 @@ export default function EditSite() {
         }
 
         if (!hasChanges) {
-            // Si aucun changement, rediriger sans appel API
             navigate(`/sites/${id}`);
             return;
         }
@@ -155,7 +142,6 @@ export default function EditSite() {
             });
     };
 
-    // Réinitialiser les modifications
     const handleReset = () => {
         if (siteOriginal) {
             setSite(JSON.parse(siteOriginal));
@@ -164,7 +150,6 @@ export default function EditSite() {
         }
     };
 
-    // Valeurs par défaut pour React‑Select
     const defaultMissionValues = missionsOptions.filter(opt =>
         site.missionsIds.includes(opt.value)
     );

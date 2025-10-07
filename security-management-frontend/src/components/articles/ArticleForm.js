@@ -11,7 +11,6 @@ import "../../styles/ArticleDetail.css";
 import "../../styles/ArticleForm.css";
 
 export default function ArticleForm({ onSubmit, initialData = {}, loading = false }) {
-    // État du formulaire
     const [formData, setFormData] = useState({
         numero: '',
         titre: '',
@@ -21,7 +20,6 @@ export default function ArticleForm({ onSubmit, initialData = {}, loading = fals
         ...initialData
     });
     
-    // Mettre à jour l'état du formulaire quand initialData change
     useEffect(() => {
         if (initialData && Object.keys(initialData).length > 0) {
             console.log("Mise à jour du formulaire avec les données initiales:", initialData);
@@ -32,7 +30,6 @@ export default function ArticleForm({ onSubmit, initialData = {}, loading = fals
         }
     }, [initialData]);
     
-    // État pour la recherche et la sélection de contrat
     const [contrats, setContrats] = useState([]);
     const [loadingContrats, setLoadingContrats] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -41,7 +38,6 @@ export default function ArticleForm({ onSubmit, initialData = {}, loading = fals
     const [showContratSelector, setShowContratSelector] = useState(false);
     const [contratError, setContratError] = useState(null);
     
-    // Charger les informations du contrat sélectionné si un ID est fourni
     useEffect(() => {
         if (formData.contratId) {
             setLoadingContrats(true);
@@ -61,7 +57,6 @@ export default function ArticleForm({ onSubmit, initialData = {}, loading = fals
         }
     }, [formData.contratId]);
     
-    // S'assurer que le contrat est chargé lors de l'initialisation quand un contratId est présent
     useEffect(() => {
         if (initialData && initialData.contratId && !selectedContrat) {
             ContratService.getById(initialData.contratId)
@@ -74,7 +69,6 @@ export default function ArticleForm({ onSubmit, initialData = {}, loading = fals
         }
     }, [initialData, selectedContrat]);
     
-    // Charger la liste des contrats pour la recherche
     useEffect(() => {
         if (showContratSelector) {
             setLoadingContrats(true);
@@ -93,7 +87,6 @@ export default function ArticleForm({ onSubmit, initialData = {}, loading = fals
         }
     }, [showContratSelector]);
     
-    // Filtrer les résultats de recherche lorsque le terme de recherche change
     useEffect(() => {
         if (!searchTerm.trim()) {
             setSearchResults(contrats);
@@ -107,13 +100,11 @@ export default function ArticleForm({ onSubmit, initialData = {}, loading = fals
         }
     }, [searchTerm, contrats]);
     
-    // Gérer les changements de champ
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
     
-    // Gérer la sélection d'un contrat
     const handleSelectContrat = (contrat) => {
         setSelectedContrat(contrat);
         setFormData({ ...formData, contratId: contrat.id });
@@ -121,13 +112,11 @@ export default function ArticleForm({ onSubmit, initialData = {}, loading = fals
         setSearchTerm('');
     };
     
-    // Gérer la suppression du contrat associé
     const handleRemoveContrat = () => {
         setSelectedContrat(null);
         setFormData({ ...formData, contratId: '' });
     };
     
-    // Gérer la soumission du formulaire
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(formData);

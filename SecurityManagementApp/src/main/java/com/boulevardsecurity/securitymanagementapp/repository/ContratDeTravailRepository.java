@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+// Repository JPA
 public interface ContratDeTravailRepository extends JpaRepository<ContratDeTravail, Long> {
     List<ContratDeTravail> findByAgentDeSecuriteId(Long agentId);
 }

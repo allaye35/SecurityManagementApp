@@ -28,11 +28,9 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final NotificationService notificationService;
     private final PasswordEncoder passwordEncoder;
 
-    /** URL publique du FRONT (utilisée dans les emails) */
     @Value("${app.public-url:http://localhost:8080}")
     private String appPublicUrl;
 
-    /** Durée d'expiration du lien de réinitialisation */
     @Value("${app.password.reset.expiration-hours:2}")
     private long expirationHours;
 
@@ -42,12 +40,10 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         String email = EmailUtil.normalize(emailRaw);
         Optional<AgentDeSecurite> opt = agentRepo.findByEmail(email);
 
-        // Ne pas divulguer si l'email existe ou non
         if (opt.isEmpty()) return;
 
         AgentDeSecurite agent = opt.get();
 
-        // Génère un token « brut » et stocke uniquement son hash
         String raw  = TokenUtil.generateRawToken();
         String hash = TokenUtil.sha256Hex(raw);
 
@@ -58,7 +54,6 @@ public class PasswordResetServiceImpl implements PasswordResetService {
                 .build();
         tokenRepo.save(token);
 
-        // 👉 Lien vers la **page React** (le front enverra ensuite le token à l'API POST /api/auth/password-reset/confirm)
         String link = appPublicUrl + "/password-reset/confirm?token=" + raw;
 
         String subject = "Réinitialisation de votre mot de passe";

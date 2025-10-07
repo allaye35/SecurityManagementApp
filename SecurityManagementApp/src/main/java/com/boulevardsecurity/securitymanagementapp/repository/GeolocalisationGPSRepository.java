@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
+// Repository JPA
 public interface GeolocalisationGPSRepository extends JpaRepository<GeolocalisationGPS, Long> {
 }

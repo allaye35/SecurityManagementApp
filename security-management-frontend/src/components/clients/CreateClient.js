@@ -13,11 +13,10 @@ import {
 import ClientService from "../../services/ClientService";
 
 export default function CreateClient() {
-    // États pour le formulaire
     const [client, setClient] = useState({
         username: "",
         password: "",
-        confirmPassword: "", // Ajout de la confirmation de mot de passe
+        confirmPassword: "",
         typeClient: "PARTICULIER",
         nom: "",
         prenom: "",
@@ -29,13 +28,11 @@ export default function CreateClient() {
         adresse: "",
         codePostal: "",
         ville: "",
-        pays: "France", // Valeur par défaut
+        pays: "France",
         numeroRue: "",
         modeContactPrefere: "EMAIL",
-        // role reste default CLIENT
     });
 
-    // États pour la validation et le feedback
     const [validated, setValidated] = useState(false);
     const [errors, setErrors] = useState({});
     const [formCompletionPercent, setFormCompletionPercent] = useState(0);
@@ -44,7 +41,6 @@ export default function CreateClient() {
     
     const navigate = useNavigate();
 
-    // Mise à jour du pourcentage de complétion du formulaire
     useEffect(() => {
         const requiredFields = ['username', 'password', 'email'];
         const totalFields = Object.keys(client).length;
@@ -56,12 +52,10 @@ export default function CreateClient() {
         setFormCompletionPercent(completionPercentage);
     }, [client]);
 
-    // Gestion des changements de champs
     const handleChange = e => {
         const { name, value } = e.target;
         setClient(prevClient => ({ ...prevClient, [name]: value }));
         
-        // Validation en temps réel pour certains champs
         if (name === "password" || name === "confirmPassword") {
             validatePasswordMatch();
         }
@@ -71,7 +65,6 @@ export default function CreateClient() {
         }
 
         if (name === "typeClient") {
-            // Reset des champs spécifiques aux entreprises si on change pour un particulier
             if (value === "PARTICULIER") {
                 setClient(prev => ({
                     ...prev,
@@ -87,38 +80,32 @@ export default function CreateClient() {
                 }));
             }
         }
-    };    // Validation du formulaire
+    };
     const validateForm = () => {
         const newErrors = {};
         
-        // Validation du nom d'utilisateur
         if (!client.username || client.username.length < 3) {
             newErrors.username = "Le nom d'utilisateur doit contenir au moins 3 caractères";
         }
         
-        // Validation du mot de passe
         if (!client.password || client.password.length < 6) {
             newErrors.password = "Le mot de passe doit contenir au moins 6 caractères";
         }
         
-        // Validation du mot de passe fort
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
         if (client.password && !strongPasswordRegex.test(client.password)) {
             newErrors.password = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre";
         }
         
-        // Validation de la confirmation du mot de passe
         if (client.password !== client.confirmPassword) {
             newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
         }
         
-        // Validation de l'email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!client.email || !emailRegex.test(client.email)) {
             newErrors.email = "Veuillez saisir une adresse email valide";
         }
         
-        // Validations spécifiques aux entreprises
         if (client.typeClient === "ENTREPRISE") {
             if (!client.nom) {
                 newErrors.nom = "Le nom de l'entreprise est requis";
@@ -135,7 +122,6 @@ export default function CreateClient() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Validation du mot de passe en temps réel
     const validatePasswordMatch = () => {
         if (client.password && client.confirmPassword && client.password !== client.confirmPassword) {
             setErrors(prev => ({ ...prev, confirmPassword: "Les mots de passe ne correspondent pas" }));
@@ -151,7 +137,6 @@ export default function CreateClient() {
         return true;
     };
 
-    // Validation de l'email en temps réel
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email && !emailRegex.test(email)) {
@@ -167,7 +152,6 @@ export default function CreateClient() {
         }
     };
 
-    // Soumission du formulaire
     const handleSubmit = e => {
         e.preventDefault();
         setValidated(true);
@@ -183,7 +167,6 @@ export default function CreateClient() {
         setIsSubmitting(true);
         setFeedback({ type: "", message: "" });
         
-        // Suppression des champs inutiles avant l'envoi
         const { confirmPassword, ...clientToSubmit } = client;
 
         ClientService.create(clientToSubmit)
@@ -215,14 +198,14 @@ export default function CreateClient() {
                         </Card.Header>
                         
                         <Card.Body className="p-4">
-                            {/* Feedback messages */}
+                            {}
                             {feedback.message && (
                                 <Alert variant={feedback.type} dismissible onClose={() => setFeedback({ type: "", message: "" })}>
                                     {feedback.message}
                                 </Alert>
                             )}
                             
-                            {/* Progress bar */}
+                            {}
                             <div className="mb-4">
                                 <div className="d-flex justify-content-between align-items-center mb-1">
                                     <span>Progression du formulaire</span>
@@ -241,7 +224,7 @@ export default function CreateClient() {
                             </div>
                             
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                                {/* Type de client */}
+                                {}
                                 <Card className="mb-4 border-light shadow-sm">
                                     <Card.Header className="bg-light">
                                         <h5 className="mb-0">Type de client</h5>
@@ -289,7 +272,7 @@ export default function CreateClient() {
                                     </Card.Body>
                                 </Card>
                                 
-                                {/* Informations d'identification */}                                <Card className="mb-4 border-light shadow-sm">
+                                {}                                <Card className="mb-4 border-light shadow-sm">
                                     <Card.Header className="bg-light">
                                         <div className="d-flex justify-content-between align-items-center">
                                             <h5 className="mb-0">Informations d'identification</h5>
@@ -394,7 +377,7 @@ export default function CreateClient() {
                                     </Card.Body>
                                 </Card>
                                 
-                                {/* Informations personnelles */}
+                                {}
                                 <Card className="mb-4 border-light shadow-sm">
                                     <Card.Header className="bg-light">
                                         <h5 className="mb-0">
@@ -520,7 +503,7 @@ export default function CreateClient() {
                                     </Card.Body>
                                 </Card>
                                 
-                                {/* Adresse */}
+                                {}
                                 <Card className="mb-4 border-light shadow-sm">
                                     <Card.Header className="bg-light">
                                         <h5 className="mb-0">
@@ -591,7 +574,7 @@ export default function CreateClient() {
                                     </Card.Body>
                                 </Card>
                                 
-                                {/* Boutons d'action */}
+                                {}
                                 <div className="d-flex justify-content-end gap-3 mt-4">
                                     <Button 
                                         as={Link}

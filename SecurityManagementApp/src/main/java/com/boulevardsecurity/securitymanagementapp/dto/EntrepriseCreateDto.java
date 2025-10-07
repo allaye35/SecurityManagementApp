@@ -13,25 +13,21 @@ public class EntrepriseCreateDto {
     @NotBlank
     private String nom;
 
-    /* Infos légales */
     private String siretPrestataire;
     private String representantPrestataire;
 
-    /* Adresse */
     private String numeroRue;
     private String rue;
     private String codePostal;
     private String ville;
     private String pays;
 
-    /* Contact */
     @Email
     private String email;
 
     @NotBlank
     private String telephone;
 
-    /* Relations (IDs optionnels à la création) */
     private List<Long> devisIds;
     private List<Long> contratsDeTravailIds;
 }

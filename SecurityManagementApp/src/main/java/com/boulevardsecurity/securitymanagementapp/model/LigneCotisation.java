@@ -16,7 +16,7 @@ public class LigneCotisation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String libelle;                // Exemple : "Retraite complémentaire"
+    private String libelle;
     private Double tauxSalarial;
     private Double montantSalarial;
     private Double tauxEmployeur;

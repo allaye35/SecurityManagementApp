@@ -25,7 +25,6 @@ const MainLayout = () => {
       const width = window.innerWidth;
       setWindowWidth(width);
       
-      // Auto-show sidebar on large screens
       if (width >= 992) {
         setSidebarVisible(true);
         setShowSidebar(true);
@@ -36,7 +35,7 @@ const MainLayout = () => {
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Initial check
+    handleResize();
     
     return () => {
       window.removeEventListener('resize', handleResize);

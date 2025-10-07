@@ -43,7 +43,7 @@ export default function GeolocalisationDetail() {
 
     return (
         <div className="detail-container">
-            {/* Header avec titre et badge */}
+            {}
             <div className="detail-header">
                 <div className="header-content">
                     <h1>📍 Géolocalisation #{geo.id}</h1>
@@ -73,7 +73,7 @@ export default function GeolocalisationDetail() {
                 </div>
             </div>
 
-            {/* Carte Leaflet */}
+            {}
             <div className="map-section">
                 <h3>🗺️ Localisation sur la carte</h3>
                 <MapContainer
@@ -95,7 +95,7 @@ export default function GeolocalisationDetail() {
                 </MapContainer>
             </div>
 
-            {/* Informations GPS */}
+            {}
             <div className="info-section">
                 <h3>📌 Coordonnées GPS</h3>
                 <div className="info-grid">
@@ -123,7 +123,7 @@ export default function GeolocalisationDetail() {
                 </div>
             </div>
 
-            {/* Missions rattachées */}
+            {}
             <div className="missions-section">
                 <div className="section-header">
                     <h3>🎯 Missions rattachées</h3>
@@ -161,7 +161,7 @@ export default function GeolocalisationDetail() {
                 )}
             </div>
 
-            {/* Bouton retour */}
+            {}
             <div className="footer-actions">
                 <button className="btn-back" onClick={() => navigate("/geolocalisations")}>
                     ← Retour à la liste

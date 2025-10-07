@@ -25,9 +25,6 @@ public class MissionMapper {
     private final PointageRepository pointageRepo;
     private final ContratDeTravailRepository contratTravailRepo;
 
-    /**
-     * ==== ENTITÉ → DTO ====
-     */
     public MissionDto toDto(Mission m) {
         return MissionDto.builder()
                 .id(m.getId())
@@ -78,9 +75,6 @@ public class MissionMapper {
                 .build();
     }
 
-    /**
-     * ==== DTO (create) → nouvelle ENTITÉ ====
-     */
     public Mission toEntity(MissionCreateDto dto) {
         Mission m = Mission.builder()
                 .titre(dto.getTitre())
@@ -163,11 +157,7 @@ public class MissionMapper {
         return m;
     }
 
-    /**
-     * ==== Mise à jour partielle (PUT) ====
-     */
     public void updateEntityFromDto(MissionCreateDto dto, Mission m) {
-        // — champs simples —
         if (dto.getTitre() != null) m.setTitre(dto.getTitre());
         if (dto.getDescription() != null) m.setDescription(dto.getDescription());
         if (dto.getDateDebut() != null) m.setDateDebut(dto.getDateDebut());
@@ -182,7 +172,6 @@ public class MissionMapper {
         if (dto.getMontantTVA() != null) m.setMontantTVA(dto.getMontantTVA());
         if (dto.getMontantTTC() != null) m.setMontantTTC(dto.getMontantTTC());
 
-        // — relations simples (1:n) —
         if (dto.getPlanningId() != null) {
             m.setPlanning(planningRepo.findById(dto.getPlanningId())
                     .orElseThrow(() -> new IllegalArgumentException("Planning introuvable id=" + dto.getPlanningId())));
@@ -208,7 +197,6 @@ public class MissionMapper {
                     .orElseThrow(() -> new IllegalArgumentException("Devis introuvable id=" + dto.getDevisId())));
         }
 
-        // — collections / associations —
         if (dto.getAgentIds() != null) {
             m.setAgents(dto.getAgentIds().stream()
                     .map(id -> agentRepo.findById(id)
@@ -246,5 +234,4 @@ public class MissionMapper {
         }
     }
 }
-
 

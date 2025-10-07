@@ -9,7 +9,6 @@ export default function DevisList() {
     const [error, setError]     = useState("");
     const navigate = useNavigate();
     
-    // Nouvelles variables de calcul pour les statistiques
     const [stats, setStats] = useState({
         totalHT: 0,
         totalTVA: 0, 
@@ -27,7 +26,6 @@ export default function DevisList() {
                     if (Array.isArray(response.data)) {
                         setDevis(response.data);
                         
-                        // Calcul des statistiques
                         const newStats = {
                             totalHT: 0,
                             totalTVA: 0,
@@ -39,16 +37,13 @@ export default function DevisList() {
                         };
                         
                         response.data.forEach(d => {
-                            // Calcul des montants
                             newStats.totalHT += d.montantHT || 0;
                             newStats.totalTVA += d.montantTVA || 0;
                             newStats.totalTTC += d.montantTTC || 0;
                             
-                            // Calcul des quantités
                             newStats.nombreAgentsTotal += d.nombreAgents || 0;
                             newStats.quantiteTotal += d.quantite || 0;
                             
-                            // Comptage par statut
                             if (d.statut) {
                                 newStats.devisParStatut[d.statut] = (newStats.devisParStatut[d.statut] || 0) + 1;
                             }
@@ -83,7 +78,7 @@ export default function DevisList() {
         <div className="devis-list">
             <h2>Liste des devis</h2>
             
-            {/* Ajout d'un résumé des statistiques */}
+            {}
             <div className="devis-stats">
                 <div className="stat-card">
                     <h3>Résumé</h3>

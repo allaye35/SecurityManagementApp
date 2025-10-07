@@ -50,11 +50,9 @@ public class ArticleContratTravailServiceImpl implements ArticleContratTravailSe
 
     @Override
     public ArticleContratTravailDto update(Long id, ArticleContratTravailCreationDto updateDto) {
-        // Récupère l'entité existante
         ArticleContratTravail existing = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("ArticleContratTravail introuvable id=" + id));
         
-        // Mise à jour des champs de l'entité avec les valeurs du DTO
         if (updateDto.getLibelle() != null) {
             existing.setLibelle(updateDto.getLibelle());
         }
@@ -62,7 +60,6 @@ public class ArticleContratTravailServiceImpl implements ArticleContratTravailSe
             existing.setContenu(updateDto.getContenu());
         }
         
-        // Sauvegarde et retourne l'entité mise à jour
         ArticleContratTravail saved = repo.save(existing);
         return mapper.toDto(saved);
     }

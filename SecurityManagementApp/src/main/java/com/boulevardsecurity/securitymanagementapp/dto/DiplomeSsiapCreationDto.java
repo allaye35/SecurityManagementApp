@@ -1,6 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.dto;
 
-
 import com.boulevardsecurity.securitymanagementapp.Enums.NiveauSSIAP;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

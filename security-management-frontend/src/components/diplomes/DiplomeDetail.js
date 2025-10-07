@@ -27,12 +27,10 @@ const DiplomeDetail = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // Récupérer les informations du diplôme
                 const diplomeRes = await DiplomeService.getById(id);
                 const diplomeData = diplomeRes.data;
                 setDiplome(diplomeData);
                 
-                // Récupérer les informations de l'agent associé
                 try {
                     const agentRes = await AgentService.getAgentById(diplomeData.agentId);
                     setAgent(agentRes.data);
@@ -52,7 +50,6 @@ const DiplomeDetail = () => {
         fetchData();
     }, [id]);
 
-    // Fonction pour déterminer le statut du diplôme
     const getDiplomeStatus = (dateExpiration) => {
         if (!dateExpiration) return { status: "indefini", label: "Pas de date d'expiration", variant: "secondary" };
         
@@ -63,25 +60,22 @@ const DiplomeDetail = () => {
             return { status: "expired", label: "Expiré", variant: "danger" };
         }
         
-        // Calcul de la différence en jours
         const diffTime = expirationDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
-        if (diffDays <= 90) { // 3 mois
+        if (diffDays <= 90) {
             return { status: "expiring-soon", label: "Expire bientôt", variant: "warning" };
         }
         
         return { status: "valid", label: "Valide", variant: "success" };
     };
     
-    // Fonction pour calculer la durée de validité
     const getValidityDuration = (dateObtention, dateExpiration) => {
         if (!dateObtention || !dateExpiration) return "Non définie";
         
         const obtentionDate = new Date(dateObtention);
         const expirationDate = new Date(dateExpiration);
         
-        // Calcul de la différence en années et mois
         let years = expirationDate.getFullYear() - obtentionDate.getFullYear();
         let months = expirationDate.getMonth() - obtentionDate.getMonth();
         
@@ -99,7 +93,6 @@ const DiplomeDetail = () => {
         }
     };
 
-    // Fonction pour calculer le temps restant avant expiration
     const getRemainingTime = (dateExpiration) => {
         if (!dateExpiration) return "Non applicable";
         
@@ -110,7 +103,6 @@ const DiplomeDetail = () => {
             return "Expiré";
         }
         
-        // Calcul de la différence en jours
         const diffTime = expirationDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
@@ -131,7 +123,6 @@ const DiplomeDetail = () => {
         }
     };
 
-    // Fonction pour formater les dates
     const formatDate = (dateString) => {
         if (!dateString) return "Non spécifiée";
         
@@ -143,7 +134,6 @@ const DiplomeDetail = () => {
         });
     };
 
-    // Fonction pour afficher la description du niveau SSIAP
     const getNiveauDescription = (niveau) => {
         switch(niveau) {
             case 'SSIAP_1':
@@ -157,7 +147,6 @@ const DiplomeDetail = () => {
         }
     };
 
-    // Fonction pour gérer la suppression du diplôme
     const handleDelete = async () => {
         if (window.confirm(`Êtes-vous sûr de vouloir supprimer ce diplôme SSIAP ${diplome?.niveau?.split('_')[1]} de ${agent?.nom} ${agent?.prenom} ?`)) {
             setDeleting(true);
@@ -172,7 +161,6 @@ const DiplomeDetail = () => {
         }
     };
 
-    // Fonction pour obtenir la couleur de badge selon le niveau SSIAP
     const getNiveauBadgeVariant = (niveau) => {
         switch(niveau) {
             case 'SSIAP_1': return "info";
@@ -232,7 +220,7 @@ const DiplomeDetail = () => {
 
     return (
         <Container fluid className="py-4">
-            {/* En-tête */}
+            {}
             <Card className="shadow-sm border-0 rounded-lg mb-4 overflow-hidden">
                 <Card.Header className="bg-gradient bg-primary text-white py-3">
                     <Row className="align-items-center">
@@ -269,7 +257,7 @@ const DiplomeDetail = () => {
             </Card>
             
             <Row className="g-4">
-                {/* Informations du diplôme */}
+                {}
                 <Col lg={6}>
                     <Card className="shadow-sm border-0 rounded-lg h-100">
                         <Card.Header className="bg-light py-3">
@@ -349,7 +337,7 @@ const DiplomeDetail = () => {
                     </Card>
                 </Col>
                 
-                {/* Titulaire du diplôme */}
+                {}
                 <Col lg={6}>
                     <Card className="shadow-sm border-0 rounded-lg h-100">
                         <Card.Header className="bg-light py-3">
@@ -433,7 +421,7 @@ const DiplomeDetail = () => {
                     </Card>
                 </Col>
                 
-                {/* Actions */}
+                {}
                 <Col xs={12}>
                     <Card className="shadow-sm border-0 rounded-lg">
                         <Card.Header className="bg-light py-3">
@@ -490,7 +478,7 @@ const DiplomeDetail = () => {
                 </Col>
             </Row>
             
-            {/* CSS personnalisé */}
+            {}
             <style>{`
                 .avatar-circle {
                     border-radius: 50%;

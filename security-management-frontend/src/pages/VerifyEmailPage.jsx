@@ -24,7 +24,6 @@ export default function VerifyEmailPage() {
           ok: true,
           msg: "Email vérifié. Vous pouvez vous connecter.",
         });
-        // redirection automatique après 2s
         setTimeout(() => navigate("/login", { replace: true }), 2000);
       })
       .catch((e) =>
@@ -64,7 +63,7 @@ export default function VerifyEmailPage() {
         </>
       )}
 
-      {/* Liens utiles complémentaires */}
+      {}
       <div
         style={{
           display: "flex",

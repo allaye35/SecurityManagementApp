@@ -24,7 +24,6 @@ public class ZoneDeTravailServiceImpl implements ZoneDeTravailService {
 
     @Override
     public ZoneDeTravailDto createZone(ZoneDeTravailCreateDto createDto) {
-        // vérification d’unicité
         if (repo.existsByNomAndTypeZone(createDto.getNom(), createDto.getTypeZone())) {
             throw new IllegalArgumentException("La zone existe déjà : " + createDto.getNom());
         }

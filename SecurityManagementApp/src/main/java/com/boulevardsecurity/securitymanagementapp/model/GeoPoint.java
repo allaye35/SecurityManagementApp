@@ -3,7 +3,7 @@ package com.boulevardsecurity.securitymanagementapp.model;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 
-@Embeddable  // ✅ Permet d'intégrer cette classe dans une autre entité
+@Embeddable
 @Getter
 @Setter
 @NoArgsConstructor

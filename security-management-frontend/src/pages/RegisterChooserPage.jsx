@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaUserShield, FaBuilding } from "react-icons/fa";
 import logo from "../assets/logo.jpg";
-import "../styles/Home.css"; // ou ton fichier de styles global
+import "../styles/Home.css";
 
 export default function RegisterChooserPage() {
   return (
@@ -13,7 +13,7 @@ export default function RegisterChooserPage() {
         <p className="chooser-subtitle">Choisissez votre profil pour continuer.</p>
 
         <div className="chooser-grid">
-          {/* Agent */}
+          {}
           <Link
             to="/register/agent"
             className="card-select card-select--button"
@@ -32,7 +32,7 @@ export default function RegisterChooserPage() {
             <span className="card-select__cta">Choisir</span>
           </Link>
 
-          {/* Client */}
+          {}
           <Link
             to="/register/client"
             className="card-select card-select--button"

@@ -28,7 +28,6 @@ export default function TarifMissionDetail() {
             });
     }, [id]);
 
-    // Formatage des valeurs
     const formatPrix = (prix) => {
         if (!prix && prix !== 0) return "-";
         return Number(prix).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
@@ -39,14 +38,12 @@ export default function TarifMissionDetail() {
         return `${pourcentage}%`;
     };
     
-    // Calcul du prix TTC
     const calculerPrixTTC = (prixHT, tauxTVA) => {
         if (!prixHT || !tauxTVA) return "-";
         const prixTTC = prixHT * (1 + tauxTVA / 100);
         return formatPrix(prixTTC);
     };
 
-    // Exemples de calcul de prix avec majorations
     const calculerExemple = (prixBase, majoration) => {
         if (!prixBase || !majoration) return "-";
         return formatPrix(prixBase * (1 + majoration / 100));
@@ -76,11 +73,11 @@ export default function TarifMissionDetail() {
         );
     }
 
-    if (!tarif) return null; // Éviter les erreurs si tarif est null après chargement
+    if (!tarif) return null;
     
     return (
         <div className="tarif-detail">
-            {/* En-tête */}
+            {}
             <div className="tarif-detail-header">
                 <div className="tarif-detail-title">
                     <span>Détail du tarif mission</span>
@@ -89,7 +86,7 @@ export default function TarifMissionDetail() {
                 <div className="tarif-detail-subtitle">{tarif.typeMission || "Type non défini"}</div>
             </div>
             
-            {/* Corps */}
+            {}
             <div className="tarif-detail-body">
                 <div className="tarif-card">
                     <div className="tarif-card-header">
@@ -221,7 +218,7 @@ export default function TarifMissionDetail() {
                 )}
             </div>
             
-            {/* Pied de page */}
+            {}
             <div className="tarif-detail-footer">
                 <button 
                     className="tarif-btn tarif-btn-outline" 

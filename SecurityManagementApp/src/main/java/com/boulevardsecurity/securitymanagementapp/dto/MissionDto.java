@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class MissionDto {
-    /* ───── données métier ───── */
+    
     private Long           id;
     private String         titre;
     private String         description;
@@ -24,14 +24,12 @@ public class MissionDto {
     private StatutMission  statutMission;
     private TypeMission    typeMission;
 
-    /* ───── chiffrage ───── */
     private Integer        nombreAgents;
     private Integer        quantite;
     private BigDecimal     montantHT;
     private BigDecimal     montantTVA;
     private BigDecimal     montantTTC;
 
-    /* ───── relations (ID only) ───── */
     private Set<Long>      agentIds;
     private Long           planningId;
     private Long           siteId;

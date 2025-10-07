@@ -9,14 +9,13 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+// Service métier
 public class ServiceJoursFeries {
 
     private final JoursFeriesApiClient apiClient;
     private final int nbAnneesMaxEnCache;
 
-    // Cache année -> Set<LocalDate>
     private final Map<Integer, Set<LocalDate>> cacheParAnnee = new ConcurrentHashMap<>();
-    // mini-LRU pour éviter que le cache ne grossisse trop
     private final Deque<Integer> lru = new ArrayDeque<>();
 
     public ServiceJoursFeries(JoursFeriesApiClient apiClient,
@@ -25,7 +24,6 @@ public class ServiceJoursFeries {
         this.nbAnneesMaxEnCache = Math.max(1, nbAnneesMaxEnCache);
     }
 
-    /** Renvoie true si la date est fériée (zone configurée). */
     public boolean estFerie(LocalDate date) {
         int annee = date.getYear();
         Set<LocalDate> feries = cacheParAnnee.computeIfAbsent(annee, this::chargerAnnee);
@@ -33,7 +31,6 @@ public class ServiceJoursFeries {
         return feries.contains(date);
     }
 
-    /** Liste des fériés pour une année donnée. */
     public Set<LocalDate> joursFeriesDeLAnnee(int annee) {
         Set<LocalDate> feries = cacheParAnnee.computeIfAbsent(annee, this::chargerAnnee);
         toucher(annee);
@@ -43,7 +40,6 @@ public class ServiceJoursFeries {
     private Set<LocalDate> chargerAnnee(int annee) {
         Map<String, String> json = apiClient.recupererAnnee(annee);
         if (json.isEmpty()) {
-            // secours: multi-années puis filtrage par yyyy-
             Map<String, String> toutes = apiClient.recupererToutesAnnees();
             if (!toutes.isEmpty()) {
                 Set<LocalDate> set = new HashSet<>();

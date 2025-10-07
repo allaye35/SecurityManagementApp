@@ -1,10 +1,4 @@
-// =============================================================
-// Done ✅ – plus aucun MultipartFile, FileStorageService retiré, 
-// mais toutes les relations Devis / Missions / Articles restent gérées via le mapper.
 
-// -------------------------------------------------------------
-// ContratController.java (JSON only)
-// -------------------------------------------------------------
 package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.dto.*;
@@ -22,31 +16,27 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ContratController {
 
-    private final ContratService service;    /* ---------- CREATE ---------- */
+    private final ContratService service;    
     @PostMapping
     public ResponseEntity<?> create(@RequestBody ContratCreateDto dto) {
         try {
             ContratDto created = service.createContrat(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (IllegalArgumentException e) {
-            // Erreurs de validation, par exemple devis déjà lié à un contrat
             return ResponseEntity.badRequest()
                 .body(Map.of("message", e.getMessage(), "status", "error"));
         } catch (Exception e) {
-            // Autres erreurs
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "Erreur lors de la création du contrat: " + e.getMessage(), 
                             "status", "error"));
         }
     }
 
-    /* ---------- UPDATE ---------- */
     @PutMapping("/{id}")
     public ResponseEntity<ContratDto> update(@PathVariable Long id, @RequestBody ContratCreateDto dto) {
         return ResponseEntity.ok(service.updateContrat(id, dto));
     }
 
-    /* ---------- READ ---------- */
     @GetMapping
     public List<ContratDto> getAll() {
         return service.getAllContrats();
@@ -67,7 +57,6 @@ public class ContratController {
         return service.getContratByDevisId(devisId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    /* ---------- DELETE ---------- */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteContrat(id);

@@ -11,7 +11,6 @@ const adminAccountsService = {
   rejectAgent:  (id, reason = "") => api.post(`/admin/accounts/agents/${id}/reject`, { reason }).then(r=>r.data),
   rejectClient: (id, reason = "") => api.post(`/admin/accounts/clients/${id}/reject`, { reason }).then(r=>r.data),
   
-  // Méthode pour changer le rôle d'un client (utilise l'endpoint spécialisé)
   changeClientRole: (id, newRole) => api.put(`/clients/${id}/role`, { role: newRole }).then(r=>r.data),
 };
 

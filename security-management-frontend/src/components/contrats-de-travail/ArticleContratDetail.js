@@ -1,18 +1,15 @@
 import React, { useState } from "react";
-import { Button, Badge, Row, Col, Card, Dropdown, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap"; // Import des composants Bootstrap supplémentaires
+import { Button, Badge, Row, Col, Card, Dropdown, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const ArticleContratDetail = ({ article, onBack }) => {
-    // État pour gérer l'impression et autres actions
     const [isPrinting, setIsPrinting] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
 
-    // Fonction pour formater une date
     const formatDate = (dateString) => {
         if (!dateString) return "–";
         return new Date(dateString).toLocaleString();
     };
 
-    // Fonction pour gérer l'impression
     const handlePrint = () => {
         setIsPrinting(true);
         setTimeout(() => {
@@ -21,16 +18,12 @@ const ArticleContratDetail = ({ article, onBack }) => {
         }, 300);
     };
 
-    // Fonction pour gérer l'export en PDF
     const handleExportPDF = () => {
         setIsExporting(true);
-        // Simuler un délai pour l'export (à remplacer par votre logique réelle d'export PDF)
         setTimeout(() => {
             alert("Le document a été exporté en PDF");
             setIsExporting(false);
         }, 1000);
-        // Ici vous pouvez implémenter une vraie fonction d'export PDF
-        // avec une bibliothèque comme jsPDF ou html2pdf.js
     };
 
     return (
@@ -40,12 +33,12 @@ const ArticleContratDetail = ({ article, onBack }) => {
             padding: '0',
             backgroundColor: '#fff',
             overflow: 'hidden',
-            maxWidth: '800px',           // Largeur approximative A4
-            minHeight: '1123px',         // Hauteur approximative A4 (297mm)
+            maxWidth: '800px',
+            minHeight: '1123px',
             width: '100%',
             position: 'relative'
         }}>
-            {/* Navigation et Actions principales en haut */}
+            {}
             <div className="d-flex justify-content-between align-items-center bg-light p-3 border-bottom d-print-none">
                 <Button 
                     variant="outline-secondary" 
@@ -171,7 +164,7 @@ const ArticleContratDetail = ({ article, onBack }) => {
                 </Row>
             </Card.Body>
             
-            {/* Indicateur de chargement pour l'impression/export */}
+            {}
             {(isPrinting || isExporting) && (
                 <div style={{
                     position: 'fixed',

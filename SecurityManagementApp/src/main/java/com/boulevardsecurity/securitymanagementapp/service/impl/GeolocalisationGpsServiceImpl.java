@@ -74,15 +74,12 @@ public class GeolocalisationGpsServiceImpl implements GeolocalisationGpsService 
         if (gps.getMissions() == null) {
             gps.setMissions(new java.util.ArrayList<>());
         }
-        // lie la mission et la géolocalisation
         mission.setGeolocalisationGPS(gps);
         gps.getMissions().add(mission);
 
-        // on persiste les deux côtés
         gpsRepository.save(gps);
         missionRepository.save(mission);
 
-        // on renvoie la liste des IDs actuels
         return gps.getMissions()
                 .stream()
                 .map(Mission::getId)

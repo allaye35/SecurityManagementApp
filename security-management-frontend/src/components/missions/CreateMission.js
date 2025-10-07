@@ -8,7 +8,6 @@ import DevisService from "../../services/DevisService";
 export default function CreateMission() {
   const navigate = useNavigate();
 
-  // 1) On charge d'abord les listes TarifMission et Devis pour les <select>
   const [tarifs, setTarifs] = useState([]);
   const [devisList, setDevisList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +33,6 @@ export default function CreateMission() {
     fetchData();
   }, []);
 
-  // 2) État local de la nouvelle mission (tous les champs obligatoires + optionnels)
   const [mission, setMission] = useState({
     titre: "",
     description: "",
@@ -53,11 +51,9 @@ export default function CreateMission() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 3) Mise à jour des champs (gère aussi tarifMissionId et devisId)
   const handleChange = e => {
     const { name, value } = e.target;
     if (name === "tarif") {
-      // On ne stocke que l'id du tarif sélectionné (string ou number)
       setMission(m => ({ ...m, tarifMissionId: value }));
     } else if (name === "devis") {
       setMission(m => ({ ...m, devisId: value }));
@@ -66,13 +62,11 @@ export default function CreateMission() {
     }
   };
 
-  // 4) Soumission
   const handleSubmit = async e => {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
 
-    // Vérif rapide
     if (
       !mission.titre ||
       !mission.description ||

@@ -1,6 +1,4 @@
-// dto/zone/ZoneDeTravailDto.java
 package com.boulevardsecurity.securitymanagementapp.dto;
-
 
 import com.boulevardsecurity.securitymanagementapp.Enums.TypeZone;
 import com.boulevardsecurity.securitymanagementapp.dto.AgentDeSecuriteDto;
@@ -20,6 +18,5 @@ public class ZoneDeTravailDto {
     private String region;
     private String pays;
 
-    /** --- Liste des agents affectés à cette zone --- */
     private List<AgentDeSecuriteDto> agents;
 }

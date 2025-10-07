@@ -19,7 +19,6 @@ const DiplomeList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
-    // États pour le filtrage
     const [searchTerm, setSearchTerm] = useState("");
     const [filterNiveau, setFilterNiveau] = useState("");
     const [filterDateType, setFilterDateType] = useState("all");
@@ -28,15 +27,12 @@ const DiplomeList = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // Charger tous les diplômes
                 const diplomesRes = await DiplomeService.getAll();
                 const diplomes = diplomesRes.data;
                 setList(diplomes);
                 
-                // Extraire les IDs uniques des agents pour éviter les doublons
                 const agentIds = [...new Set(diplomes.map(diplome => diplome.agentId))];
                 
-                // Récupérer les informations pour chaque agent
                 const agentsData = {};
                 for (const agentId of agentIds) {
                     try {
@@ -60,7 +56,6 @@ const DiplomeList = () => {
         fetchData();
     }, []);
 
-    // Fonction pour afficher les informations de l'agent
     const renderAgentInfo = (agentId) => {
         const agent = agents[agentId];
         if (!agent) return `Agent #${agentId}`;
@@ -78,7 +73,6 @@ const DiplomeList = () => {
         );
     };
 
-    // Fonction pour afficher le badge de niveau SSIAP
     const renderNiveauBadge = (niveau) => {
         let variant = "secondary";
         
@@ -103,7 +97,6 @@ const DiplomeList = () => {
         );
     };
 
-    // Fonction pour afficher le statut d'expiration
     const renderExpirationStatus = (dateExpiration) => {
         if (!dateExpiration) return null;
         
@@ -148,7 +141,6 @@ const DiplomeList = () => {
         }
     };
 
-    // Fonction de suppression avec confirmation
     const handleDelete = (diplome) => {
         if (window.confirm(`Êtes-vous sûr de vouloir supprimer le diplôme ${diplome.niveau} de ${agents[diplome.agentId]?.nom || 'cet agent'} ?`)) {
             DiplomeService.delete(diplome.id)
@@ -162,7 +154,6 @@ const DiplomeList = () => {
         }
     };
 
-    // Fonction de filtrage des diplômes
     const filteredDiplomes = list.filter(diplome => {
         const agent = agents[diplome.agentId];
         const nomComplet = agent ? `${agent.nom} ${agent.prenom}`.toLowerCase() : "";
@@ -170,24 +161,19 @@ const DiplomeList = () => {
         const niveau = diplome.niveau?.toLowerCase() || "";
         const search = searchTerm.toLowerCase();
         
-        // Filtre par terme de recherche (nom, prénom, email ou niveau)
         const matchesSearch = !searchTerm || 
             nomComplet.includes(search) || 
             email.includes(search) ||
             niveau.includes(search);
         
-        // Filtre par niveau
         const matchesNiveau = !filterNiveau || diplome.niveau === filterNiveau;
         
-        // Filtre par type de date
         let matchesDateType = true;
         const currentDate = new Date();
         
         if (filterDateType === "expired") {
-            // Diplômes expirés
             matchesDateType = diplome.dateExpiration && new Date(diplome.dateExpiration) < currentDate;
         } else if (filterDateType === "expiringSoon") {
-            // Diplômes qui expirent dans moins de 3 mois
             if (diplome.dateExpiration) {
                 const expirationDate = new Date(diplome.dateExpiration);
                 const threeMonthsLater = new Date(currentDate);
@@ -197,14 +183,12 @@ const DiplomeList = () => {
                 matchesDateType = false;
             }
         } else if (filterDateType === "valid") {
-            // Diplômes valides
             matchesDateType = !diplome.dateExpiration || new Date(diplome.dateExpiration) >= currentDate;
         }
         
         return matchesSearch && matchesNiveau && matchesDateType;
     });
 
-    // Fonction pour formater la date en format français
     const formatDate = (dateString) => {
         if (!dateString) return "–";
         const date = new Date(dateString);
@@ -240,7 +224,7 @@ const DiplomeList = () => {
                 </Card.Header>
 
                 <Card.Body className="p-0 pb-2">
-                    {/* Filtres de recherche */}
+                    {}
                     <div className="p-3 border-bottom bg-light">
                         <Row className="g-3">
                             <Col lg={5} md={5}>
@@ -391,7 +375,7 @@ const DiplomeList = () => {
                 </Card.Footer>
             </Card>
             
-            {/* CSS personnalisé */}
+            {}
             <style>{`
                 .avatar-circle {
                     width: 36px;

@@ -23,7 +23,6 @@ public class TarifMissionServiceImpl implements TarifMissionService {
 
     @Override
     public TarifMissionDto create(TarifMissionCreateDto dto) {
-        // validation basique
         if (dto.getTauxTVA() == null) {
             throw new IllegalArgumentException("Le taux de TVA est obligatoire.");
         }
@@ -60,9 +59,8 @@ public class TarifMissionServiceImpl implements TarifMissionService {
     public TarifMissionDto update(Long id, TarifMissionDto dto) {
         TarifMission existing = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("TarifMission introuvable id=" + id));
-        // on reconstruit l’entité à partir du DTO (y compris les modifications de missions)
         TarifMission updated = mapper.toEntity(dto);
-        updated.setId(existing.getId());  // conserver l’ID
+        updated.setId(existing.getId());
         TarifMission saved = repo.save(updated);
         return mapper.toDto(saved);
     }

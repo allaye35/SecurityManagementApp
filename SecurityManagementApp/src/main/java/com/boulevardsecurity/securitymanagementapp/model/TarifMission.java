@@ -20,16 +20,13 @@ public class TarifMission {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Type de mission (correspond à ton enum) */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private TypeMission typeMission;
 
-    /** Prix de base HT pour 1 agent / 1 heure */
     @Column(nullable = false)
     private BigDecimal prixUnitaireHT;
 
-    /** Majoration en fraction (10% → 0.10), ou ZERO si inclus */
     @Column(nullable = false)
     private BigDecimal majorationNuit;
 

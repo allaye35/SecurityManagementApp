@@ -38,9 +38,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // ⚠️ L'ORDRE COMPTE : autoriser d'abord TOUT /api/auth/**
                         .requestMatchers("/api/auth/**").permitAll()
-                        // (facultatif mais explicite)
                         .requestMatchers(HttpMethod.GET,  "/api/auth/verify-email").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/verify-email/code").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
@@ -48,13 +46,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/password-reset/**").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/api/auth/password-reset/**").permitAll()
 
-                        // Swagger en libre accès
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                        // Le reste de l'API nécessite ADMIN
                         .requestMatchers("/api/**").hasAuthority("ADMIN")
 
-                        // Autres ressources (si jamais) : pas d'auth
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

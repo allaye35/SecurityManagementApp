@@ -19,14 +19,12 @@ public class ArticleContratController {
 
     private final ArticleContratService service;
 
-    /** Récupérer tous les articles */
     @GetMapping
     public ResponseEntity<List<ArticleContratDto>> getAll() {
         List<ArticleContratDto> list = service.getAllArticles();
         return ResponseEntity.ok(list);
     }
 
-    /** Récupérer un article par son ID */
     @GetMapping("/{id}")
     public ResponseEntity<ArticleContratDto> getById(@PathVariable Long id) {
         return service.getArticleById(id)
@@ -34,21 +32,18 @@ public class ArticleContratController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /** Récupérer les articles d’un contrat donné, triés par numéro */
     @GetMapping("/contrat/{contratId}")
     public ResponseEntity<List<ArticleContratDto>> getByContrat(@PathVariable Long contratId) {
         List<ArticleContratDto> list = service.getArticlesByContrat(contratId);
         return ResponseEntity.ok(list);
     }
 
-    /** Créer un nouvel article */
     @PostMapping
     public ResponseEntity<ArticleContratDto> create(@RequestBody ArticleContratCreateDto dto) {
         ArticleContratDto created = service.createArticle(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    /** Mettre à jour un article existant */
     @PutMapping("/{id}")
     public ResponseEntity<ArticleContratDto> update(
             @PathVariable Long id,
@@ -62,7 +57,6 @@ public class ArticleContratController {
         }
     }
 
-    /** Supprimer un article */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {

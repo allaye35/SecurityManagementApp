@@ -10,26 +10,21 @@ import java.math.BigDecimal;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class DevisDto {
 
-    /* ------- données de base ------- */
     private Long        id;
     private String      referenceDevis;
     private String      description;
     private StatutDevis statut;
 
-    /* ------- dates ------- */
     private LocalDate   dateCreation;
     private LocalDate   dateValidite;
 
-    /* ------- conditions générales ------- */
     private String      conditionsGenerales;
 
-    /* ------- relations (ID only) ------- */
-    private Long        entrepriseId;   // prestataire
-    private Long        clientId;       // bénéficiaire
-    private Long        contratId;      // s’il existe déjà
-    private List<Long>  missionIds;     // missions rattachées
+    private Long        entrepriseId;
+    private Long        clientId;
+    private Long        contratId;
+    private List<Long>  missionIds;
 
-    /* ------- totaux agrégés ------- */
     private BigDecimal montantHT;
     private BigDecimal montantTVA;
     private BigDecimal montantTTC;

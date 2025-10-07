@@ -16,7 +16,7 @@ export default function ArticleList() {
     const [articles, setArticles] = useState([]);
     const [contrats, setContrats] = useState({});
     const [searchTerm, setSearchTerm] = useState("");
-    const [viewMode, setViewMode] = useState("list"); // "list" ou "card"
+    const [viewMode, setViewMode] = useState("list");
     const [loading, setLoading] = useState(true);
     const [sortField, setSortField] = useState("id");
     const [sortDirection, setSortDirection] = useState("asc");
@@ -33,7 +33,6 @@ export default function ArticleList() {
                 const arr = res.data;
                 setArticles(arr);
 
-                // charger tous les contrats liés
                 const ids = Array.from(
                     new Set(arr.map(a => a.contratId).filter(Boolean))
                 );
@@ -121,7 +120,6 @@ export default function ArticleList() {
         setRefreshTrigger(prev => prev + 1);
     };
     
-    // Filtrer les articles par recherche et contrat
     const filteredArticles = articles.filter(article => {
         const matchesSearch = 
             article.titre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -133,7 +131,6 @@ export default function ArticleList() {
         return matchesSearch && matchesContratFilter;
     });
     
-    // Trier les articles
     const sortedArticles = [...filteredArticles].sort((a, b) => {
         let valA, valB;
         
@@ -164,13 +161,11 @@ export default function ArticleList() {
         return 0;
     });
     
-    // Générer la liste des contrats pour le filtre
     const contratOptions = Object.entries(contrats).map(([id, c]) => ({
         id: id,
         label: c.referenceContrat || `Contrat #${id}`
     }));
     
-    // Générer un rapport CSV exportable
     const generateCsv = () => {
         const headers = ["ID", "Numéro", "Titre", "Contrat (réf.)"];
         
@@ -199,7 +194,6 @@ export default function ArticleList() {
         document.body.removeChild(link);
     };
     
-    // Rendu des tooltips
     const renderTooltip = (props, content) => (
         <Tooltip id="button-tooltip" {...props}>
             {content}
@@ -235,7 +229,7 @@ export default function ArticleList() {
                 </div>
                 
                 <div className="article-tools-row">
-                    {/* Barre de recherche */}
+                    {}
                     <div className="article-search-container">
                         <div className="search-wrapper">
                             <input
@@ -249,9 +243,9 @@ export default function ArticleList() {
                         </div>
                     </div>
                     
-                    {/* Actions groupées */}
+                    {}
                     <div className="article-filters-actions">
-                        {/* Filtre contrats */}
+                        {}
                         <Dropdown className="me-2">
                             <Dropdown.Toggle variant="outline-secondary" id="dropdown-contrat">
                                 <FontAwesomeIcon icon={faFilter} className="me-2" />
@@ -279,7 +273,7 @@ export default function ArticleList() {
                             </Dropdown.Menu>
                         </Dropdown>
                         
-                        {/* Actions pour les éléments sélectionnés */}
+                        {}
                         <div className="d-flex align-items-center">
                             {selectedArticles.length > 0 && (
                                 <>
@@ -309,7 +303,7 @@ export default function ArticleList() {
                             </OverlayTrigger>
                         </div>
                         
-                        {/* Boutons de basculement de vue */}
+                        {}
                         <div className="view-toggle ms-2">
                             <button 
                                 className={`btn btn-sm ${viewMode === 'list' ? 'btn-secondary' : 'btn-outline-secondary'}`}
@@ -412,7 +406,7 @@ export default function ArticleList() {
                         {sortedArticles.map((a, index) => {
                             const c = contrats[a.contratId];
                             const isSelected = selectedArticles.includes(a.id);
-                            const animationDelay = index * 50; // ms
+                            const animationDelay = index * 50;
                             
                             return (
                                 <tr 
@@ -489,7 +483,7 @@ export default function ArticleList() {
                     {sortedArticles.map((a, index) => {
                         const c = contrats[a.contratId];
                         const isSelected = selectedArticles.includes(a.id);
-                        const animationDelay = index * 50; // ms
+                        const animationDelay = index * 50;
                         
                         return (
                             <div 
@@ -569,7 +563,7 @@ export default function ArticleList() {
                 </div>
             )}
             
-            {/* Pagination peut être ajoutée ici si nécessaire */}
+            {}
             {sortedArticles.length > 0 && (
                 <div className="d-flex justify-content-between align-items-center mt-4">
                     <div>

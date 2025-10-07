@@ -11,5 +11,5 @@ public class CarteProfessionnelleDto {
     private String numeroCarte;
     private Date   dateDebut;
     private Date   dateFin;
-    private Long   agentId;          // ← relation
+    private Long   agentId;
 }

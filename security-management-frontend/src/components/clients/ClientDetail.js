@@ -19,7 +19,6 @@ export default function ClientDetail() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Pour simuler des données associées (à remplacer par de vraies API)
     const [contrats, setContrats] = useState([]);
     const [devis, setDevis] = useState([]);
     const [factures, setFactures] = useState([]);
@@ -32,16 +31,12 @@ export default function ClientDetail() {
             setError(null);
             try {
                 const response = await ClientService.getById(id);
-                // Le service retourne un AxiosResponse (response.data) aujourd'hui.
-                // On garde une compatibilité future si un objet brut est renvoyé directement.
                 const data = response?.data ?? response;
 
                 if (data && data.id) {
                     console.log("Données client reçues:", data);
-                    // Normalisation des données pour éviter les problèmes d'affichage
                     const normalizedData = {
                         ...data,
-                        // Valeurs par défaut pour éviter les undefined
                         nom: data.nom || '',
                         prenom: data.prenom || '',
                         email: data.email || '',
@@ -60,7 +55,6 @@ export default function ClientDetail() {
                     };
                     if (!cancelled) {
                         setClient(normalizedData);
-                        // Simulation des données associées (remplacer par de vraies API si besoin)
                         simulateRelatedData(data.id);
                     }
                 } else {
@@ -79,27 +73,22 @@ export default function ClientDetail() {
         return () => { cancelled = true; };
     }, [id]);
 
-    // Fonction pour simuler le chargement des données associées
     const simulateRelatedData = (clientId) => {
-        // Simulation de contrats (à remplacer par un appel API réel)
         setContrats([
             { id: 101, reference: "CONT-2025-101", dateDebut: "2025-01-01", dateFin: "2025-12-31", statut: "ACTIF", montant: 1200 },
             { id: 102, reference: "CONT-2025-102", dateDebut: "2025-02-15", dateFin: "2025-08-15", statut: "EN_COURS", montant: 850 }
         ]);
         
-        // Simulation de devis (à remplacer par un appel API réel)
         setDevis([
             { id: 201, reference: "DEV-2025-201", dateCreation: "2025-01-15", statut: "ACCEPTE", montant: 1200 },
             { id: 202, reference: "DEV-2025-202", dateCreation: "2025-03-10", statut: "EN_ATTENTE", montant: 950 }
         ]);
         
-        // Simulation de factures (à remplacer par un appel API réel)
         setFactures([
             { id: 301, reference: "FAC-2025-301", dateEmission: "2025-02-01", dateEcheance: "2025-03-01", statut: "PAYEE", montant: 400 },
             { id: 302, reference: "FAC-2025-302", dateEmission: "2025-03-15", dateEcheance: "2025-04-15", statut: "EN_ATTENTE", montant: 350 }
         ]);
         
-        // Simulation d'activités récentes (à remplacer par un appel API réel)
         setActivite([
             { id: 1, type: "CONNEXION", date: "2025-05-15T10:30:00", description: "Connexion à l'espace client" },
             { id: 2, type: "DEVIS", date: "2025-05-10T14:20:00", description: "Consultation du devis DEV-2025-202" },
@@ -107,14 +96,12 @@ export default function ClientDetail() {
         ]);
     };
 
-    // Fonction pour formater une date (YYYY-MM-DD -> DD/MM/YYYY)
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);
         return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
     };
     
-    // Fonction pour déterminer la couleur du badge selon le statut
     const getBadgeColor = (statut) => {
         switch (statut) {
             case "ACTIF": 
@@ -272,7 +259,7 @@ export default function ClientDetail() {
                         <Card className="shadow-sm">
                             <Card.Body className="p-0">
                                 <Tab.Content>
-                                    {/* Onglet Informations générales */}
+                                    {}
                                     <Tab.Pane eventKey="details">
                                         <div className="p-4">
                                             <h4 className="mb-4">Informations du client</h4>
@@ -414,7 +401,7 @@ export default function ClientDetail() {
                                                         </ListGroup>
                                                     </Card>
                                                 </Col>
-                                            </Row>                                            {/* Carte pour visualiser l'adresse */}
+                                            </Row>                                            {}
                                             {client.adresse ? (
                                                 <Card className="mb-4">
                                                     <Card.Header className="bg-light">
@@ -453,7 +440,7 @@ export default function ClientDetail() {
                                         </div>
                                     </Tab.Pane>
 
-                                    {/* Onglet Contrats */}
+                                    {}
                                     <Tab.Pane eventKey="contrats">
                                         <div className="p-4">
                                             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -508,7 +495,7 @@ export default function ClientDetail() {
                                         </div>
                                     </Tab.Pane>
 
-                                    {/* Onglet Devis */}
+                                    {}
                                     <Tab.Pane eventKey="devis">
                                         <div className="p-4">
                                             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -561,7 +548,7 @@ export default function ClientDetail() {
                                         </div>
                                     </Tab.Pane>
 
-                                    {/* Onglet Factures */}
+                                    {}
                                     <Tab.Pane eventKey="factures">
                                         <div className="p-4">
                                             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -616,7 +603,7 @@ export default function ClientDetail() {
                                         </div>
                                     </Tab.Pane>
 
-                                    {/* Onglet Activité récente */}
+                                    {}
                                     <Tab.Pane eventKey="activite">
                                         <div className="p-4">
                                             <h4 className="mb-4">Activité récente</h4>

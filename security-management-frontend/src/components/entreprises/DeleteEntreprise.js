@@ -6,9 +6,8 @@ const DeleteEntreprise = () => {
   const navigate = useNavigate();
 
   const handleDelete = () => {
-    // Suppression fictive (Remplace avec ton API)
     console.log(`Entreprise avec ID ${id} supprimée`);
-    navigate("/entreprises"); // Rediriger après suppression
+    navigate("/entreprises");
   };
 
   return (

@@ -1,6 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.service;
 
-
 import com.boulevardsecurity.securitymanagementapp.dto.DiplomeSsiapCreationDto;
 import com.boulevardsecurity.securitymanagementapp.dto.DiplomeSsiapDto;
 

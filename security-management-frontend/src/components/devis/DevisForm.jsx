@@ -42,7 +42,6 @@ export default function DevisForm() {
       try {
         setLoading(true);
 
-        // Clients
         const clientsResp = await ClientService.getAll();
         const clientOptions = (clientsResp.data || []).map((c) => ({
           value: c.id,
@@ -51,7 +50,6 @@ export default function DevisForm() {
         }));
         setClients(clientOptions);
 
-        // Entreprises
         const entResp = await EntrepriseService.getAllEntreprises();
         const entOptions = (entResp.data || []).map((e) => ({
           value: e.id,
@@ -60,7 +58,6 @@ export default function DevisForm() {
         }));
         setEntreprises(entOptions);
 
-        // Missions sans devis (global)
         console.log("Chargement des missions sans devis...");
         const sansDevis = await MissionService.getSansDevis().then((r) => r.data);
         console.log("Missions sans devis chargées :", sansDevis);
@@ -87,7 +84,6 @@ export default function DevisForm() {
             missionIds: Array.isArray(devis.missionIds) ? devis.missionIds : [],
           }));
 
-          // Pré-sélections
           if (devis.clientId) {
             setSelectedClient(clientOptions.find((o) => String(o.value) === String(devis.clientId)) || null);
           }
@@ -95,14 +91,12 @@ export default function DevisForm() {
             setSelectedEntreprise(entOptions.find((o) => String(o.value) === String(devis.entrepriseId)) || null);
           }
 
-          // Récupérer toutes les missions pour retrouver celles déjà liées au devis
           const all = await MissionService.getAllMissions().then((r) => r.data);
           const selectedMissions = (all || []).filter((m) =>
             (devis.missionIds || []).map(String).includes(String(m.id))
           );
           const optionsFromSelected = selectedMissions.map(toOption);
 
-          // Merge (sans-devis + déjà liées à ce devis)
           const mapById = new Map();
           [...optionsSansDevis, ...optionsFromSelected].forEach((o) => mapById.set(String(o.value), o));
           const mergedOptions = Array.from(mapById.values());
@@ -110,7 +104,6 @@ export default function DevisForm() {
           setMissionsDisponibles(mergedOptions);
           setMissionsSelectionnees(optionsFromSelected);
         } else {
-          // Création : seulement les missions libres
           setMissionsDisponibles(optionsSansDevis);
         }
       } catch (e) {

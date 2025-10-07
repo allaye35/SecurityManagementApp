@@ -1,6 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.dto;
 
-
 import com.boulevardsecurity.securitymanagementapp.Enums.TypeZone;
 import lombok.*;
 
@@ -17,6 +16,5 @@ public class ZoneDeTravailCreateDto {
     private String region;
     private String pays;
 
-    /** IDs des agents à rattacher (optionnel) */
     private Set<Long> agentIds;
 }

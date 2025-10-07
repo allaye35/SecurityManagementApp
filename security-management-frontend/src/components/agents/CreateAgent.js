@@ -16,7 +16,6 @@ import '../../styles/AgentForm.css';
 export default function CreateAgent() {
   const navigate = useNavigate();
 
-  /* ---------- état principal ---------- */
   const [agent, setAgent] = useState({
     nom: '',
     prenom: '',
@@ -30,13 +29,11 @@ export default function CreateAgent() {
     role: 'AGENT_SECURITE'
   });
 
-  /* ---------- listes d'options ---------- */
   const [zonesOpts, setZonesOpts] = useState([]);
   const [disposOpts, setDisposOpts] = useState([]);
   const [diplomesOpts, setDiplomesOpts] = useState([]);
   const [cartesOpts, setCartesOpts] = useState([]);
 
-  /* ---------- sélection utilisateur ---------- */
   const [zonesSel, setZonesSel] = useState([]);
   const [disposSel, setDisposSel] = useState([]);
   const [diplomesSel, setDiplomesSel] = useState([]);
@@ -45,9 +42,6 @@ export default function CreateAgent() {
   const [error, setError] = useState('');
   const [validated, setValidated] = useState(false);
 
-  /* -------------------------------------------------------------------- */
-  /* 1.  Charger les données existantes dès le montage                    */
-  /* -------------------------------------------------------------------- */
   useEffect(() => {
     ZoneService.getAll().then(res =>
       setZonesOpts(res.data.map(z => ({ value: z.id, label: z.nom })))
@@ -75,22 +69,15 @@ export default function CreateAgent() {
     );
   }, []);
 
-  /* -------------------------------------------------------------------- */
-  /* 2.  Binding des champs « texte »                                     */
-  /* -------------------------------------------------------------------- */
   const handleChange = e => {
     const { name, value } = e.target;
     setAgent(prev => ({ ...prev, [name]: value }));
   };
 
-  /* -------------------------------------------------------------------- */
-  /* 3.  Soumission                                                       */
-  /* -------------------------------------------------------------------- */
   const handleSubmit = async e => {
     e.preventDefault();
     const form = e.currentTarget;
     
-    // Activation de la validation Bootstrap
     setValidated(true);
     
     if (form.checkValidity() === false) {
@@ -122,9 +109,6 @@ export default function CreateAgent() {
     }
   };
 
-  /* -------------------------------------------------------------------- */
-  /* 4.  Personnalisation du style pour react-select                      */
-  /* -------------------------------------------------------------------- */
   const selectStyles = {
     control: (base) => ({
       ...base,
@@ -142,9 +126,6 @@ export default function CreateAgent() {
     })
   };
 
-  /* -------------------------------------------------------------------- */
-  /* 5.  Rendu                                                            */
-  /* -------------------------------------------------------------------- */
   return (
     <Container className="py-4">
       <Card className="shadow-sm">

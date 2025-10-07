@@ -5,8 +5,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+// Repository JPA
 public interface CarteProfessionnelleRepository extends JpaRepository<CarteProfessionnelle, Long> {
 
-    List<CarteProfessionnelle> findByAgentDeSecuriteId(Long agentId);  // Récupère toutes les cartes d'un agent spécifique
+    List<CarteProfessionnelle> findByAgentDeSecuriteId(Long agentId);
 }
 

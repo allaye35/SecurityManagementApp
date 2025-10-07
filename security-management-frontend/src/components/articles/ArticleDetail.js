@@ -30,16 +30,13 @@ export default function ArticleDetail() {
     const shareButtonRef = useRef(null);
 
     useEffect(() => {
-        // 1) Charger l'article
         ArticleService.getById(id)
             .then(res => {
                 setArticle(res.data);
-                // 2) si un contrat est référencé, le charger aussi
                 if (res.data.contratId) {
                     return ContratService.getById(res.data.contratId)
                         .then(r2 => setContrat(r2.data))
                         .catch(() => {
-                            // si échec, on laisse contrat à null
                             console.warn("Impossible de charger le contrat associé");
                         });
                 }
@@ -63,7 +60,6 @@ export default function ArticleDetail() {
     };
     
     const handleShare = () => {
-        // Copier l'URL dans le presse-papier
         navigator.clipboard.writeText(window.location.href)
             .then(() => {
                 setCopieLien(true);

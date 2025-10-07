@@ -1,7 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.dto;
 
-
-
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 

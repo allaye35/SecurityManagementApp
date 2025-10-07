@@ -8,12 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+// Repository JPA
 public interface ZoneDeTravailRepository extends JpaRepository<ZoneDeTravail, Long> {
 
-    List<ZoneDeTravail> findByNomContainingIgnoreCase(String nom);  // Recherche par nom
+    List<ZoneDeTravail> findByNomContainingIgnoreCase(String nom);
 
-    List<ZoneDeTravail> findByTypeZone(TypeZone typeZone);  // Recherche par type de zone
+    List<ZoneDeTravail> findByTypeZone(TypeZone typeZone);
 
-    boolean existsByNomAndTypeZone(String nom, TypeZone typeZone);  // Vérifie si une zone existe déjà
+    boolean existsByNomAndTypeZone(String nom, TypeZone typeZone);
     Optional<ZoneDeTravail> findById(Long id);
 }

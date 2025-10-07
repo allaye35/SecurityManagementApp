@@ -21,7 +21,6 @@ public class ZoneDeTravailController {
     private final ZoneDeTravailService service;
     private final AgentDeSecuriteService agentService;
 
-    /** Crée une nouvelle zone */
     @PostMapping
     public ResponseEntity<ZoneDeTravailDto> create(@RequestBody ZoneDeTravailCreateDto dto) {
         try {
@@ -32,13 +31,11 @@ public class ZoneDeTravailController {
         }
     }
 
-    /** Toutes les zones */
     @GetMapping
     public ResponseEntity<List<ZoneDeTravailDto>> getAll() {
         return ResponseEntity.ok(service.getAllZones());
     }
 
-    /** Par ID */
     @GetMapping("/{id}")
     public ResponseEntity<ZoneDeTravailDto> getById(@PathVariable Long id) {
         return service.getZoneById(id)
@@ -46,19 +43,16 @@ public class ZoneDeTravailController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /** Recherche par nom (contains) */
     @GetMapping("/recherche")
     public ResponseEntity<List<ZoneDeTravailDto>> searchByName(@RequestParam String nom) {
         return ResponseEntity.ok(service.searchZonesByName(nom));
     }
 
-    /** Recherche par type */
     @GetMapping("/type/{typeZone}")
     public ResponseEntity<List<ZoneDeTravailDto>> searchByType(@PathVariable TypeZone typeZone) {
         return ResponseEntity.ok(service.searchZonesByType(typeZone));
     }
 
-    /** Mise à jour */
     @PutMapping("/{id}")
     public ResponseEntity<ZoneDeTravailDto> update(
             @PathVariable Long id,
@@ -72,7 +66,6 @@ public class ZoneDeTravailController {
         }
     }
 
-    /** Récupérer les agents affectés à une zone */
     @GetMapping("/{id}/agents")
     public ResponseEntity<List<AgentDeSecuriteDto>> getAgentsByZoneId(@PathVariable Long id) {
         try {
@@ -82,26 +75,20 @@ public class ZoneDeTravailController {
             return ResponseEntity.notFound().build();
         }
     }
-    
-    /** 
-     * Affecter un agent à une zone 
-     * Note: Utilise la même logique que l'endpoint PUT /api/agents/{agentId}/zone/{zoneId}
-     */
+
     @PostMapping("/{zoneId}/agents/{agentId}")
     public ResponseEntity<AgentDeSecuriteDto> assignAgentToZone(
             @PathVariable Long zoneId,
             @PathVariable Long agentId
     ) {
         try {
-            // Utiliser le service existant dans AgentDeSecuriteService qui permet déjà d'assigner une zone à un agent
             AgentDeSecuriteDto dto = agentService.assignZoneDeTravail(agentId, zoneId);
             return ResponseEntity.ok(dto);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
-    
-    /** Retirer un agent d'une zone */
+
     @DeleteMapping("/{zoneId}/agents/{agentId}")
     public ResponseEntity<Void> removeAgentFromZone(
             @PathVariable Long zoneId,
@@ -114,8 +101,7 @@ public class ZoneDeTravailController {
             return ResponseEntity.notFound().build();
         }
     }
-    
-    /** Suppression */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {

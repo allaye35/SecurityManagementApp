@@ -11,33 +11,30 @@ export default function PointageForm() {
     const [searchParams] = useSearchParams();
     const isEdit = Boolean(id);
     const navigate = useNavigate();
-    const { user } = useAuth(); // Récupérer l'utilisateur du contexte
+    const { user } = useAuth();
     
-    // Mode service : prise ou fin de service
-    const serviceMode = searchParams.get('mode'); // 'prise' ou 'fin'
+    const serviceMode = searchParams.get('mode');
     const isServiceMode = serviceMode === 'prise' || serviceMode === 'fin';
 
     const [dto, setDto] = useState({
-        datePointage: new Date().toISOString().slice(0, 16), // Date/heure actuelle par défaut
-        estPresent: true, // Toujours présent si l'agent pointe
-        estRetard: false, // Sera calculé automatiquement
+        datePointage: new Date().toISOString().slice(0, 16),
+        estPresent: true,
+        estRetard: false,
         positionActuelle: { latitude: "", longitude: "" },
         missionId: "",
-        agentId: "" // Sera rempli avec l'utilisateur connecté
+        agentId: ""
     });
     const [missions, setMissions] = useState([]);
     const [agents, setAgents] = useState([]);
     const [agentsEnService, setAgentsEnService] = useState([]);
-    const [currentUser, setCurrentUser] = useState(null); // Utilisateur connecté
-    const [selectedMission, setSelectedMission] = useState(null); // Mission sélectionnée pour calcul retard
+    const [currentUser, setCurrentUser] = useState(null);
+    const [selectedMission, setSelectedMission] = useState(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [gettingLocation, setGettingLocation] = useState(false);
 
-    // Récupérer l'agent de l'utilisateur connecté au montage
     useEffect(() => {
         if (user && user.id && !dto.agentId) {
-            // Essayer de trouver l'agent correspondant à l'utilisateur
             AgentService.getAllAgents()
                 .then(({ data }) => {
                     const agentUtilisateur = data.find(a => a.utilisateur?.id === user.id);
@@ -58,17 +55,14 @@ export default function PointageForm() {
             setCurrentUser(user);
         }
         
-        // Obtenir automatiquement la géolocalisation au chargement
         if (isServiceMode) {
-            setTimeout(() => getCurrentPosition(), 500); // Petit délai pour éviter les problèmes
+            setTimeout(() => getCurrentPosition(), 500);
         }
     }, [user, isServiceMode]);
 
-    // Charger les missions au montage
     useEffect(() => {
         MissionService.getAllMissions()
             .then(({ data }) => {
-                // Si mode service, filtrer les missions actives
                 if (isServiceMode) {
                     const missionsActives = data.filter(m => 
                         m.statutMission === 'EN_COURS' || m.statutMission === 'PLANIFIEE'
@@ -81,7 +75,6 @@ export default function PointageForm() {
             .catch(() => setError("Impossible de charger les missions"));
     }, [isServiceMode]);
 
-    // Charger les agents quand une mission est sélectionnée
     useEffect(() => {
         if (dto.missionId) {
             console.log("Chargement des agents pour la mission:", dto.missionId);
@@ -93,47 +86,38 @@ export default function PointageForm() {
                     console.log("Est un tableau?", Array.isArray(data.agentIds));
                     console.log("Valeurs:", data.agentIds);
                     
-                    // Convertir agentIds en tableau selon le format reçu
                     let agentIdsArray = [];
                     if (data.agentIds) {
                         if (Array.isArray(data.agentIds)) {
                             agentIdsArray = data.agentIds;
                         } else if (typeof data.agentIds === 'object') {
-                            // Si c'est un objet (Set en Java devient un objet en JSON)
                             agentIdsArray = Array.from(Object.values(data.agentIds));
                         } else if (typeof data.agentIds === 'number') {
-                            // Si c'est un seul ID
                             agentIdsArray = [data.agentIds];
                         }
                     }
                     
-                    // Filtrer les valeurs nulles ou undefined
                     agentIdsArray = agentIdsArray.filter(id => id != null && id !== undefined);
                     
                     console.log("Agent IDs convertis en tableau:", agentIdsArray);
                     
-                    // Sauvegarder la mission sélectionnée pour le calcul du retard
                     setSelectedMission(data);
                     
-                    // Calculer automatiquement le retard si on est en mode prise de service
                     if (serviceMode === 'prise' && data.heureDebut) {
                         const heureActuelle = new Date();
                         const heureDebut = new Date();
                         const [hours, minutes] = data.heureDebut.split(':');
                         heureDebut.setHours(parseInt(hours), parseInt(minutes), 0);
                         
-                        // Tolérance de 15 minutes
-                        const tolerance = 15 * 60 * 1000; // 15 minutes en millisecondes
+                        const tolerance = 15 * 60 * 1000;
                         const estEnRetard = heureActuelle.getTime() > (heureDebut.getTime() + tolerance);
                         
                         console.log("Calcul retard - Heure début:", data.heureDebut, "Heure actuelle:", heureActuelle.toLocaleTimeString(), "En retard?", estEnRetard);
                         setDto(d => ({ ...d, estRetard: estEnRetard }));
                     }
                     
-                    // Vérifier si on a des IDs d'agents
                     if (agentIdsArray.length > 0) {
                         console.log("Récupération des agents pour les IDs:", agentIdsArray);
-                        // Récupérer les détails complets de chaque agent
                         const agentPromises = agentIdsArray.map(agentId => 
                             AgentService.getAgentById(agentId)
                         );
@@ -154,7 +138,6 @@ export default function PointageForm() {
                         setAgents([]);
                     }
                     
-                    // Si c'est une fin de service, charger les agents en service
                     if (serviceMode === 'fin') {
                         PointageService.getAgentsEnService(dto.missionId)
                             .then(({ data }) => setAgentsEnService(data))
@@ -200,7 +183,6 @@ export default function PointageForm() {
         }
     };
 
-    // Obtenir la position GPS
     const getCurrentPosition = () => {
         if (!navigator.geolocation) {
             setError("La géolocalisation n'est pas supportée par votre navigateur");
@@ -235,15 +217,12 @@ export default function PointageForm() {
         );
     };
 
-    // Filtrer les agents selon le mode
     const getAvailableAgents = () => {
         if (serviceMode === 'fin') {
-            // Pour la fin de service, montrer seulement les agents en service
             return agents.filter(agent => 
                 agentsEnService.some(a => a.id === agent.id)
             );
         }
-        // Pour les autres modes, montrer tous les agents
         return agents;
     };
 
@@ -282,7 +261,6 @@ export default function PointageForm() {
                         ? "Prise de service enregistrée avec succès !" 
                         : "Fin de service enregistrée avec succès !"
                 );
-                // Réinitialiser le formulaire après 2 secondes
                 setTimeout(() => {
                     setDto({
                         datePointage: "",
@@ -312,7 +290,7 @@ export default function PointageForm() {
             {error && <p className="error">❌ {error}</p>}
             {success && <p className="success">✅ {success}</p>}
             
-            {/* Informations automatiques */}
+            {}
             {isServiceMode && (
                 <div className="auto-info">
                     <h4>ℹ️ Informations automatiques</h4>
@@ -337,7 +315,7 @@ export default function PointageForm() {
             )}
             
             <form onSubmit={handleSubmit}>
-                {/* Date & heure - uniquement en mode création classique */}
+                {}
                 {!isServiceMode && (
                     <label>
                         Date & heure *
@@ -351,7 +329,7 @@ export default function PointageForm() {
                     </label>
                 )}
 
-                {/* Mission */}
+                {}
                 <label>
                     Mission *
                     <select
@@ -370,7 +348,7 @@ export default function PointageForm() {
                     </select>
                 </label>
 
-                {/* Agent - seulement si mission sélectionnée */}
+                {}
                 {dto.missionId && getAvailableAgents().length > 0 && (
                     <label>
                         Agent * {serviceMode === 'fin' && <span className="badge">En service uniquement</span>}
@@ -399,7 +377,7 @@ export default function PointageForm() {
                     <p className="warning">ℹ️ Aucun agent actuellement en service pour cette mission</p>
                 )}
 
-                {/* Position GPS */}
+                {}
                 <div className="gps-section">
                     <label>Position GPS *</label>
                     <button 
@@ -443,7 +421,7 @@ export default function PointageForm() {
                     )}
                 </div>
 
-                {/* Checkboxes - uniquement en mode classique */}
+                {}
                 {!isServiceMode && (
                     <>
                         <label className="checkbox-label">
@@ -467,7 +445,7 @@ export default function PointageForm() {
                     </>
                 )}
 
-                {/* Boutons */}
+                {}
                 <div className="form-actions">
                     <button 
                         type="submit" 

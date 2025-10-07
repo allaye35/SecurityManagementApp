@@ -16,13 +16,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ContratDeTravailMapper {
 
-    /* ---------- repos ---------- */
     private final AgentDeSecuriteRepository       agentRepo;
     private final EntrepriseRepository            entrepriseRepo;
     private final MissionRepository               missionRepo;
-    private final ArticleContratTravailRepository articleRepo;   // 🆕
+    private final ArticleContratTravailRepository articleRepo;
 
-    /* ---------- ENTITÉ → DTO ---------- */
     public ContratDeTravailDto toDto(ContratDeTravail c) {
         return ContratDeTravailDto.builder()
                 .id(c.getId())
@@ -51,7 +49,6 @@ public class ContratDeTravailMapper {
                 .build();
     }
 
-    /* ---------- DTO → ENTITÉ ---------- */
     public ContratDeTravail toEntity(ContratDeTravailCreationDto dto) {
 
         ContratDeTravail entity = ContratDeTravail.builder()
@@ -66,21 +63,19 @@ public class ContratDeTravailMapper {
 
         linkAgentEntrepriseMission(dto, entity);
 
-        // 🆕 rattacher les clauses
         if (dto.getArticleContratTravailIds() != null) {
             dto.getArticleContratTravailIds().forEach(id -> {
                 ArticleContratTravail art = articleRepo.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException(
                                 "ArticleContratTravail introuvable id=" + id));
-                art.setContratDeTravail(entity);   // côté inverse
-                entity.getClauses().add(art);       // côté propriétaire
+                art.setContratDeTravail(entity);
+                entity.getClauses().add(art);
             });
         }
 
         return entity;
     }
 
-    /* ---------- PATCH (update partiel) ---------- */
     public void updateEntityFromDto(ContratDeTravailCreationDto dto, ContratDeTravail entity) {
 
         if (dto.getReferenceContrat()   != null) entity.setReferenceContrat(dto.getReferenceContrat());
@@ -93,7 +88,6 @@ public class ContratDeTravailMapper {
 
         linkAgentEntrepriseMission(dto, entity);
 
-        // 🆕 refresh des clauses si la liste est fournie
         if (dto.getArticleContratTravailIds() != null) {
             entity.getClauses().clear();
             dto.getArticleContratTravailIds().forEach(id -> {
@@ -106,7 +100,6 @@ public class ContratDeTravailMapper {
         }
     }
 
-    /* ---------- factorisation des associations ---------- */
     private void linkAgentEntrepriseMission(ContratDeTravailCreationDto dto, ContratDeTravail entity) {
 
         if (dto.getAgentDeSecuriteId() != null) {

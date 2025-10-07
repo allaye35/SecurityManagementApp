@@ -18,9 +18,8 @@ public class FactureCreateDto {
     private BigDecimal      montantTVA;
     private BigDecimal      montantTTC;
 
-    /* IDs des entités liées */
     private Long            devisId;
     private Long            entrepriseId;
     private Long            clientId;
-    private List<Long>      missionIds;    // facultatif
+    private List<Long>      missionIds;
 }

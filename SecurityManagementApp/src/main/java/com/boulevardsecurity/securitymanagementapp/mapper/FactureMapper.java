@@ -19,7 +19,6 @@ public class FactureMapper {
     private final ContratRepository      contratRepo;
     private final MissionRepository      missionRepo;
 
-    /** ENTITÉ → DTO **/
     public FactureDto toDto(Facture f) {
         return FactureDto.builder()
                 .id(f.getId())
@@ -39,9 +38,7 @@ public class FactureMapper {
                 .build();
     }
 
-    /** DTO création / update → ENTITÉ **/
     public Facture toEntity(FactureCreateDto dto) {
-        // récupère les entités obligatoires
         Devis devis        = devisRepo.findById(dto.getDevisId())
                 .orElseThrow(() -> new IllegalArgumentException("Devis id=" + dto.getDevisId() + " introuvable"));
         Entreprise ent     = entrepriseRepo.findById(dto.getEntrepriseId())
@@ -49,7 +46,6 @@ public class FactureMapper {
         Client client      = clientRepo.findById(dto.getClientId())
                 .orElseThrow(() -> new IllegalArgumentException("Client id=" + dto.getClientId() + " introuvable"));
 
-        // construit la facture
         Facture f = Facture.builder()
                 .referenceFacture(dto.getReferenceFacture())
                 .dateEmission(dto.getDateEmission())
@@ -63,9 +59,6 @@ public class FactureMapper {
                 .client(client)
                 .build();
 
-
-
-        // missions facturées facultatives
         if (dto.getMissionIds() != null && !dto.getMissionIds().isEmpty()) {
             dto.getMissionIds().forEach(mid -> {
                 Mission m = missionRepo.findById(mid)

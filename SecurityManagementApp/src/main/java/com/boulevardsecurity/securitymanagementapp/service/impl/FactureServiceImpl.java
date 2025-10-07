@@ -43,10 +43,7 @@ public class FactureServiceImpl implements FactureService {
     @Autowired
     private TemplateEngine templateEngine;
 
-    /* ---------- utilitaires ---------- */
     private static BigDecimal nz(BigDecimal v) { return v == null ? BigDecimal.ZERO : v; }
-
-    /* ================= CRUD de base ================= */
 
     @Override
     public FactureDto create(FactureCreateDto dto) {
@@ -91,13 +88,6 @@ public class FactureServiceImpl implements FactureService {
         repo.deleteById(id);
     }
 
-    /* ================= Génération métier ================= */
-
-    /**
-     * Crée une facture à partir d'un devis existant.
-     * On calcule HT/TVA/TTC sur chaque mission UNE SEULE FOIS, puis on agrège
-     * les champs posés (et non un nouveau calcul).
-     */
     @Transactional
     public Facture creerDepuisDevis(Long devisId) {
         Devis d = repDevis.findById(devisId)
@@ -105,13 +95,10 @@ public class FactureServiceImpl implements FactureService {
 
         List<Mission> missions = Optional.ofNullable(d.getMissions()).orElseGet(List::of);
         if (missions.isEmpty()) {
-            // facture "vide" autorisée ou non ? Ici on autorise avec montants à 0.
         }
 
-        // 1) Poser les montants sur chaque mission (HT/TVA/TTC)
         appliquerChiffrageSurMissions(missions);
 
-        // 2) Agréger les valeurs déjà posées (gère des TVA différentes par mission)
         BigDecimal totalHT  = missions.stream().map(Mission::getMontantHT).map(FactureServiceImpl::nz)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalTVA = missions.stream().map(Mission::getMontantTVA).map(FactureServiceImpl::nz)
@@ -135,10 +122,6 @@ public class FactureServiceImpl implements FactureService {
         return repo.save(f);
     }
 
-    /**
-     * Crée une facture pour un client sur une période donnée.
-     * Idem : on pose d'abord HT/TVA/TTC sur chaque mission, puis on agrège.
-     */
     @Transactional
     public Facture creerPourClientEtPeriode(Long clientId, LocalDate debut, LocalDate fin) {
         Client client = clientRepository.findById(clientId)
@@ -151,10 +134,8 @@ public class FactureServiceImpl implements FactureService {
             throw new IllegalArgumentException("Aucune mission trouvée pour ce client dans la période spécifiée");
         }
 
-        // 1) Poser HT/TVA/TTC sur chaque mission
         appliquerChiffrageSurMissions(missions);
 
-        // 2) Agréger les montants posés
         BigDecimal totalHT  = missions.stream().map(Mission::getMontantHT).map(FactureServiceImpl::nz)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalTVA = missions.stream().map(Mission::getMontantTVA).map(FactureServiceImpl::nz)
@@ -179,11 +160,6 @@ public class FactureServiceImpl implements FactureService {
         return repo.save(f);
     }
 
-    /**
-     * Pose HT/TVA/TTC sur une mission selon les règles de TarificationDomainService.
-     * (On ne persistait auparavant qu'à l'intérieur de cette méthode mission par mission.
-     *  Ici on laisse l'appelant faire un saveAll après la boucle pour limiter les I/O.)
-     */
     private void appliquerChiffrage(Mission m) {
         BigDecimal ht   = tarification.montantHT(m);
         BigDecimal taux = m.getTarif().getTauxTVA();
@@ -195,19 +171,15 @@ public class FactureServiceImpl implements FactureService {
         m.setMontantTTC(ttc);
     }
 
-    /** Applique le chiffrage à une liste puis persiste en une seule fois. */
     private void appliquerChiffrageSurMissions(List<Mission> missions) {
         if (missions == null || missions.isEmpty()) return;
         missions.forEach(this::appliquerChiffrage);
-        missionRepository.saveAll(missions); // un seul batch d'écritures
+        missionRepository.saveAll(missions);
     }
 
-    /** Génère une référence unique pour une facture. */
     private String genererReference() {
         return "FACT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
-
-    /* ================= PDF ================= */
 
     @Override
     public byte[] generatePdf(Long id) {

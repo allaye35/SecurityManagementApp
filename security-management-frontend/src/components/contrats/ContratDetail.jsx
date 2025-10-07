@@ -1,4 +1,3 @@
-// filepath: c:\Users\allay\Documents\java_Project_2025\security-management-frontend\src\components\contrats\ContratDetail.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ContratService from "../../services/ContratService";
@@ -26,24 +25,19 @@ export default function ContratDetail() {
     const [devis, setDevis] = useState(null);
     const [missions, setMissions] = useState(null);
     const [articles, setArticles] = useState(null);
-    const [client, setClient] = useState(null);      // on garde l'état
-    const [entreprise, setEntreprise] = useState(null);      // mais plus de fetch dédié
+    const [client, setClient] = useState(null);
+    const [entreprise, setEntreprise] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-      // Référence pour l'impression
     const componentRef = useRef();
-      // État pour suivre si l'impression est en cours
     const [isPrinting, setIsPrinting] = useState(false);
-      // Fonction pour gérer les erreurs d'impression
     const handlePrintError = (error) => {
         console.error("Erreur lors de l'impression:", error);
         setIsPrinting(false);
         
-        // Message d'erreur plus détaillé selon le type d'erreur
         let errorMessage = "Une erreur est survenue lors de l'impression. ";
         
         if (error && error.message) {
-            // Ajouter des détails spécifiques selon le message d'erreur
             if (error.message.includes("timeout")) {
                 errorMessage += "Délai d'attente dépassé. ";
             } else if (error.message.includes("network") || error.message.includes("connexion")) {
@@ -54,26 +48,22 @@ export default function ContratDetail() {
         errorMessage += "Veuillez réessayer ou vérifier votre connexion.";
         setError(errorMessage);
         
-        // Effacer le message d'erreur après un délai
-        setTimeout(() => setError(""), 8000);  // Message affiché plus longtemps
+        setTimeout(() => setError(""), 8000);
         
-        // Log pour diagnostic
         console.log("État du document au moment de l'erreur:", componentRef.current ? "Disponible" : "Non disponible");
     };
-      // Configuration de l'impression - déplacé avant les conditionnels pour respecter les règles des Hooks
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
         documentTitle: `Contrat_${contrat?.referenceContrat || id}`,
         onBeforeGetContent: () => {
             setIsPrinting(true);
-            setError(""); // Réinitialisation des erreurs avant impression
+            setError("");
             console.log("Début préparation impression...");
             return new Promise(resolve => {
-                // Donner du temps pour que les styles soient correctement appliqués
                 setTimeout(() => {
                     console.log("Contenu prêt pour impression");
                     resolve();
-                }, 500); // Augmentation du temps d'attente
+                }, 500);
             });
         },
         onAfterPrint: () => {
@@ -81,8 +71,8 @@ export default function ContratDetail() {
             console.log("Impression terminée avec succès");
         },
         onPrintError: handlePrintError,
-        removeAfterPrint: false, // Conserver l'iframe pour debug si nécessaire
-        copyStyles: true, // Assurer la copie des styles
+        removeAfterPrint: false,
+        copyStyles: true,
         pageStyle: `
             @page {
                 size: A4;
@@ -157,17 +147,14 @@ export default function ContratDetail() {
             try {
                 setLoading(true);
 
-                /* ----------- CONTRAT ----------- */
                 const { data: contratData } = await ContratService.getById(id);
                 setContrat(contratData);
 
-                /* ----------- DEVIS (+ client / entreprise) ----------- */
                 if (contratData.devisId) {
                     try {
                         const { data: devisData } = await DevisService.getById(contratData.devisId);
 
                         setDevis(devisData);
-                        // ⬇️  on récupère directement les infos des parties
                         setClient(devisData.client);
                         setEntreprise(devisData.entreprise);
                     } catch (err) {
@@ -176,11 +163,9 @@ export default function ContratDetail() {
                     }
                 }
 
-                /* ----------- MISSIONS ----------- */
                 const missionsRes = await MissionService.getAllMissions();
                 setMissions(missionsRes.data.filter(m => m.contratId === Number(id)));
 
-                /* ----------- ARTICLES ----------- */
                 try {
                     const artRes = await ArticleService.getByContratId(id);
                     setArticles(artRes.data);
@@ -215,7 +200,6 @@ export default function ContratDetail() {
         const today = new Date();
         const signatureDate = new Date(contrat.dateSignature);
         
-        // Si une durée est spécifiée, calculer la date de fin
         if (contrat.dureeMois) {
             const endDate = new Date(signatureDate);
             endDate.setMonth(endDate.getMonth() + parseInt(contrat.dureeMois));
@@ -235,7 +219,6 @@ export default function ContratDetail() {
                     startDate: signatureDate.toLocaleDateString()
                 };
             } else {
-                // Calculer le pourcentage d'avancement
                 const totalDuration = endDate.getTime() - signatureDate.getTime();
                 const elapsed = today.getTime() - signatureDate.getTime();
                 const percent = Math.round((elapsed / totalDuration) * 100);
@@ -249,7 +232,6 @@ export default function ContratDetail() {
                 };
             }
         } else {
-            // Si pas de durée spécifiée
             if (today < signatureDate) {
                 return { 
                     status: "futur", 
@@ -332,7 +314,7 @@ export default function ContratDetail() {
     
     return (
         <Container className="contrat-detail-container">
-            {/* Barre d'actions - ne sera pas imprimée */}
+            {}
             <div className="d-flex justify-content-between align-items-center mb-4 no-print">
                 <div>
                     <Button 
@@ -345,7 +327,7 @@ export default function ContratDetail() {
                     </Button>
                 </div>
                 
-                {/* Afficher un avertissement si des erreurs de connexion se produisent */}
+                {}
                 {error && (
                     <Alert variant="danger" className="mt-2 mb-2 w-100">
                         <FontAwesomeIcon icon={faExclamationTriangle} className="me-2" />
@@ -384,11 +366,11 @@ export default function ContratDetail() {
                 </div>
             </div>
             
-            {/* Contenu à imprimer */}
+            {}
             <div ref={componentRef} className="print-container">
                 <Card className="shadow mb-4">                
                     <Card.Header className="contrat-header">
-                        {/* En-tête principal du contrat */}
+                        {}
                         <div className="d-flex justify-content-between align-items-center">
                             <div className="d-flex align-items-center">
                                 <h2 className="contrat-title text-white">
@@ -421,9 +403,9 @@ export default function ContratDetail() {
                                 </Badge>
                             </div>
                         </div>
-                          {/* Parties contractantes */}
+                          {}
                         <div className="mt-4 d-flex justify-content-between flex-wrap parties-contractantes">
-                            {/* Prestataire - depuis le devis ou directement depuis entreprise */}
+                            {}
                             {(devis?.entreprise || entreprise) && (
                                 <div className="partie text-white">
                                     <h5 className="mb-2">
@@ -453,7 +435,7 @@ export default function ContratDetail() {
                                 </div>
                             )}
                             
-                            {/* Client - depuis le devis ou directement depuis client */}
+                            {}
                             {(devis?.client || client) && (
                                 <div className="partie text-white">
                                     <h5 className="mb-2">
@@ -486,7 +468,7 @@ export default function ContratDetail() {
                                 </div>
                             )}
                         </div>
-                          {/* Infos complémentaires */}
+                          {}
                         <div className="mt-3 d-flex flex-wrap contrat-meta-infos">
                             {(devis?.montantTotal || contrat?.montantTotal) && (
                                 <div className="info-box me-3">
@@ -537,7 +519,7 @@ export default function ContratDetail() {
                     </Card.Header>
                     
                     <Card.Body className="contrat-body p-4">
-                        {/* Section Informations Générales */}
+                        {}
                         <Row className="mb-4">
                             <Col>
                                 <div className="print-section">
@@ -589,7 +571,7 @@ export default function ContratDetail() {
                                     </Table>
                                 </div>
                             </Col>
-                        </Row>                        {/* Section Informations Détaillées sur le Prestataire et le Client */}
+                        </Row>                        {}
                         {((devis && (devis.entreprise || devis.client)) || entreprise || client) && (
                             <Row className="mb-4">
                                 <Col>
@@ -600,7 +582,7 @@ export default function ContratDetail() {
                                         </h3>
                                         
                                         <Row>
-                                            {/* Informations du Prestataire - depuis le devis ou directement*/}
+                                            {}
                                             {(devis?.entreprise || entreprise) && (
                                                 <Col md={6} className="mb-4 mb-md-0">
                                                     <Card className="h-100 partie-card">
@@ -672,7 +654,7 @@ export default function ContratDetail() {
                                                 </Col>
                                             )}
                                             
-                                            {/* Informations du Client - depuis le devis ou directement */}
+                                            {}
                                             {(devis?.client || client) && (
                                                 <Col md={6}>
                                                     <Card className="h-100 partie-card">
@@ -753,7 +735,7 @@ export default function ContratDetail() {
                             </Row>
                         )}
                         
-                        {/* Section Articles du Contrat */}
+                        {}
                         <Row className="mb-4">
                             <Col>
                                 <div className="print-section">
@@ -790,7 +772,7 @@ export default function ContratDetail() {
                             </Col>
                         </Row>
                         
-                        {/* Section Missions associées */}
+                        {}
                         <Row className="mb-4">
                             <Col>
                                 <div className="print-section">
@@ -841,7 +823,7 @@ export default function ContratDetail() {
                             </Col>
                         </Row>
                         
-                        {/* Section Détails du Devis */}
+                        {}
                         {devis && (
                             <Row className="mb-4">
                                 <Col>
@@ -879,7 +861,7 @@ export default function ContratDetail() {
                             </Row>
                         )}
                         
-                        {/* Section Signatures */}
+                        {}
                         <Row className="mt-5">
                             <Col>
                                 <div className="print-section signatures">
@@ -907,7 +889,7 @@ export default function ContratDetail() {
                             </Col>
                         </Row>
                         
-                        {/* Document PDF original - seulement pour l'affichage, pas pour l'impression */}
+                        {}
                         {contrat.documentPdf && (
                             <Row className="mt-4 no-print">
                                 <Col>

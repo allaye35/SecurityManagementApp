@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // Importer useNavigate pour la navigation et useParams pour récupérer l'ID
+import { useNavigate, useParams } from 'react-router-dom';
 
 const DeleteAgent = () => {
-  const { id } = useParams(); // Récupérer l'ID de l'agent à partir de l'URL
-  const navigate = useNavigate(); // Pour naviguer après la suppression
-  const [isDeleted, setIsDeleted] = useState(false); // État pour savoir si l'agent est supprimé ou non
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [isDeleted, setIsDeleted] = useState(false);
 
   const handleDelete = async () => {
     try {
@@ -13,10 +13,9 @@ const DeleteAgent = () => {
       });
       if (response.ok) {
         setIsDeleted(true);
-        // Rediriger après la suppression
         setTimeout(() => {
-          navigate('/agents'); // Par exemple, après suppression, on revient à la liste des agents
-        }, 2000); // Attente de 2 secondes pour l'animation
+          navigate('/agents');
+        }, 2000);
       } else {
         alert('Erreur lors de la suppression de l\'agent');
       }

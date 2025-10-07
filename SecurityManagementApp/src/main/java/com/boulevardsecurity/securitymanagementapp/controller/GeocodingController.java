@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/geocode")
 public class GeocodingController {
 
-
     private GeocodingService geocodingService;
 
     @Autowired

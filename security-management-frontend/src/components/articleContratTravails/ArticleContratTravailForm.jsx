@@ -37,7 +37,6 @@ export default function ArticleContratTravailForm() {
     const [success, setSuccess] = useState(false);
     const [validated, setValidated] = useState(false);
 
-    // Fonction pour convertir l'ID en nombre ou retourner null
     const parseContratId = (value) => {
         if (value === undefined || value === null || value === "") {
             return "";
@@ -46,7 +45,6 @@ export default function ArticleContratTravailForm() {
         return isNaN(numValue) ? "" : numValue;
     };
     
-    // Chargement des contrats de travail disponibles
     useEffect(() => {
         setContratsLoading(true);
         ContratDeTravailService.getAll()
@@ -56,12 +54,10 @@ export default function ArticleContratTravailForm() {
             })
             .catch(err => {
                 console.error("Erreur lors du chargement des contrats:", err);
-                // On ne bloque pas le formulaire pour autant
             })
             .finally(() => setContratsLoading(false));
     }, []);
 
-    // Chargement des données de l'article si en mode édition
     useEffect(() => {
         if (isEdit) {
             setLoading(true);
@@ -85,12 +81,9 @@ export default function ArticleContratTravailForm() {
     const handleChange = e => {
         const { name, value } = e.target;
         
-        // Traiter spécifiquement le cas du contratDeTravailId pour s'assurer qu'il est correctement formaté
         if (name === "contratDeTravailId") {
             console.log("Changement d'ID de contrat:", value);
             
-            // Utiliser directement la valeur string pour le state du formulaire
-            // La conversion en nombre se fera uniquement lors de la soumission
             setForm(f => ({ ...f, [name]: value }));
         } else {
             setForm(f => ({ ...f, [name]: value }));
@@ -101,7 +94,6 @@ export default function ArticleContratTravailForm() {
         const formElement = e.currentTarget;
         e.preventDefault();
         
-        // Validation du formulaire
         if (formElement.checkValidity() === false) {
             e.stopPropagation();
             setValidated(true);
@@ -113,10 +105,8 @@ export default function ArticleContratTravailForm() {
         setError("");
         
         try {
-            // Création d'une copie du formulaire pour éviter des modifications indésirables
             const articleData = { ...form };
             
-            // Traitement spécifique pour l'ID du contrat
             if (articleData.contratDeTravailId !== "") {
                 articleData.contratDeTravailId = parseContratId(articleData.contratDeTravailId);
                 
@@ -136,7 +126,6 @@ export default function ArticleContratTravailForm() {
             console.log("Données à envoyer:", articleData);
             
             if (isEdit) {
-                // Force la recréation de l'objet pour s'assurer que toutes les propriétés sont envoyées
                 const updateData = {
                     libelle: articleData.libelle,
                     contenu: articleData.contenu,
@@ -148,7 +137,6 @@ export default function ArticleContratTravailForm() {
                 console.log("Réponse après mise à jour:", response);
                 setSuccess(true);
                 
-                // Redirection après un court délai pour montrer le message de succès
                 setTimeout(() => {
                     navigate("/article-contrat-travail", { 
                         state: { message: "Article modifié avec succès!" }
@@ -160,7 +148,6 @@ export default function ArticleContratTravailForm() {
                 console.log("Réponse après création:", response);
                 setSuccess(true);
                 
-                // Redirection après un court délai pour montrer le message de succès
                 setTimeout(() => {
                     navigate("/article-contrat-travail", { 
                         state: { message: "Article créé avec succès!" }
@@ -174,7 +161,7 @@ export default function ArticleContratTravailForm() {
             } else {
                 setError("Erreur lors de l'enregistrement de l'article. Veuillez vérifier vos informations et réessayer.");
             }
-            window.scrollTo(0, 0); // Scroll vers le message d'erreur
+            window.scrollTo(0, 0);
         } finally {
             setLoading(false);
         }
@@ -201,7 +188,7 @@ export default function ArticleContratTravailForm() {
                 </Card.Header>
 
                 <Card.Body className="px-4 py-4">
-                    {/* Message d'erreur */}
+                    {}
                     {error && (
                         <Alert variant="danger" className="mb-4 d-flex align-items-start">
                             <div className="me-3 mt-1">
@@ -214,7 +201,7 @@ export default function ArticleContratTravailForm() {
                         </Alert>
                     )}
                     
-                    {/* Message de succès */}
+                    {}
                     {success && (
                         <Alert variant="success" className="mb-4 d-flex align-items-start">
                             <div className="me-3 mt-1">
@@ -230,7 +217,7 @@ export default function ArticleContratTravailForm() {
                         </Alert>
                     )}
                     
-                    {/* Bannière d'information */}
+                    {}
                     <div className="form-title-banner mb-4">
                         <h3>{isEdit ? "Modification d'un article" : "Création d'un nouvel article"}</h3>
                         <p>Les articles de contrat de travail définissent les termes et conditions qui s'appliqueront à vos employés.</p>

@@ -52,8 +52,6 @@ public class DiplomeSsiapServiceImpl implements DiplomeSsiapService {
         DiplomeSSIAP existing = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Diplôme SSIAP introuvable id=" + id));
         mapper.updateEntityFromDto(mapper.toDto(existing), existing);
-        // si vous voulez mettre à jour aussi les champs obligatoires :
-        // mapper.toEntity(dto) n'est pas utilisé ici, on fait que le patch
         DiplomeSSIAP saved = repo.save(existing);
         return mapper.toDto(saved);
     }

@@ -23,7 +23,6 @@ export default function RapportDetail() {
     const [error, setError] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-    // 1️⃣ Chargement du rapport
     useEffect(() => {
         setLoading(true);
         RapportService.getRapportById(id)
@@ -38,7 +37,6 @@ export default function RapportDetail() {
             });
     }, [id]);
 
-    // 2️⃣ Dès que report est chargé, on va chercher la mission
     useEffect(() => {
         if (!report?.missionId) return;
 
@@ -46,11 +44,9 @@ export default function RapportDetail() {
                 .then(({ data }) => setMission(data))
                 .catch(err => {
                     console.error("Erreur lors du chargement de la mission:", err);
-                    // On ne bloque pas l'affichage du rapport si la mission n'est pas trouvée
                 });
     }, [report]);
 
-    // Fonction pour obtenir la couleur du badge selon le statut
     const getStatusBadgeVariant = (status) => {
         switch (status) {
             case 'TERMINE': return 'success';
@@ -60,7 +56,6 @@ export default function RapportDetail() {
         }
     };
 
-    // Affichage du nom de statut
     const getStatusDisplayName = (status) => {
         switch (status) {
             case 'TERMINE': return 'Terminé';
@@ -70,7 +65,6 @@ export default function RapportDetail() {
         }
     };
 
-    // Fonction pour obtenir l'icône du statut
     const getStatusIcon = (status) => {
         switch (status) {
             case 'TERMINE': return faCheckCircle;
@@ -80,7 +74,6 @@ export default function RapportDetail() {
         }
     };
 
-    // Fonction pour supprimer le rapport
     const handleDelete = () => {
         setLoading(true);
         RapportService.deleteRapport(id)
@@ -123,7 +116,7 @@ export default function RapportDetail() {
 
     return (
         <Container className="py-4">
-            {/* Confirmation de suppression */}
+            {}
             {showDeleteConfirm && (
                 <Alert variant="danger" className="mb-4">
                     <Alert.Heading>Confirmer la suppression</Alert.Heading>
@@ -149,7 +142,7 @@ export default function RapportDetail() {
                 </Alert>
             )}
 
-            {/* Navigation */}
+            {}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <Button as={Link} to="/rapports" variant="outline-secondary" className="d-flex align-items-center">
                     <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
@@ -167,7 +160,7 @@ export default function RapportDetail() {
                 </div>
             </div>
 
-            {/* Titre principal avec ID et statut */}
+            {}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="mb-0 d-flex align-items-center">
                     <FontAwesomeIcon icon={faFileAlt} className="me-3 text-primary" />
@@ -180,7 +173,7 @@ export default function RapportDetail() {
             </div>
 
             <Row>
-                {/* Informations générales */}
+                {}
                 <Col lg={6} className="mb-4">
                     <Card className="shadow-sm h-100">
                         <Card.Header className="bg-white">
@@ -246,7 +239,7 @@ export default function RapportDetail() {
                     </Card>
                 </Col>
 
-                {/* Informations sur l'agent */}
+                {}
                 <Col lg={6} className="mb-4">
                     <Card className="shadow-sm h-100">
                         <Card.Header className="bg-white">
@@ -277,7 +270,7 @@ export default function RapportDetail() {
                 </Col>
             </Row>
 
-            {/* Détails du rapport */}
+            {}
             <Card className="shadow-sm mb-4">
                 <Card.Header className="bg-white">
                     <h3 className="fs-5 mb-0">
@@ -303,7 +296,7 @@ export default function RapportDetail() {
                 </Card.Body>
             </Card>
 
-            {/* Actions en bas de page */}
+            {}
             <div className="d-flex justify-content-between mt-4">
                 <Button as={Link} to="/rapports" variant="outline-secondary">
                     <FontAwesomeIcon icon={faArrowLeft} className="me-2" />

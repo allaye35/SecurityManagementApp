@@ -59,10 +59,8 @@ public class ClientController {
 
     @PutMapping("/{id}/role")
     public ResponseEntity<ClientDto> updateRole(@PathVariable Long id, @RequestBody Map<String, String> roleData) {
-        // Récupérer le rôle depuis le body
         String newRole = roleData.get("role");
         
-        // Validation des rôles autorisés
         if (newRole == null || (!newRole.equals("ADMIN") && !newRole.equals("CLIENT") && !newRole.equals("AGENT_SECURITE"))) {
             return ResponseEntity.badRequest().build();
         }
@@ -77,14 +75,11 @@ public class ClientController {
         return ResponseEntity.noContent().build();
     }
 
-    /* ====== Nouveaux endpoints Admin ====== */
-    /** Liste les clients en attente d’approbation (email vérifié mais non approuvé) */
     @GetMapping("/pending")
     public ResponseEntity<List<ClientDto>> listPending() {
         return ResponseEntity.ok(service.getPendingApprovalClients());
     }
 
-    /** Approuver un compte client (ADMIN) */
     @PostMapping("/{id}/approve")
     public ResponseEntity<ClientDto> approve(@PathVariable Long id) {
         return ResponseEntity.ok(service.approveClient(id));

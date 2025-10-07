@@ -20,7 +20,6 @@ public class ClientMapper {
     private final DevisRepository devisRepo;
     private final GestionnaireNotificationsRepository notifRepo;
 
-    /** ENTITÉ ➜ DTO */
     public ClientDto toDto(Client c) {
         return ClientDto.builder()
                 .id(c.getId())
@@ -46,7 +45,6 @@ public class ClientMapper {
                 .build();
     }
 
-    /** DTO création ➜ ENTITÉ */
     public Client toEntity(ClientCreateDto dto) {
         Client c = Client.builder()
                 .password(dto.getPassword())
@@ -85,9 +83,7 @@ public class ClientMapper {
         return c;
     }
 
-    /** DTO update ➜ ENTITÉ existante (ne touche pas aux drapeaux de sécurité) */
     public void updateEntityFromDto(ClientDto dto, Client c) {
-        // Mise à jour du rôle (ajouté pour permettre le changement de rôle par l'admin)
         if (dto.getRole() != null) {
             c.setRole(dto.getRole());
         }
@@ -105,18 +101,13 @@ public class ClientMapper {
         c.setPays(dto.getPays());
         c.setModeContactPrefere(dto.getModeContactPrefere());
 
-        // NE PAS mettre à jour les collections pour éviter les problèmes de lazy loading
-        // Les collections (devis et notifications) ne sont mises à jour que si explicitement demandé
     }
 
-    /** Méthode spécifique pour la mise à jour simple (sans collections) */
     public void updateBasicFieldsFromDto(ClientDto dto, Client c) {
-        // Mise à jour du rôle
         if (dto.getRole() != null) {
             c.setRole(dto.getRole());
         }
         
-        // Mise à jour des champs simples uniquement
         if (dto.getNom() != null) c.setNom(dto.getNom());
         if (dto.getPrenom() != null) c.setPrenom(dto.getPrenom());
         if (dto.getSiege() != null) c.setSiege(dto.getSiege());

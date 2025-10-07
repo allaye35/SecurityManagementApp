@@ -21,7 +21,6 @@ public class SiteController {
     
     private final SiteService siteService;
 
-    /** Récupère tous les sites */
     @GetMapping
     public ResponseEntity<List<SiteDto>> getAll() {
         logger.info("GET /api/sites - Récupération de tous les sites");
@@ -30,7 +29,6 @@ public class SiteController {
         return ResponseEntity.ok(sites);
     }
 
-    /** Récupère un site par son ID */
     @GetMapping("/{id}")
     public ResponseEntity<SiteDto> getById(@PathVariable Long id) {
         logger.info("GET /api/sites/{} - Récupération du site", id);
@@ -45,7 +43,6 @@ public class SiteController {
                 });
     }
 
-    /** Crée un nouveau site */
     @PostMapping
     public ResponseEntity<SiteDto> create(@RequestBody SiteCreateDto dto) {
         logger.info("POST /api/sites - Création d'un nouveau site: {}", dto.getNom());
@@ -59,7 +56,6 @@ public class SiteController {
         }
     }
 
-    /** Met à jour un site existant */
     @PutMapping("/{id}")
     public ResponseEntity<SiteDto> update(
             @PathVariable Long id,
@@ -76,7 +72,6 @@ public class SiteController {
         }
     }
 
-    /** Supprime un site */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         logger.info("DELETE /api/sites/{} - Suppression du site", id);

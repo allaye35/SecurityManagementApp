@@ -18,18 +18,14 @@ export default function RegisterClientPage() {
   const [form, setForm] = useState({
     typeClient: "PARTICULIER",
 
-    // particulier
     nom: "", prenom: "",
 
-    // entreprise
     siege: "", representant: "", numeroSiret: "",
 
-    // coordonnées
     email: "", telephone: "", adresse: "", numeroRue: "",
     codePostal: "", ville: "", pays: "",
     modeContactPrefere: "EMAIL",
 
-    // sécurité
     password: "", confirm: "",
   });
 
@@ -47,7 +43,6 @@ export default function RegisterClientPage() {
 
     setErr(""); setMsg(""); setLoading(true);
 
-    // validations mini
     if (form.password !== form.confirm) {
       setErr("Les mots de passe ne correspondent pas.");
       setLoading(false);
@@ -67,21 +62,17 @@ export default function RegisterClientPage() {
       }
     }
 
-    // construire le DTO attendu par ton backend (ClientCreateDto)
     const dto = {
       password: form.password,
       typeClient: form.typeClient,
 
-      // particulier
       nom: isEntreprise ? undefined : form.nom.trim(),
       prenom: isEntreprise ? undefined : form.prenom.trim(),
 
-      // entreprise
       siege: isEntreprise ? form.siege.trim() : undefined,
       representant: isEntreprise ? form.representant.trim() : undefined,
       numeroSiret: isEntreprise ? (form.numeroSiret?.trim() || undefined) : undefined,
 
-      // coordonnées
       email: form.email.trim(),
       telephone: form.telephone?.trim() || undefined,
       adresse: form.adresse?.trim() || undefined,
@@ -112,13 +103,13 @@ export default function RegisterClientPage() {
       <h2>Créer un compte client</h2>
 
       <form onSubmit={submit} className="auth-form" autoComplete="off">
-        {/* Type */}
+        {}
         <label className="auth-label">Type de client</label>
         <select name="typeClient" value={form.typeClient} onChange={onField}>
           {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
 
-        {/* Particularier */}
+        {}
         {!isEntreprise && (
           <>
             <input name="nom" placeholder="Nom" value={form.nom} onChange={onField} required />
@@ -126,7 +117,7 @@ export default function RegisterClientPage() {
           </>
         )}
 
-        {/* Entreprise */}
+        {}
         {isEntreprise && (
           <>
             <input name="siege" placeholder="Siège (ex: Société X, Paris)" value={form.siege} onChange={onField} required />
@@ -135,7 +126,7 @@ export default function RegisterClientPage() {
           </>
         )}
 
-        {/* Coordonnées */}
+        {}
         <input type="email" name="email" placeholder="Email" value={form.email} onChange={onField} required />
         <input name="telephone" placeholder="Téléphone (optionnel)" value={form.telephone} onChange={onField} />
         <input name="adresse" placeholder="Adresse (optionnel)" value={form.adresse} onChange={onField} />
@@ -153,7 +144,7 @@ export default function RegisterClientPage() {
           {MODES.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
         </select>
 
-        {/* Sécurité */}
+        {}
         <input type="password" name="password" placeholder="Mot de passe" value={form.password} onChange={onField} required />
         <input type="password" name="confirm" placeholder="Confirmer le mot de passe" value={form.confirm} onChange={onField} required />
 

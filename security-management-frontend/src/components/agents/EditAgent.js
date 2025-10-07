@@ -1,4 +1,4 @@
-/* src/components/agents/EditAgent.jsx */
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select/creatable";
@@ -9,10 +9,9 @@ import {
   faCalendarAlt, faFileContract, faBell, faMapMarkerAlt, faTasks
 } from '@fortawesome/free-solid-svg-icons';
 
-/* ─── services REST ───────────────────────────────────────────────────── */
 import AgentService            from "../../services/AgentService";
 import ZoneService             from "../../services/ZoneService";
-import MissionService          from "../../services/MissionService";          // ⇦ getAllMissions()
+import MissionService          from "../../services/MissionService";
 import DisponibiliteService    from "../../services/DisponibiliteService";
 import DiplomeService          from "../../services/DiplomeService";
 import CarteProService         from "../../services/CarteProService";
@@ -25,18 +24,12 @@ export default function EditAgent() {
   const { id }   = useParams();
   const navigate = useNavigate();
 
-  /* ╔══════════════════════════╗
-     ║   1) ÉTAT PRINCIPAL      ║
-     ╚══════════════════════════╝ */
   const [agent, setAgent] = useState({
     nom: "", prenom: "", email: "", telephone: "", adresse: "",
     dateNaissance: "", statut: "EN_SERVICE", role: "AGENT_SECURITE",
     password: "******", newPassword: ""
   });
 
-  /* ╔══════════════════════════╗
-     ║   2) OPTIONS <Select>    ║
-     ╚══════════════════════════╝ */
   const [zonesOpts,    setZonesOpts]    = useState([]);
   const [missionsOpts, setMissionsOpts] = useState([]);
   const [disposOpts,   setDisposOpts]   = useState([]);
@@ -45,9 +38,6 @@ export default function EditAgent() {
   const [contratsOpts, setContratsOpts] = useState([]);
   const [notifsOpts,   setNotifsOpts]   = useState([]);
 
-  /* ╔══════════════════════════╗
-     ║   3) SÉLECTION COURANTE  ║
-     ╚══════════════════════════╝ */
   const [zonesSel,     setZonesSel]     = useState([]);
   const [missionsSel,  setMissionsSel]  = useState([]);
   const [disposSel,    setDisposSel]    = useState([]);
@@ -56,9 +46,6 @@ export default function EditAgent() {
   const [contratsSel,  setContratsSel]  = useState([]);
   const [notifsSel,    setNotifsSel]    = useState([]);
 
-  /* ╔══════════════════════════╗
-     ║   4) FLAGS "TOUCHED"     ║
-     ╚══════════════════════════╝ */
   const [disposTouched,   setDisposTouched]   = useState(false);
   const [diplomesTouched, setDiplomesTouched] = useState(false);
   const [cartesTouched,   setCartesTouched]   = useState(false);
@@ -69,11 +56,8 @@ export default function EditAgent() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('infos');
 
-  /* ╔══════════════════════════╗
-     ║   5) CHARGEMENT INITIAL  ║
-     ╚══════════════════════════╝ */
   useEffect(() => {
-    /* 5‑1  options */
+    
     ZoneService.getAll()
         .then(r => setZonesOpts(r.data.map(z => ({ value: z.id, label: z.nom }))));
 
@@ -110,7 +94,6 @@ export default function EditAgent() {
           label: `${n.titre} — ${new Date(n.dateEnvoi).toLocaleDateString()}`
         }))));
 
-    /* 5‑2  données de l'agent */
     AgentService.getAgentById(id).then(({ data }) => {
       setAgent(a => ({
         ...a,
@@ -130,9 +113,6 @@ export default function EditAgent() {
     });
   }, [id]);
 
-  /* ╔══════════════════════════╗
-     ║   6) HANDLERS            ║
-     ╚══════════════════════════╝ */
   const handleChange = e => {
     const { name, value } = e.target;
     setAgent(p => ({ ...p, [name]: value }));
@@ -151,12 +131,10 @@ export default function EditAgent() {
       statut: agent.statut, role: agent.role,
       password: agent.newPassword ? agent.newPassword : undefined,
 
-      /* toujours envoyés */
       zonesDeTravailIds: zonesSel.map(o => o.value),
       missionsIds      : missionsSel.map(o => o.value)
     };
 
-    /* envoyés seulement si modifiés (collections orphanRemoval) */
     if (disposTouched)   payload.disponibilitesIds         = disposSel.map(o => o.value);
     if (cartesTouched)   payload.cartesProfessionnellesIds = cartesSel.map(o => o.value);
     if (diplomesTouched) payload.diplomesSSIAPIds          = diplomesSel.map(o => o.value);
@@ -172,9 +150,6 @@ export default function EditAgent() {
     }
   };
 
-  /* ╔══════════════════════════╗
-     ║   7) UI                  ║
-     ╚══════════════════════════╝ */
   return (
     <Container className="py-4 animate__animated animate__fadeIn">
       <Card className="shadow-sm border-0">

@@ -13,9 +13,6 @@ public interface GeolocalisationGpsService {
     GeolocalisationGpsDto create(GeolocalisationGpsCreateDto dto);
     GeolocalisationGpsDto update(Long id, GeolocalisationGpsCreateDto dto);
     void delete(Long id);
-    /**
-     * Ajoute la mission d’ID missionId à la géolocalisation gpsId
-     * et renvoie la nouvelle liste d’IDs de missions.
-     */
+    
     List<Long> addMission(Long gpsId, Long missionId);
 }

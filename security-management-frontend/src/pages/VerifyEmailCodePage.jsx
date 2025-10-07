@@ -22,7 +22,6 @@ export default function VerifyEmailCodePage() {
     try {
       await AuthService.verifyEmailByCode(clean(email), clean(code));
       setOk("Email vérifié ✅. Redirection vers la connexion…");
-      // Rediriger automatiquement après 2 secondes
       setTimeout(() => navigate("/login", { replace: true }), 2000);
     } catch (ex) {
       setErr(ex?.response?.data?.message ?? "Code invalide ou expiré.");
@@ -58,7 +57,7 @@ export default function VerifyEmailCodePage() {
           <p className="auth-error">
             {err}
             {" "}
-            {/* Si le code est déjà consommé, laisser une porte vers la connexion */}
+            {}
             <Link to="/login">Se connecter</Link>
           </p>
         )}
@@ -74,7 +73,7 @@ export default function VerifyEmailCodePage() {
         </button>
       </form>
 
-      {/* Liens utiles en dessous du formulaire */}
+      {}
       <p className="auth-link" style={{ marginTop: 12 }}>
         <Link to="/verify-email/resend">Renvoyer l’email de vérification</Link>
         {" "}&nbsp;·&nbsp;{" "}

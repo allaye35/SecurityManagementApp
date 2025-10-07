@@ -24,20 +24,17 @@ public class FactureController {
     private final FactureService service;
     private final FactureServiceImpl serviceImpl;
 
-    /** Crée une nouvelle facture */
     @PostMapping
     public ResponseEntity<FactureDto> create(@RequestBody FactureCreateDto dto) {
         FactureDto created = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    /** Récupère toutes les factures */
     @GetMapping
     public ResponseEntity<List<FactureDto>> getAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
-    /** Récupère une facture par son ID */
     @GetMapping("/{id}")
     public ResponseEntity<FactureDto> getById(@PathVariable Long id) {
         return service.findById(id)
@@ -45,7 +42,6 @@ public class FactureController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /** Récupère une facture par sa référence */
     @GetMapping("/reference/{ref}")
     public ResponseEntity<FactureDto> getByReference(@PathVariable String ref) {
         return service.findByReference(ref)
@@ -53,7 +49,6 @@ public class FactureController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /** Met à jour une facture existante */
     @PutMapping("/{id}")
     public ResponseEntity<FactureDto> update(
             @PathVariable Long id,
@@ -67,7 +62,6 @@ public class FactureController {
         }
     }
 
-    /** Supprime une facture */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
@@ -77,8 +71,7 @@ public class FactureController {
             return ResponseEntity.notFound().build();
         }
     }
-    
-    /** Crée une facture pour un client sur une période donnée */
+
     @PostMapping("/periode")
     public ResponseEntity<?> createForPeriod(@RequestBody PeriodeFacturationDto periodeDto) {
         try {
@@ -95,8 +88,7 @@ public class FactureController {
                 .body("Erreur lors de la création de la facture: " + e.getMessage());
         }
     }
-    
-    /** Crée une facture à partir d'un devis */
+
     @PostMapping("/from-devis/{devisId}")
     public ResponseEntity<?> createFromDevis(@PathVariable Long devisId) {
         try {
@@ -110,7 +102,6 @@ public class FactureController {
         }
     }
 
-    /** Génère un PDF pour une facture */
     @GetMapping("/{id}/pdf")
     public ResponseEntity<byte[]> generatePdf(@PathVariable Long id) {
         byte[] pdfContent = service.generatePdf(id);

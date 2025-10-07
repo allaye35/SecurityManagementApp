@@ -1,4 +1,4 @@
-/* ---------- entity ---------- */
+
 
 package com.boulevardsecurity.securitymanagementapp.model;
 
@@ -26,11 +26,9 @@ import java.util.List;
 @Builder
 public class ContratDeTravail {
 
-    /* ---------- clé ---------- */
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /* ---------- informations générales ---------- */
     @Column(nullable = false, unique = true, length = 60)
     @NotBlank
     private String referenceContrat;
@@ -38,7 +36,6 @@ public class ContratDeTravail {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 15)
     private TypeContrat typeContrat;
-
 
     private LocalDate dateDebut;
 
@@ -48,7 +45,6 @@ public class ContratDeTravail {
     @Size(max = 2_000)
     private String description;
 
-    /* ---------- rémunération ---------- */
     @Positive
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal salaireDeBase;
@@ -57,7 +53,6 @@ public class ContratDeTravail {
     @Column(nullable = false, length = 10)
     private PeriodiciteSalaire periodiciteSalaire;
 
-    /* ---------- relations ---------- */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agent_id")
     private AgentDeSecurite agentDeSecurite;
@@ -66,20 +61,15 @@ public class ContratDeTravail {
     @JoinColumn(name = "entreprise_id")
     private Entreprise entreprise;
 
-    /** Facultatif : pour un CDD / intérim rattaché à UNE mission précise */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mission_id")
     private Mission mission;
 
-    /** Bulletins de paie émis dans le cadre de ce contrat */
     @OneToMany(mappedBy = "contratDeTravail",
             cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<FicheDePaie> fichesDePaie = new ArrayList<>();
 
-
-
-    /* ---------- audit ---------- */
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -89,8 +79,6 @@ public class ContratDeTravail {
     @OneToMany(mappedBy="contratDeTravail", cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<ArticleContratTravail> clauses = new ArrayList<>();
-
-
 
     @PrePersist
     private void prePersist() {

@@ -4,10 +4,8 @@ import { Container, Row, Col, Form, Button, Card, InputGroup, Alert, Accordion, 
 import { FaSave, FaMapMarkerAlt, FaCity, FaGlobe, FaUsers, FaSearch, FaCheck } from "react-icons/fa";
 
 const ZoneForm = ({ title, data, setData, onSubmit, error, agents, selectedAgents, setSelectedAgents }) => {
-    // État local pour la recherche d'agents
     const [agentSearch, setAgentSearch] = useState("");
     
-    // Fonction pour gérer la sélection/désélection des agents
     const handleAgentSelection = (agentId) => {
         if (selectedAgents.includes(agentId)) {
             setSelectedAgents(selectedAgents.filter(id => id !== agentId));
@@ -16,12 +14,10 @@ const ZoneForm = ({ title, data, setData, onSubmit, error, agents, selectedAgent
         }
     };
 
-    // Filtrer les agents basé sur la recherche
     const filteredAgents = agents && agents.filter(agent => 
         `${agent.nom} ${agent.prenom}`.toLowerCase().includes(agentSearch.toLowerCase())
     );
 
-    // Sélectionner/désélectionner tous les agents
     const toggleAllAgents = () => {
         if (filteredAgents.length === 0) return;
         
@@ -29,10 +25,8 @@ const ZoneForm = ({ title, data, setData, onSubmit, error, agents, selectedAgent
         const allSelected = filteredAgents.every(agent => selectedAgents.includes(agent.id));
         
         if (allSelected) {
-            // Désélectionner tous les agents filtrés
             setSelectedAgents(selectedAgents.filter(id => !allAgentIds.includes(id)));
         } else {
-            // Sélectionner tous les agents filtrés (en évitant les doublons)
             const newSelectedAgents = [...new Set([...selectedAgents, ...allAgentIds])];
             setSelectedAgents(newSelectedAgents);
         }

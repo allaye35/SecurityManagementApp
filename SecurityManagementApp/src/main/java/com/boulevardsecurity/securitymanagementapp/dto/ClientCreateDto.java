@@ -12,21 +12,17 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ClientCreateDto {
 
-    /* -------- authentification -------- */
     @NotBlank
     private String password;
 
-    /* -------- typologie -------- */
-    private TypeClient typeClient;         // PARTICULIER / ENTREPRISE
+    private TypeClient typeClient;
 
-    /* -------- infos personne / société -------- */
     private String nom;
     private String prenom;
     private String siege;
     private String representant;
     private String numeroSiret;
 
-    /* -------- coordonnées -------- */
     @Email
     private String email;
     private String telephone;
@@ -37,7 +33,6 @@ public class ClientCreateDto {
     private String pays;
     private ModeContactPrefere modeContactPrefere;
 
-    /* -------- relations (ID) -------- */
     private List<Long> devisIds;
     private List<Long> notificationIds;
 }

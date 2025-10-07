@@ -18,31 +18,26 @@ public class GeocodingService {
 
     public GeoPoint getCoordinatesFromAddress(String address) {
         try {
-            // Construire l’URL pour l’appel Nominatim
             String url = NOMINATIM_URL + address.replace(" ", "+");
 
             RestTemplate restTemplate = new RestTemplate();
 
-            // Ajouter un User-Agent dans l'en-tête de la requête
             HttpHeaders headers = new HttpHeaders();
             headers.set("User-Agent", "BoulevardSecurityApp/1.0 (contact@boulevardsecurity.com)");
 
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            // Effectuer la requête
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class, entity);
 
             if (!response.getStatusCode().is2xxSuccessful()) {
                 throw new RuntimeException("Erreur HTTP lors de la géolocalisation : " + response.getStatusCode());
             }
 
-            // Nominatim renvoie un tableau JSON
             JSONArray array = new JSONArray(response.getBody());
             if (array.length() == 0) {
                 throw new IllegalArgumentException("Adresse introuvable via Nominatim : " + address);
             }
 
-            // Récupérer le premier résultat
             JSONObject location = array.getJSONObject(0);
             double lat = location.getDouble("lat");
             double lon = location.getDouble("lon");

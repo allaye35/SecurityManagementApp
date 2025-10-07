@@ -9,11 +9,9 @@ import java.util.List;
 public class ContratDto {
     private Long id;
 
-    /** Référence et date */
     private String referenceContrat;
     private LocalDate dateSignature;
 
-    /** Durée & conditions */
     private Integer dureeMois;
     private Boolean taciteReconduction;
     private Integer preavisMois;

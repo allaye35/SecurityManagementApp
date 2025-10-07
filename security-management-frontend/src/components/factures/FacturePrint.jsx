@@ -16,7 +16,6 @@ export default function FacturePrint() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Fonction pour revenir à la liste des factures
   const handleRetour = () => {
     navigate('/factures');
   };
@@ -25,16 +24,13 @@ export default function FacturePrint() {
     setLoading(true);
     console.log("Chargement des données pour la facture ID:", id);
     
-    // Charger la facture
     FactureService.getById(id)
       .then(({ data: factureData }) => {
         console.log("Facture récupérée:", factureData);
         setFacture(factureData);
         
-        // Préparer un tableau de promesses à résoudre en parallèle
         const promises = [];
         
-        // Promesse pour charger le client
         if (factureData.clientId) {
           promises.push(
             ClientService.getById(factureData.clientId)
@@ -49,7 +45,6 @@ export default function FacturePrint() {
           );
         }
         
-        // Promesse pour charger l'entreprise
         if (factureData.entrepriseId) {
           promises.push(
             EntrepriseService.getEntrepriseById(factureData.entrepriseId)
@@ -64,7 +59,6 @@ export default function FacturePrint() {
           );
         }
         
-        // Promesse pour charger les missions
         if (factureData.missionIds && factureData.missionIds.length > 0) {
           const missionPromises = factureData.missionIds.map(missionId => 
             MissionService.getMissionById(missionId)
@@ -85,14 +79,12 @@ export default function FacturePrint() {
           );
         }
         
-        // Exécuter toutes les promesses en parallèle
         return Promise.all(promises);
       })
       .then(() => {
         console.log("Toutes les données ont été chargées avec succès");
         setLoading(false);
         
-        // Déclencher l'impression automatiquement après un court délai
         setTimeout(() => {
           window.print();
         }, 1000);
@@ -104,7 +96,6 @@ export default function FacturePrint() {
       });
   }, [id]);
 
-  // Listener pour détecter quand l'impression est terminée
   useEffect(() => {
     window.onafterprint = () => {
       console.log("Impression terminée, retour à la page précédente");
@@ -116,13 +107,11 @@ export default function FacturePrint() {
     };
   }, [navigate]);
 
-  // Fonction pour télécharger la facture en PDF
   const handleDownloadPDF = () => {
     if (!facture) return;
     
     FactureService.getPdf(id)
       .then(response => {
-        // Créer un URL à partir du blob directement depuis response.data
         const url = window.URL.createObjectURL(response.data);
         const link = document.createElement('a');
         link.href = url;
@@ -130,7 +119,6 @@ export default function FacturePrint() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        // Libérer l'URL après utilisation
         window.URL.revokeObjectURL(url);
       })
       .catch(err => {

@@ -35,8 +35,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     @Value("${app.email.verification.expiration-hours:24}")
     private long expirationHours;
 
-    /* ---------- ENVOI APRÈS INSCRIPTION ---------- */
-
     @Override
     @Transactional
     public void sendVerificationEmailForAgent(Long agentId, String emailRaw) {
@@ -54,8 +52,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
                 : (c.getRepresentant() != null ? c.getRepresentant() : "client");
         doSend(VerificationSubject.CLIENT, c.getId(), displayName, c.getEmail(), emailRaw);
     }
-
-    /* ---------- RENVOI (depuis un email saisi) ---------- */
 
     @Override
     @Transactional
@@ -76,7 +72,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
             return;
         }
 
-        // Silence volontaire si l'email n'existe pas (ne pas divulguer)
     }
 
     private void doSend(VerificationSubject subjectType, Long subjectId, String displayName,
@@ -84,7 +79,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
         String email = EmailUtil.normalize(emailRaw);
         if (!EmailUtil.equalsNormalized(storedEmail, email)) {
-            // on renvoie toujours vers l'email stocké (source de vérité)
             email = storedEmail;
         }
 
@@ -123,8 +117,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         notificationService.sendEmail(email, subject, content);
     }
 
-    /* ---------- CONFIRMATION PAR LIEN ---------- */
-
     @Override
     @Transactional
     public void confirmEmail(String rawToken) {
@@ -135,7 +127,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         if (Instant.now().isAfter(token.getExpiresAt()))
             throw new IllegalArgumentException("Token de vérification expiré");
 
-        if (token.getConsumedAt() != null) return; // idempotent
+        if (token.getConsumedAt() != null) return;
 
         if (token.getSubjectType() == VerificationSubject.AGENT) {
             AgentDeSecurite a = agentRepo.findById(token.getSubjectId())
@@ -151,14 +143,11 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         tokenRepo.save(token);
     }
 
-    /* ---------- CONFIRMATION PAR CODE ---------- */
-
     @Override
     @Transactional
     public void confirmEmailByCode(String emailRaw, String codePlain) {
         String email = EmailUtil.normalize(emailRaw);
 
-        // 1) chercher un agent
         AgentDeSecurite a = agentRepo.findByEmail(email).orElse(null);
         if (a != null) {
             String codeHash = TokenUtil.sha256Hex(codePlain);
@@ -173,7 +162,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
             return;
         }
 
-        // 2) sinon client
         Client c = clientRepo.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Aucun compte pour cet email."));
         String codeHash = TokenUtil.sha256Hex(codePlain);

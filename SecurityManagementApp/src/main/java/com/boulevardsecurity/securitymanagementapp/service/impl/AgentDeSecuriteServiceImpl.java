@@ -53,10 +53,9 @@ public class AgentDeSecuriteServiceImpl implements AgentDeSecuriteService {
         AgentDeSecurite ent = agentMapper.toEntity(dto);
         if (ent.getRole() == null) ent.setRole(Role.AGENT_SECURITE);
 
-        // Hash + état initial
         ent.setPassword(passwordEncoder.encode(ent.getPassword()));
         ent.setEmailVerified(false);
-        ent.setPasswordChangedAt(Instant.now()); // première version de mdp
+        ent.setPasswordChangedAt(Instant.now());
 
         return agentMapper.toDto(agentRepo.save(ent));
     }
@@ -66,10 +65,8 @@ public class AgentDeSecuriteServiceImpl implements AgentDeSecuriteService {
         AgentDeSecurite ent = agentRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Agent non trouvé : " + id));
 
-        // Le mapper copie éventuellement un password « brut »
         agentMapper.updateEntityFromCreationDto(dto, ent);
 
-        // Si le mot de passe a été fourni → re-hash et maj passwordChangedAt
         if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
             ent.setPassword(passwordEncoder.encode(dto.getPassword()));
             ent.setPasswordChangedAt(Instant.now());

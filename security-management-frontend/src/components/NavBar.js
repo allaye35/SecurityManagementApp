@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";   // ⬅️ on utilise le contexte
+import { useAuth } from "../context/AuthContext";
 import "../styles/NavBar.css";
 
 export default function NavBar() {
@@ -15,7 +15,6 @@ export default function NavBar() {
     administration: useRef(null),
   };
 
-  // Fermer les dropdowns au clic extérieur
   useEffect(() => {
     const handleOutside = (e) => {
       const clickedInside = Object.values(refs).some(
@@ -28,7 +27,7 @@ export default function NavBar() {
   }, []);
 
   const onLogout = async () => {
-    await logout();               // efface tokens + user
+    await logout();
     navigate("/login", { replace: true });
   };
 
@@ -43,12 +42,12 @@ export default function NavBar() {
 
   return (
     <nav className="navbar">
-      {/* Accueil */}
+      {}
       <div className="navbar-left">
         <Link to="/">Accueil</Link>
       </div>
 
-      {/* Administration : ADMIN uniquement - Section ajoutée pour l'administration système */}
+      {}
       {isAuthenticated && hasRole("ADMIN") && (
         <div className="navbar-left" ref={refs.administration}>
           <MenuBtn id="administration" label="🔧 Administration" />
@@ -64,7 +63,7 @@ export default function NavBar() {
         </div>
       )}
 
-      {/* DEBUG TEMPORAIRE - pour voir pourquoi Administration n'apparaît pas */}
+      {}
       {isAuthenticated && (
         <div className="navbar-left">
           <span style={{color: 'white', fontSize: '10px', background: 'rgba(255,0,0,0.3)', padding: '2px 4px'}}>
@@ -73,7 +72,7 @@ export default function NavBar() {
         </div>
       )}
 
-      {/* RH : ADMIN uniquement */}
+      {}
       {isAuthenticated && hasRole("ADMIN") && (
         <div className="navbar-left" ref={refs.rh}>
           <MenuBtn id="rh" label="Ressources Humaines" />
@@ -95,7 +94,7 @@ export default function NavBar() {
         </div>
       )}
 
-      {/* Opérations : ADMIN ou AGENT_SECURITE (créations réservées à ADMIN) */}
+      {}
       {isAuthenticated && (hasRole("ADMIN") || hasRole("AGENT_SECURITE")) && (
         <div className="navbar-left" ref={refs.operations}>
           <MenuBtn id="operations" label="Opérations" />
@@ -115,7 +114,7 @@ export default function NavBar() {
         </div>
       )}
 
-      {/* Commercial : ADMIN ou CLIENT (client voit “Mes …”) */}
+      {}
       {isAuthenticated && (hasRole("ADMIN") || hasRole("CLIENT")) && (
         <div className="navbar-left" ref={refs.commercial}>
           <MenuBtn id="commercial" label="Commercial" />
@@ -144,7 +143,7 @@ export default function NavBar() {
         </div>
       )}
 
-      {/* Connexion / Déconnexion */}
+      {}
       <div className="navbar-right">
         {isAuthenticated ? (
           <>

@@ -24,7 +24,6 @@ export default function LigneCotisationList() {
         LigneCotisationService.delete(id)
             .then(() => {
                 setList(l => l.filter(x => x.id !== id));
-                // Toast notification could be added here
             })
             .catch(() => alert("Échec de la suppression"));
     };

@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class GeolocalisationGpsMapper {
     private final MissionMapper missionMapper;
 
-    /** ENTITÉ → DTO **/
     public GeolocalisationGpsDto toDto(GeolocalisationGPS entity) {
         GeoPointDto pointDto = null;
         if (entity.getPosition() != null) {
@@ -37,7 +36,7 @@ public class GeolocalisationGpsMapper {
                 )
                 .build();
     }
-    /** DTO création → ENTITÉ **/
+    
     public GeolocalisationGPS toEntity(GeolocalisationGpsCreateDto dto) {
         GeoPoint point = GeoPoint.builder()
                 .latitude(dto.getLatitude())
@@ -50,7 +49,6 @@ public class GeolocalisationGpsMapper {
                 .build();
     }
 
-    /** Mise à jour partielle (patch) **/
     public void updateEntityFromDto(GeolocalisationGpsCreateDto dto, GeolocalisationGPS entity) {
         if (dto.getGpsPrecision() != 0f) {
             entity.setGps_precision(dto.getGpsPrecision());

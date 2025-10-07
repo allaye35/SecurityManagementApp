@@ -7,21 +7,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEdit, faTrash, faPlus, faSearch, faEuroSign, faMoon, faCalendarWeek, faCalendarDay, faCalendarCheck, faPercent, faSort, faSortUp, faSortDown, faChevronLeft, faChevronRight, faFileExport, faFilter, faSync, faCog, faColumns, faInfoCircle, faArrowUp, faSliders, faQuestion, faBars } from "@fortawesome/free-solid-svg-icons";
 import "../../styles/TarifMissionList.css";
 
-
 export default function TarifMissionList() {
     const [tarifs, setTarifs] = useState([]);
     const [filteredTarifs, setFilteredTarifs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState(""); // Message de succès
+    const [success, setSuccess] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [tarifToDelete, setTarifToDelete] = useState(null);
-    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    // Nouveaux états pour les filtres avancés
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const [priceFilter, setPriceFilter] = useState({ min: '', max: '' });
     const [typeFilter, setTypeFilter] = useState('');
@@ -36,7 +33,6 @@ export default function TarifMissionList() {
         tauxTVA: true
     });
     const [refreshTrigger, setRefreshTrigger] = useState(false);
-    // Nouveaux états pour les améliorations
     const [darkMode, setDarkMode] = useState(false);
     const [showStats, setShowStats] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
@@ -53,14 +49,12 @@ export default function TarifMissionList() {
             .finally(() => setLoading(false));
     }, []);
 
-    // Filtrage des tarifs en fonction du terme de recherche et des filtres avancés
     useEffect(() => {
         let results = tarifs.filter(tarif => 
             (tarif.typeMission?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             tarif.id?.toString().includes(searchTerm))
         );
         
-        // Appliquer les filtres avancés si nécessaire
         if (typeFilter) {
             results = results.filter(tarif => 
                 tarif.typeMission?.toLowerCase().includes(typeFilter.toLowerCase())
@@ -82,10 +76,9 @@ export default function TarifMissionList() {
         }
         
         setFilteredTarifs(results);
-        setCurrentPage(1); // Réinitialiser à la première page lors du filtrage
+        setCurrentPage(1);
     }, [searchTerm, tarifs, typeFilter, priceFilter.min, priceFilter.max]);
 
-    // Tri des tarifs
     useEffect(() => {
         let sortedTarifs = [...filteredTarifs];
         sortedTarifs.sort((a, b) => {
@@ -126,26 +119,24 @@ export default function TarifMissionList() {
                 setTarifs(t => t.filter(x => x.id !== tarifToDelete));
                 setShowDeleteModal(false);
                 setSuccess("Le tarif a été supprimé avec succès");
-                setTimeout(() => setSuccess(""), 3000); // Effacer le message de succès après 3 secondes
+                setTimeout(() => setSuccess(""), 3000);
             })
             .catch(() => {
                 setShowDeleteModal(false);
                 setError("Échec de la suppression");
-                setTimeout(() => setError(""), 3000); // Effacer le message d'erreur après 3 secondes
+                setTimeout(() => setError(""), 3000);
             });
-    };// Format currency
+    };
     const formatCurrency = (value) => {
         if (value === undefined || value === null) return "-";
         return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
     };
     
-    // Format percentage
     const formatPercent = (value) => {
         if (value === undefined || value === null) return "-";
         return new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value / 100);
     };
     
-    // Gestion de la pagination
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredTarifs.slice(indexOfFirstItem, indexOfLastItem);
@@ -165,10 +156,9 @@ export default function TarifMissionList() {
         }
     };
     
-    // Rendu des liens de pagination
     const renderPaginationItems = () => {
         const items = [];
-        const maxPagesToShow = 5; // Nombre maximum de pages à afficher
+        const maxPagesToShow = 5;
         
         let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
         let endPage = startPage + maxPagesToShow - 1;
@@ -193,7 +183,6 @@ export default function TarifMissionList() {
         return items;
     };
     
-    // Exporter les données en CSV
     const exportToCSV = () => {
         const headers = [
             'ID',
@@ -206,7 +195,6 @@ export default function TarifMissionList() {
             'Taux TVA'
         ];
         
-        // Préparer les données
         const csvData = filteredTarifs.map(t => [
             t.id,
             t.typeMission,
@@ -218,13 +206,10 @@ export default function TarifMissionList() {
             t.tauxTVA + '%'
         ]);
         
-        // Ajouter les en-têtes
         csvData.unshift(headers);
         
-        // Convertir en CSV
         const csvString = csvData.map(row => row.join(',')).join('\n');
         
-        // Créer un élément de téléchargement
         const downloadLink = document.createElement('a');
         const blob = new Blob(['\ufeff' + csvString], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
@@ -233,17 +218,14 @@ export default function TarifMissionList() {
         downloadLink.setAttribute('download', `tarifs_missions_${new Date().toISOString().split('T')[0]}.csv`);
         document.body.appendChild(downloadLink);
         
-        // Télécharger le fichier
         downloadLink.click();
         
-        // Nettoyer
         document.body.removeChild(downloadLink);
         
         setSuccess("Export CSV effectué avec succès");
         setTimeout(() => setSuccess(""), 3000);
     };
 
-    // Fonction pour rafraîchir les données
     const refreshData = () => {
         setLoading(true);
         TarifMissionService.getAll()
@@ -260,7 +242,6 @@ export default function TarifMissionList() {
             .finally(() => setLoading(false));
     };
 
-    // Fonction pour réinitialiser tous les filtres
     const resetFilters = () => {
         setSearchTerm('');
         setPriceFilter({ min: '', max: '' });
@@ -269,7 +250,6 @@ export default function TarifMissionList() {
         setSortConfig({ key: 'id', direction: 'ascending' });
     };
 
-    // Calculer les statistiques
     const calculateStats = useCallback(() => {
         if (tarifs.length === 0) return null;
         
@@ -297,7 +277,6 @@ export default function TarifMissionList() {
         };
     }, [tarifs]);
     
-    // Gérer l'auto-complétion
     const updateSuggestions = useCallback((term) => {
         if (!term || term.length < 2) {
             setSuggestions([]);
@@ -317,10 +296,8 @@ export default function TarifMissionList() {
         setAutoCompleteVisible(typeSuggestions.length > 0);
     }, [tarifs]);
     
-    // Basculer entre mode clair et sombre
     const toggleDarkMode = () => {
         setDarkMode(prev => !prev);
-        // Appliquer les classes aux éléments principaux
         document.body.classList.toggle('bg-dark');
         document.body.classList.toggle('text-light');
     };
@@ -364,7 +341,7 @@ export default function TarifMissionList() {
                             {success}
                         </Alert>
                     )}
-                    {/* Carte de statistiques */}
+                    {}
                     {showStats && (
                         <Card className={`mb-4 shadow-sm ${darkMode ? 'bg-dark text-light border-secondary' : ''}`}>
                             <Card.Header className={darkMode ? 'bg-dark text-light border-secondary' : 'bg-light'}>
@@ -497,7 +474,7 @@ export default function TarifMissionList() {
                         </Col>
                     </Row>
                     
-                    {/* Filtres avancés */}
+                    {}
                     {showAdvancedFilters && (
                         <div className="advanced-filters mb-3 p-3 bg-light rounded border">
                             <Row className="mb-3">
@@ -717,7 +694,7 @@ export default function TarifMissionList() {
                 </Card.Footer>
             </Card>
 
-            {/* Modal de confirmation de suppression */}
+            {}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmer la suppression</Modal.Title>

@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
+// Service métier
 public class JwtService {
 
     private final Key key;

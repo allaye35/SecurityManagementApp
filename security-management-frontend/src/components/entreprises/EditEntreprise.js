@@ -44,25 +44,20 @@ const EditEntreprise = () => {
       .then(response => {
         const entrepriseData = response.data;
         
-        // Formater correctement le numéro de téléphone avec des espaces entre les paires de chiffres
         if (entrepriseData.telephone) {
-          // D'abord, on retire tous les espaces existants
           const telSansEspaces = entrepriseData.telephone.replace(/\s+/g, '');
           
-          // Ensuite, on reformate avec des espaces entre les paires de chiffres (XX XX XX XX XX)
           if (telSansEspaces.length === 10) {
             entrepriseData.telephone = telSansEspaces.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, "$1 $2 $3 $4 $5");
           }
         }
         
         setEntreprise(entrepriseData);
-        setOriginalEntreprise(entrepriseData); // Sauvegarder l'état initial
-          // Si l'entreprise a des contrats de travail associés, les sélectionner
+        setOriginalEntreprise(entrepriseData);
         if (entrepriseData.contratsDeTravailIds && entrepriseData.contratsDeTravailIds.length > 0) {
           setSelectedContrats(entrepriseData.contratsDeTravailIds);
         }
         
-        // Si l'entreprise a des devis associés, les sélectionner
         if (entrepriseData.devisIds && entrepriseData.devisIds.length > 0) {
           setSelectedDevis(entrepriseData.devisIds);
         }
@@ -75,12 +70,10 @@ const EditEntreprise = () => {
         setInitialLoading(false);
       });
   }, [id]);
-  // Chargement des contrats de travail disponibles
   useEffect(() => {
     setContratsLoading(true);
     ContratDeTravailService.getAll()
       .then(response => {
-        // Tous les contrats doivent être disponibles pour l'édition
         setContratsDeTravail(response.data);
         setContratsLoading(false);
       })
@@ -89,12 +82,10 @@ const EditEntreprise = () => {
         setContratsLoading(false);
       });
   }, []);
-  // Chargement des devis disponibles
   useEffect(() => {
     setDevisLoading(true);
     DevisService.getAll()
       .then(response => {
-        // Tous les devis doivent être disponibles pour l'édition
         setDevis(response.data);
         setDevisLoading(false);
       })
@@ -112,12 +103,10 @@ const EditEntreprise = () => {
     });
   };
 
-  // Formatage automatique du SIRET
   const handleSiretChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ''); // Enlever tous les caractères non numériques
-    if (value.length > 14) value = value.slice(0, 14); // Limiter à 14 chiffres
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 14) value = value.slice(0, 14);
     
-    // Formater avec des espaces
     if (value.length > 9) {
       value = value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6, 9) + ' ' + value.slice(9);
     } else if (value.length > 6) {
@@ -131,12 +120,10 @@ const EditEntreprise = () => {
       siretPrestataire: value
     });
   };
-  // Formatage automatique du téléphone
   const handlePhoneChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ''); // Enlever tous les caractères non numériques
-    if (value.length > 10) value = value.slice(0, 10); // Limiter à 10 chiffres
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 10) value = value.slice(0, 10);
     
-    // Toujours appliquer un formatage cohérent (XX XX XX XX XX)
     if (value.length > 0) {
       let formattedValue = '';
       for (let i = 0; i < value.length; i += 2) {
@@ -150,7 +137,7 @@ const EditEntreprise = () => {
       ...entreprise,
       telephone: value
     });
-  };// Gérer la sélection des contrats
+  };
   const handleContratsChange = (selectedOptions) => {
     const selectedIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
     setSelectedContrats(selectedIds);
@@ -161,7 +148,6 @@ const EditEntreprise = () => {
     });
   };
   
-  // Gérer la sélection des devis
   const handleDevisChange = (selectedOptions) => {
     const selectedIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
     setSelectedDevis(selectedIds);
@@ -182,14 +168,10 @@ const EditEntreprise = () => {
       return;
     }    setLoading(true);
     setError(null);
-      // S'assurer que les contratsDeTravailIds sont inclus dans les données envoyées
-    // Convertir les valeurs en nombre si nécessaire et s'assurer qu'il n'y a pas de valeurs nulles
     const contratIds = selectedContrats.filter(id => id !== null).map(id => Number(id) || id);
     
-    // S'assurer que les devisIds sont inclus dans les données envoyées
     const devisIds = selectedDevis.filter(id => id !== null).map(id => Number(id) || id);
     
-    // Préparer les données pour la mise à jour
     let entrepriseToUpdate = {
       id: entreprise.id,
       nom: entreprise.nom,
@@ -203,12 +185,9 @@ const EditEntreprise = () => {
       email: entreprise.email,
       contratsDeTravailIds: contratIds,
       devisIds: devisIds
-    };    // Toujours inclure le numéro de téléphone dans la mise à jour, qu'il ait été modifié ou non
-    // Mais s'assurer qu'il est sans espaces pour respecter le format attendu par l'API
-    // Vérifier d'abord que le numéro de téléphone est au format correct (10 chiffres sans les espaces)
+    };
     const phoneWithoutSpaces = entreprise.telephone ? entreprise.telephone.replace(/\s+/g, '') : '';
     
-    // S'il y a une erreur de validation sur le numéro (longueur différente de 10), ne pas soumettre le formulaire
     if (phoneWithoutSpaces.length !== 10) {
       setError("Le numéro de téléphone doit comporter exactement 10 chiffres. Veuillez vérifier le format.");
       setLoading(false);
@@ -217,7 +196,6 @@ const EditEntreprise = () => {
     
     entrepriseToUpdate.telephone = phoneWithoutSpaces;
     
-    // Vérifier que l'objet est correctement formaté avant envoi
     console.log("Données entreprise envoyées:", entrepriseToUpdate);
     
     EntrepriseService.updateEntreprise(id, entrepriseToUpdate)
@@ -243,7 +221,7 @@ const EditEntreprise = () => {
   }
 
   return (
-    <Container fluid className="py-4">      {/* Le fil d'Ariane a été supprimé */}
+    <Container fluid className="py-4">      {}
         <Card className="shadow border-0">
         <Card.Header className="bg-primary bg-gradient text-white py-3">
           <h4 className="m-0 fw-bold">
@@ -331,7 +309,6 @@ const EditEntreprise = () => {
                           placeholder="XX XX XX XX XX"
                           pattern="[0-9]{2}(\s[0-9]{2}){4}|[0-9]{2}(\s[0-9]{2}){0,3}(\s[0-9]{1,2})?"
                           onClick={(e) => {
-                            // Si le champ est rempli mais pas correctement formaté, reformater lors du clic
                             if (entreprise.telephone && !/^[0-9]{2}(\s[0-9]{2}){4}$/.test(entreprise.telephone)) {
                               const telSansEspaces = entreprise.telephone.replace(/\s+/g, '');
                               if (telSansEspaces.length === 10) {

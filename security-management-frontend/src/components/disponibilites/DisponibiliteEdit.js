@@ -27,7 +27,6 @@ const DisponibiliteEdit = () => {
             try {
                 setLoading(true);
                 
-                // Chargement parallèle des données de la disponibilité et de la liste des agents
                 const [dispoResponse, agentsResponse] = await Promise.all([
                     DisponibiliteService.getById(id),
                     AgentService.getAllAgents()
@@ -35,7 +34,6 @@ const DisponibiliteEdit = () => {
                 
                 const disponibilite = dispoResponse.data;
                 
-                // Formater les dates pour les inputs datetime-local
                 const formattedData = {
                     agentId: disponibilite.agentId,
                     dateDebut: new Date(disponibilite.dateDebut).toISOString().slice(0, 16),
@@ -47,7 +45,6 @@ const DisponibiliteEdit = () => {
                 setAgents(agentsResponse.data);
                 setLoading(false);
                 
-                // Afficher une notification pour confirmer le chargement
                 showNotification(
                     "Disponibilité chargée",
                     "Vous pouvez maintenant modifier les informations.",
@@ -58,7 +55,6 @@ const DisponibiliteEdit = () => {
                 setError("Impossible de charger les données. Vérifiez votre connexion ou réessayez plus tard.");
                 setLoading(false);
                 
-                // Afficher un toast d'erreur
                 showNotification(
                     "Erreur de chargement",
                     "Impossible de récupérer les détails de la disponibilité. Veuillez réessayer.",
@@ -70,13 +66,11 @@ const DisponibiliteEdit = () => {
         fetchDisponibiliteAndAgents();
     }, [id]);
 
-    // Afficher une notification toast
     const showNotification = (title, message, type = 'success') => {
         setToastMessage({ title, message, type });
         setShowToast(true);
     };
 
-    // Vérifier si des modifications ont été apportées
     const hasChanges = () => {
         if (!originalData) return false;
         
@@ -87,7 +81,6 @@ const DisponibiliteEdit = () => {
         );
     };
 
-    // Validation des données avant soumission
     const validateDisponibilite = (disponibiliteData) => {
         const start = new Date(disponibiliteData.dateDebut);
         const end = new Date(disponibiliteData.dateFin);
@@ -119,7 +112,6 @@ const DisponibiliteEdit = () => {
         e.preventDefault();
         setError(null);
         
-        // Ne rien faire si aucun changement
         if (!hasChanges()) {
             showNotification(
                 "Aucun changement",
@@ -129,7 +121,6 @@ const DisponibiliteEdit = () => {
             return Promise.resolve();
         }
         
-        // Validation des données avant envoi
         if (!validateDisponibilite(data)) {
             return Promise.reject();
         }
@@ -143,14 +134,12 @@ const DisponibiliteEdit = () => {
             
             await DisponibiliteService.update(id, formattedData);
             
-            // Afficher une notification de succès
             showNotification(
                 "Disponibilité mise à jour",
                 "La disponibilité a été modifiée avec succès.",
                 "success"
             );
             
-            // Rediriger vers la liste des disponibilités après un court délai
             setTimeout(() => {
                 navigate(`/disponibilites/${id}`);
             }, 2000);
@@ -159,7 +148,6 @@ const DisponibiliteEdit = () => {
         } catch (err) {
             console.error("Erreur lors de la mise à jour de la disponibilité:", err);
             
-            // Message d'erreur personnalisé selon le type d'erreur
             let errorMessage = "Échec de la mise à jour de la disponibilité.";
             
             if (err.response) {

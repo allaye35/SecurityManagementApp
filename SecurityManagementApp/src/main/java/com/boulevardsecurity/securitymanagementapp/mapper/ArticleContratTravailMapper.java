@@ -14,7 +14,6 @@ public class ArticleContratTravailMapper {
 
     private final ContratDeTravailRepository contratTravailRepo;
 
-    /** ENTITÉ → DTO */
     public ArticleContratTravailDto toDto(ArticleContratTravail art) {
         return ArticleContratTravailDto.builder()
                 .id(art.getId())
@@ -28,7 +27,6 @@ public class ArticleContratTravailMapper {
                 .build();
     }
 
-    /** DTO de création → ENTITÉ */
     public ArticleContratTravail toEntity(ArticleContratTravailCreationDto dto) {
         ArticleContratTravail ent = new ArticleContratTravail();
         ent.setLibelle(dto.getLibelle());
@@ -44,7 +42,6 @@ public class ArticleContratTravailMapper {
         return ent;
     }
 
-    /** Mise à jour partielle d’une ENTITÉ existante à partir d’un DTO plat */
     public void updateEntityFromDto(ArticleContratTravailDto dto,
                                     ArticleContratTravail ent) {
         if (dto.getLibelle() != null) {

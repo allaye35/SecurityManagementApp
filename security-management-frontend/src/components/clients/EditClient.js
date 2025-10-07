@@ -13,7 +13,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import ClientService from "../../services/ClientService";
 
-// on définit nos valeurs par défaut
 const defaultClient = {
     username: "",
     password: "",
@@ -49,7 +48,6 @@ export default function EditClient() {
     
     const navigate = useNavigate();
 
-    // Chargement des données du client
     useEffect(() => {
         setIsSubmitting(true);
         ClientService.getById(id)
@@ -57,16 +55,13 @@ export default function EditClient() {
                 const clientData = {
                     ...defaultClient,
                     ...apiClient,
-                    // forcer un tableau même si null
                     devisIds: apiClient.devisIds || [],
                     notificationIds: apiClient.notificationIds || [],
-                    // Mettre le mot de passe à vide pour ne pas l'afficher dans le formulaire
                     password: ""
                 };
                 setClient(clientData);
                 setIsSubmitting(false);
                 
-                // Calculer le pourcentage de complétion initial
                 calculateFormCompletion(clientData);
             })
             .catch(err => {
@@ -79,12 +74,11 @@ export default function EditClient() {
             });
     }, [id]);
 
-    // Mise à jour du pourcentage de complétion du formulaire
     const calculateFormCompletion = (clientData) => {
         if (!clientData) return;
         
         const requiredFields = ['username', 'email'];
-        const totalFields = Object.keys(clientData).length - 2; // Exclure password et confirmPassword du calcul
+        const totalFields = Object.keys(clientData).length - 2;
         const filledFields = Object.keys(clientData)
             .filter(key => key !== 'password' && key !== 'confirmPassword')
             .filter(key => clientData[key] !== "" && clientData[key] !== null)
@@ -94,7 +88,6 @@ export default function EditClient() {
         setFormCompletionPercent(completionPercentage);
     };
 
-    // Mise à jour du pourcentage à chaque changement
     useEffect(() => {
         if (client) {
             calculateFormCompletion(client);
@@ -108,7 +101,6 @@ export default function EditClient() {
         </Container>
     );
 
-    // Gestion des changements de champs
     const handleChange = e => {
         const { name, value } = e.target;
         
@@ -118,7 +110,6 @@ export default function EditClient() {
             setPasswordChanged(false);
         }
         
-        // Validation en temps réel pour certains champs
         if (name === "password" || name === "confirmPassword") {
             validatePasswordMatch(name === "password" ? value : client.password, 
                               name === "confirmPassword" ? value : confirmPassword);
@@ -134,7 +125,6 @@ export default function EditClient() {
         }
 
         if (name === "typeClient") {
-            // Reset des champs spécifiques aux entreprises si on change pour un particulier
             if (value === "PARTICULIER") {
                 setClient(prev => ({
                     ...prev,
@@ -154,40 +144,33 @@ export default function EditClient() {
         }
     };
 
-    // Validation du formulaire
     const validateForm = () => {
         const newErrors = {};
         
-        // Validation du nom d'utilisateur
         if (!client.username || client.username.length < 3) {
             newErrors.username = "Le nom d'utilisateur doit contenir au moins 3 caractères";
         }
         
-        // Validation du mot de passe si modifié
         if (passwordChanged) {
             if (!client.password || client.password.length < 6) {
                 newErrors.password = "Le mot de passe doit contenir au moins 6 caractères";
             }
             
-            // Validation du mot de passe fort
             const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
             if (client.password && !strongPasswordRegex.test(client.password)) {
                 newErrors.password = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre";
             }
             
-            // Validation de la confirmation du mot de passe
             if (client.password !== confirmPassword) {
                 newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
             }
         }
         
-        // Validation de l'email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!client.email || !emailRegex.test(client.email)) {
             newErrors.email = "Veuillez saisir une adresse email valide";
         }
         
-        // Validations spécifiques aux entreprises
         if (client.typeClient === "ENTREPRISE") {
             if (!client.nom) {
                 newErrors.nom = "Le nom de l'entreprise est requis";
@@ -202,7 +185,6 @@ export default function EditClient() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Validation du mot de passe en temps réel
     const validatePasswordMatch = (password, confirmPwd) => {
         if (password && confirmPwd && password !== confirmPwd) {
             setErrors(prev => ({ ...prev, confirmPassword: "Les mots de passe ne correspondent pas" }));
@@ -218,7 +200,6 @@ export default function EditClient() {
         return true;
     };
 
-    // Validation de l'email en temps réel
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email && !emailRegex.test(email)) {
@@ -234,7 +215,6 @@ export default function EditClient() {
         }
     };
 
-    // Soumission du formulaire
     const handleSubmit = e => {
         e.preventDefault();
         setValidated(true);
@@ -250,10 +230,8 @@ export default function EditClient() {
         setIsSubmitting(true);
         setFeedback({ type: "", message: "" });
         
-        // Création d'une copie du client pour l'envoi
         const payload = { ...client };
         
-        // Suppression du mot de passe s'il n'a pas été modifié
         if (payload.password === "") {
             delete payload.password;
         }
@@ -289,14 +267,14 @@ export default function EditClient() {
                         </Card.Header>
                         
                         <Card.Body className="p-4">
-                            {/* Feedback messages */}
+                            {}
                             {feedback.message && (
                                 <Alert variant={feedback.type} dismissible onClose={() => setFeedback({ type: "", message: "" })}>
                                     {feedback.message}
                                 </Alert>
                             )}
                             
-                            {/* Progress bar */}
+                            {}
                             <div className="mb-4">
                                 <div className="d-flex justify-content-between align-items-center mb-1">
                                     <span>Progression du formulaire</span>
@@ -309,7 +287,7 @@ export default function EditClient() {
                             </div>
                             
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                                {/* Type de client */}
+                                {}
                                 <Card className="mb-4 border-light shadow-sm">
                                     <Card.Header className="bg-light">
                                         <h5 className="mb-0">Type de client</h5>
@@ -374,7 +352,7 @@ export default function EditClient() {
                                     </Card.Body>
                                 </Card>
                                 
-                                {/* Informations d'identification */}
+                                {}
                                 <Card className="mb-4 border-light shadow-sm">
                                     <Card.Header className="bg-light">
                                         <h5 className="mb-0">Informations d'identification</h5>
@@ -479,7 +457,7 @@ export default function EditClient() {
                                     </Card.Body>
                                 </Card>
                                 
-                                {/* Informations personnelles/entreprise */}
+                                {}
                                 <Card className="mb-4 border-light shadow-sm">
                                     <Card.Header className="bg-light">
                                         <h5 className="mb-0">
@@ -604,7 +582,7 @@ export default function EditClient() {
                                     </Card.Body>
                                 </Card>
                                 
-                                {/* Adresse */}
+                                {}
                                 <Card className="mb-4 border-light shadow-sm">
                                     <Card.Header className="bg-light">
                                         <h5 className="mb-0">
@@ -675,7 +653,7 @@ export default function EditClient() {
                                     </Card.Body>
                                 </Card>
                                 
-                                {/* Boutons d'action */}
+                                {}
                                 <div className="d-flex justify-content-end gap-3 mt-4">
                                     <Button 
                                         as={Link}

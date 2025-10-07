@@ -9,11 +9,9 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class TarifMissionDto {
 
-    /* ----- clés & métadonnées ----- */
     private Long        id;
     private TypeMission typeMission;
 
-    /* ----- valeurs monétaires ----- */
     private BigDecimal  prixUnitaireHT;
     private BigDecimal  majorationNuit;
     private BigDecimal  majorationWeekend;
@@ -21,7 +19,5 @@ public class TarifMissionDto {
     private BigDecimal  majorationFerie;
     private BigDecimal  tauxTVA;
 
-    /* ----- relation inverse (facultatif) ----- */
-    /** IDs des missions rattachées (readonly) */
     private List<Long>  missionIds;
 }

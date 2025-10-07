@@ -16,7 +16,6 @@ public class ContratMapper {
     private final MissionRepository missionRepo;
     private final ArticleContratRepository articleRepo;
 
-    /* ---------- Entity ➜ DTO ---------- */
     public ContratDto toDto(Contrat c) {
         return ContratDto.builder()
                 .id(c.getId())
@@ -29,9 +28,8 @@ public class ContratMapper {
                 .missionIds(c.getMissions().stream().map(Mission::getId).collect(Collectors.toList()))
                 .articleIds(c.getArticles().stream().map(ArticleContrat::getId).collect(Collectors.toList()))
                 .build();
-    }    /* ---------- DTO ➜ Entity (CREATE) ---------- */
+    }    
     public Contrat toEntity(ContratCreateDto dto) {
-        // Contrat initial sans devis
         Contrat c = Contrat.builder()
                 .referenceContrat(dto.getReferenceContrat())
                 .dateSignature(dto.getDateSignature())
@@ -40,7 +38,6 @@ public class ContratMapper {
                 .preavisMois(dto.getPreavisMois())
                 .build();
                 
-        // Association de devis si présent
         if (dto.getDevisId() != null) {
             Devis d = devisRepo.findById(dto.getDevisId())
                     .orElseThrow(() -> new IllegalArgumentException("Devis introuvable id=" + dto.getDevisId()));
@@ -52,14 +49,12 @@ public class ContratMapper {
             c.setDevis(d);
         }
 
-        // Missions
         if (dto.getMissionIds() != null) {
             c.setMissions(dto.getMissionIds().stream()
                     .map(id -> missionRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Mission introuvable id=" + id)))
                     .peek(m -> m.setContrat(c))
                     .collect(Collectors.toList()));
         }
-        // Articles
         if (dto.getArticleIds() != null) {
             c.setArticles(dto.getArticleIds().stream()
                     .map(id -> articleRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Article introuvable id=" + id)))
@@ -70,22 +65,19 @@ public class ContratMapper {
         return c;
     }
 
-    /* ---------- UPDATE PARTIELLE ---------- */
     public void updateEntity(Contrat entity, ContratCreateDto dto) {
         if (dto.getReferenceContrat() != null) entity.setReferenceContrat(dto.getReferenceContrat());
         if (dto.getDateSignature() != null)   entity.setDateSignature(dto.getDateSignature());
         if (dto.getDureeMois() != null)       entity.setDureeMois(dto.getDureeMois());
         if (dto.getTaciteReconduction() != null) entity.setTaciteReconduction(dto.getTaciteReconduction());
-        if (dto.getPreavisMois() != null)     entity.setPreavisMois(dto.getPreavisMois());        // Devis
+        if (dto.getPreavisMois() != null)     entity.setPreavisMois(dto.getPreavisMois());
         if (dto.getDevisId() != null && (entity.getDevis() == null || !entity.getDevis().getId().equals(dto.getDevisId()))) {
             Devis d = devisRepo.findById(dto.getDevisId()).orElseThrow(() -> new IllegalArgumentException("Devis introuvable id=" + dto.getDevisId()));
             entity.setDevis(d);
         } else if (dto.getDevisId() == null) {
-            // Si null est explicitement fourni, on supprime l'association
             entity.setDevis(null);
         }
 
-        // Missions
         if (dto.getMissionIds() != null) {
             entity.getMissions().clear();
             entity.getMissions().addAll(dto.getMissionIds().stream()
@@ -93,7 +85,6 @@ public class ContratMapper {
                     .peek(m -> m.setContrat(entity))
                     .collect(Collectors.toList()));
         }
-        // Articles
         if (dto.getArticleIds() != null) {
             entity.getArticles().clear();
             entity.getArticles().addAll(dto.getArticleIds().stream()

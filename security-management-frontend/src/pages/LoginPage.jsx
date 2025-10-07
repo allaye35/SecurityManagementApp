@@ -190,7 +190,7 @@ export default function LoginPage() {
               fontSize: 19,
               fontWeight: 700,
               cursor: loading ? "not-allowed" : "pointer",
-              boxShadow: "0 2px 12px #1976d220", // <-- corrigé ici
+              boxShadow: "0 2px 12px #1976d220",
               letterSpacing: 1,
               transition: "background 0.2s",
             }}

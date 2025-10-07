@@ -1,6 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.security.user;
 
-
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
 import com.boulevardsecurity.securitymanagementapp.model.Client;
 import com.boulevardsecurity.securitymanagementapp.repository.AgentDeSecuriteRepository;

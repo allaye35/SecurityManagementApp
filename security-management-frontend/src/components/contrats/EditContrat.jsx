@@ -30,9 +30,7 @@ export default function EditContrat() {
         articles: true
     });
 
-    // charger le contrat existant + listes
     useEffect(() => {
-        // Charger le contrat
         ContratService.getById(id)
             .then(r => {
                 console.log("Contrat chargé:", r.data);
@@ -55,7 +53,6 @@ export default function EditContrat() {
                 setLoading(prev => ({...prev, contrat: false}));
             });
 
-        // Charger les devis
         DevisService.getAll()
             .then(r => {
                 console.log("Devis chargés:", r.data);
@@ -67,7 +64,6 @@ export default function EditContrat() {
                 setLoading(prev => ({...prev, devis: false}));
             });
 
-        // Charger les missions
         MissionService.getAllMissions()
             .then(r => {
                 console.log("Missions chargées:", r.data);
@@ -79,7 +75,6 @@ export default function EditContrat() {
                 setLoading(prev => ({...prev, missions: false}));
             });
 
-        // Charger les articles
         ArticleService.getAll()
             .then(r => {
                 console.log("Articles chargés:", r.data);
@@ -98,7 +93,6 @@ export default function EditContrat() {
         if (type === "checkbox") {
             setData(d => ({ ...d, [name]: checked }));
         } else if (name === "missionIds" || name === "articleIds") {
-            // Pour les sélections multiples
             const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
             setData(d => ({ ...d, [name]: selectedOptions }));
         } else {

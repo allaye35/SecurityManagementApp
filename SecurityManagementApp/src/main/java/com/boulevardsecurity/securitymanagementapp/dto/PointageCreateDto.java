@@ -1,12 +1,10 @@
 package com.boulevardsecurity.securitymanagementapp.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.util.Date;
 
-/** DTO pour une création / mise-à-jour partielle */
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class PointageCreateDto {
 

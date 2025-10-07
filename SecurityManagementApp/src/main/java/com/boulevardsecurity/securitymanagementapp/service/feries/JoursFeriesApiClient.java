@@ -33,7 +33,6 @@ public class JoursFeriesApiClient {
         this.restTemplate = new RestTemplate(f);
     }
 
-    /** Appelle /{zone}/{year}.json → map "yyyy-MM-dd" -> libellé */
     public Map<String, String> recupererAnnee(int annee) {
         String url = String.format("%s/%s/%d.json", baseUrl, zone, annee);
         try {
@@ -42,12 +41,10 @@ public class JoursFeriesApiClient {
                 return (Map<String, String>) resp.getBody();
             }
         } catch (RestClientException e) {
-            // log si besoin
         }
         return Collections.emptyMap();
     }
 
-    /** Option secours: /{zone}.json (multi-années), puis filtrage côté service */
     public Map<String, String> recupererToutesAnnees() {
         String url = String.format("%s/%s.json", baseUrl, zone);
         try {

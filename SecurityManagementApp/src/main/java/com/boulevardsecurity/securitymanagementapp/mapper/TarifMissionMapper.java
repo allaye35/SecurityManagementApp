@@ -16,9 +16,6 @@ public class TarifMissionMapper {
 
     private final MissionRepository missionRepo;
 
-    /**
-     * ENTITÉ → DTO de lecture complet (avec missionsIds)
-     */
     public TarifMissionDto toDto(TarifMission entity) {
         return TarifMissionDto.builder()
                 .id(entity.getId())
@@ -40,9 +37,6 @@ public class TarifMissionMapper {
                 .build();
     }
 
-    /**
-     * DTO de création → nouvelle ENTITÉ
-     */
     public TarifMission toEntity(TarifMissionCreateDto dto) {
         return TarifMission.builder()
                 .typeMission(dto.getTypeMission())
@@ -55,9 +49,6 @@ public class TarifMissionMapper {
                 .build();
     }
 
-    /**
-     * DTO complet → ENTITÉ (pour mise à jour)
-     */
     public TarifMission toEntity(TarifMissionDto dto) {
         TarifMission t = TarifMission.builder()
                 .id(dto.getId())
@@ -70,7 +61,6 @@ public class TarifMissionMapper {
                 .tauxTVA(dto.getTauxTVA())
                 .build();
 
-        // rattachement bidirectionnel optionnel des missions existantes
         if (dto.getMissionIds() != null) {
             dto.getMissionIds().forEach(mid -> {
                 Mission m = missionRepo.findById(mid)

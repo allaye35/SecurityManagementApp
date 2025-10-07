@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "devis")
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter @Setter
 @NoArgsConstructor
@@ -24,46 +23,37 @@ public class Devis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Référence unique du devis (ex: DEV-2025-001) */
     @Column(unique = true, length = 50)
     private String referenceDevis;
 
-    /** Description libre */
     @Column(length = 2000)
     private String description;
 
-    /** Statut du devis */
     @Enumerated(EnumType.STRING)
     private StatutDevis statut;
 
-    /** Entreprise prestataire */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "entreprise_id")
     private Entreprise entreprise;
 
-    /** Client bénéficiaire */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    /** Dates */
     @Column(nullable = false)
     private LocalDate dateCreation;
 
     @Column(nullable = false)
     private LocalDate dateValidite;
 
-    /** Conditions générales */
     @Column(columnDefinition = "TEXT")
     private String conditionsGenerales;
 
-    /** Contrat associé (le cas échéant) */
     @OneToOne(mappedBy = "devis",
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
     private Contrat contrat;
 
-    /** Missions liées à ce devis */
     @OneToMany(
             mappedBy = "devis",
             cascade = CascadeType.ALL,
@@ -72,7 +62,6 @@ public class Devis {
     @Builder.Default
     private List<Mission> missions = new ArrayList<>();
 
-    /** Totaux agrégés (calculés à partir des missions) */
     @Builder.Default
     @Column(precision = 15, scale = 2)
     private BigDecimal montantHT = BigDecimal.ZERO;
@@ -85,7 +74,6 @@ public class Devis {
     @Column(precision = 15, scale = 2)
     private BigDecimal montantTTC = BigDecimal.ZERO;
 
-    /** Recalcule les totaux à partir des missions liées */
     public void recalculerTotaux() {
         this.montantHT = missions.stream()
                 .map(m -> m.getMontantHT() == null ? BigDecimal.ZERO : m.getMontantHT())

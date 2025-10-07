@@ -23,7 +23,6 @@ export default function FicheDePaieForm() {
         netAPayer: "",
         agentDeSecuriteId: "",
         contratDeTravailId: ""
-        // pour PDF et lignes, on pas géré ici
     });
     const [error, setError] = useState("");
 
@@ -61,7 +60,6 @@ export default function FicheDePaieForm() {
         setError("");
         const payload = {
             ...dto,
-            // caster les nombres
             salaireDeBase: Number(dto.salaireDeBase),
             heuresTravaillées: Number(dto.heuresTravaillées),
             primeNuit: Number(dto.primeNuit),
@@ -109,7 +107,7 @@ export default function FicheDePaieForm() {
                     Heures travaillées *
                     <input type="number" name="heuresTravaillées" value={dto.heuresTravaillées} onChange={handleChange} required />
                 </label>
-                {/* … ajoutez les autres champs de façon similaire … */}
+                {}
                 <label>
                     Agent ID *
                     <input type="number" name="agentDeSecuriteId" value={dto.agentDeSecuriteId} onChange={handleChange} required />

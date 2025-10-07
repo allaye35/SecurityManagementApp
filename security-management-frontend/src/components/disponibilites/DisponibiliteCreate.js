@@ -19,7 +19,6 @@ const DisponibiliteCreate = () => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState({ title: '', message: '', type: 'success' });
 
-    // Chargement de la liste des agents au montage du composant
     useEffect(() => {
         setLoading(true);
         AgentService.getAllAgents()
@@ -32,7 +31,6 @@ const DisponibiliteCreate = () => {
                 setError("Impossible de charger la liste des agents. Veuillez réessayer plus tard.");
                 setLoading(false);
                 
-                // Afficher un toast d'erreur
                 showNotification(
                     "Erreur de chargement",
                     "Impossible de récupérer la liste des agents. Veuillez réessayer.",
@@ -40,11 +38,9 @@ const DisponibiliteCreate = () => {
                 );
             });
             
-        // Pré-remplir les dates avec l'heure actuelle
         const now = new Date();
         const nowString = now.toISOString().slice(0, 16);
         
-        // Par défaut, proposer une disponibilité de 4h
         const later = new Date(now.getTime() + 4 * 60 * 60 * 1000);
         const laterString = later.toISOString().slice(0, 16);
         
@@ -55,13 +51,11 @@ const DisponibiliteCreate = () => {
         }));
     }, []);
 
-    // Afficher une notification toast
     const showNotification = (title, message, type = 'success') => {
         setToastMessage({ title, message, type });
         setShowToast(true);
     };
 
-    // Validation des données avant soumission
     const validateDisponibilite = (disponibiliteData) => {
         const start = new Date(disponibiliteData.dateDebut);
         const end = new Date(disponibiliteData.dateFin);
@@ -93,7 +87,6 @@ const DisponibiliteCreate = () => {
         e.preventDefault();
         setError(null);
         
-        // Validation des données avant envoi
         if (!validateDisponibilite(data)) {
             return Promise.reject();
         }
@@ -107,14 +100,12 @@ const DisponibiliteCreate = () => {
             
             await DisponibiliteService.create(formattedData);
             
-            // Afficher une notification de succès
             showNotification(
                 "Disponibilité créée",
                 "La disponibilité a été créée avec succès.",
                 "success"
             );
             
-            // Rediriger vers la liste des disponibilités après un court délai
             setTimeout(() => {
                 navigate("/disponibilites");
             }, 2000);
@@ -123,11 +114,9 @@ const DisponibiliteCreate = () => {
         } catch (err) {
             console.error("Erreur lors de la création de la disponibilité:", err);
             
-            // Message d'erreur personnalisé selon le type d'erreur
             let errorMessage = "Échec de la création de la disponibilité.";
             
             if (err.response) {
-                // Le serveur a répondu avec un code d'erreur
                 if (err.response.status === 409) {
                     errorMessage = "Cette disponibilité est en conflit avec une autre période pour cet agent.";
                 } else if (err.response.status === 400) {

@@ -9,16 +9,13 @@ import {
   FaArrowLeft, FaTimes, FaSave, FaExclamationTriangle
 } from "react-icons/fa";
 
-// Composants React-Leaflet + L pour corriger l'icône par défaut
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import L from "leaflet";
 
-// Services & styles
 import GeolocalisationService from "../../services/GeolocalisationService";
 import "../../styles/GeolocalisationForm.css";
 import "leaflet/dist/leaflet.css";
 
-// ─── Fix des icônes Leaflet pour Webpack / CRA ───────────────────────────────
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
@@ -38,7 +35,6 @@ const EditGeolocalisation = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
-  // Chargement de la géolocalisation à partir de l'API
   useEffect(() => {
     setLoading(true);
     GeolocalisationService.getGeolocalisationById(id)
@@ -90,7 +86,7 @@ const EditGeolocalisation = () => {
   return (
     <Container fluid className="edit-geo-container py-4">
       <div className="edit-geo-wrapper">
-        {/* Header amélioré */}
+        {}
         <div className="edit-header">
           <div className="header-content">
             <h1>
@@ -124,7 +120,7 @@ const EditGeolocalisation = () => {
         ) : (
           <Form onSubmit={handleSubmit}>
             <Row className="g-4">
-              {/* Colonne gauche - Formulaire */}
+              {}
               <Col lg={6}>
                 <Card className="info-card">
                   <Card.Body>
@@ -232,7 +228,7 @@ const EditGeolocalisation = () => {
                 </Card>
               </Col>
 
-              {/* Colonne droite - Carte */}
+              {}
               <Col lg={6}>
                 <Card className="map-card">
                   <Card.Body>
@@ -269,7 +265,7 @@ const EditGeolocalisation = () => {
               </Col>
             </Row>
 
-            {/* Boutons d'action */}
+            {}
             <div className="action-buttons">
               <Button 
                 variant="outline-secondary" 

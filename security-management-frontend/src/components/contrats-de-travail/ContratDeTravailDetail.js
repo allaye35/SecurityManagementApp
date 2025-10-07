@@ -8,8 +8,8 @@ import EntrepriseService from "../../services/EntrepriseService";
 import { usePDF } from "react-to-pdf";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import "../../styles/ContratDetail.css"; // Utilisation du fichier CSS dédié
-import "../../styles/ContratDetailPrint.css"; // Ajout du fichier CSS pour l'impression
+import "../../styles/ContratDetail.css";
+import "../../styles/ContratDetailPrint.css";
 
 const ContratDeTravailDetail = () => {
     const { id } = useParams();
@@ -22,7 +22,6 @@ const ContratDeTravailDetail = () => {
     const [showPdfPreview, setShowPdfPreview] = useState(false);
     const [exportInProgress, setExportInProgress] = useState(false);
     
-    // Nouveaux états pour les options d'impression et d'export
     const [showExportOptions, setShowExportOptions] = useState(false);
     const [exportOptions, setExportOptions] = useState({
         includeArticles: true,
@@ -32,7 +31,6 @@ const ContratDeTravailDetail = () => {
         pageLayout: 'portrait'
     });
     const [showExportLoader, setShowExportLoader] = useState(false);
-      // Options pour l'export PDF
     const { toPDF, targetRef } = usePDF({
         filename: `contrat-de-travail-${id}.pdf`,
         page: { 
@@ -42,7 +40,6 @@ const ContratDeTravailDetail = () => {
         method: 'save'
     });
     
-    // Gérer le changement des options d'export
     const handleExportOptionChange = (e) => {
         const { name, checked, value, type } = e.target;
         setExportOptions(prev => ({
@@ -51,22 +48,18 @@ const ContratDeTravailDetail = () => {
         }));
     };
     
-    // Fonction pour imprimer le contrat
     const handlePrint = () => {
         window.print();
     };
     
-    // Fonction pour ouvrir/fermer les options d'export
     const toggleExportOptions = () => {
         setShowExportOptions(prev => !prev);
     };
 
-    // Fonction pour exporter la page en PDF avec html2canvas et jsPDF
     const exportToPDF = () => {
         setExportInProgress(true);
         setShowExportLoader(true);
         
-        // Cacher temporairement les éléments non inclus dans l'export
         if (!exportOptions.includeArticles) {
             document.querySelectorAll('.articles-section').forEach(el => {
                 el.style.display = 'none';
@@ -114,7 +107,6 @@ const ContratDeTravailDetail = () => {
             const imgX = (pdfWidth - imgWidth * ratio) / 2;
             const imgY = 20;
             
-            // Ajouter un en-tête si demandé
             if (exportOptions.includeHeader) {
                 pdf.setFontSize(12);
                 pdf.setTextColor(100, 100, 100);
@@ -125,7 +117,6 @@ const ContratDeTravailDetail = () => {
             
             pdf.addImage(imgData, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
             
-            // Ajouter un pied de page si demandé
             if (exportOptions.includeFooter) {
                 const pageCount = pdf.internal.getNumberOfPages();
                 for (let i = 1; i <= pageCount; i++) {
@@ -143,7 +134,6 @@ const ContratDeTravailDetail = () => {
             
             pdf.save(fileName);
             
-            // Restaurer l'affichage des éléments cachés
             document.querySelectorAll('.articles-section, .fiches-paie-section').forEach(el => {
                 el.style.display = '';
             });
@@ -153,7 +143,6 @@ const ContratDeTravailDetail = () => {
         }).catch(err => {
             console.error("Erreur lors de l'export PDF:", err);
             
-            // Restaurer l'affichage des éléments cachés en cas d'erreur
             document.querySelectorAll('.articles-section, .fiches-paie-section').forEach(el => {
                 el.style.display = '';
             });
@@ -169,29 +158,23 @@ const ContratDeTravailDetail = () => {
         console.log("Chargement des détails du contrat avec ID:", id);
         setLoading(true);
 
-        // Charger le contrat principal - en s'assurant d'utiliser getById avec B majuscule
         ContratDeTravailService.getById(id)
             .then(res => {
                 const contratData = res.data;
                 setContrat(contratData);
                 console.log("Contrat chargé:", contratData);
 
-                // Charger les données associées
                 return Promise.all([
-                    // Charger les infos de l'agent
                     contratData.agentDeSecuriteId ?
                         AgentService.getAgentById(contratData.agentDeSecuriteId) :
                         Promise.resolve({ data: null }),
 
-                    // Charger les infos de l'entreprise
                     contratData.entrepriseId ?
                         EntrepriseService.getEntrepriseById(contratData.entrepriseId) :
                         Promise.resolve({ data: null }),
 
-                    // Charger les articles du contrat - utilisation de l'ID du paramètre d'URL
                     ArticleContratTravailService.getByContratTravail(Number(id)),
 
-                    // Charger les fiches de paie par contrat (si disponible) ou sinon toutes les fiches
                     FicheDePaieService.getAll()
                 ]);
             })
@@ -199,20 +182,15 @@ const ContratDeTravailDetail = () => {
                 setAgent(agentRes.data);
                 setEntreprise(entrepriseRes.data);
 
-                // Debuggage des articles
                 console.log("Articles récupérés (brut):", articlesRes);
-                console.log("Articles récupérés (données):", articlesRes.data);                // S'assurer que les articles sont bien un tableau et les trier par ordre croissant
+                console.log("Articles récupérés (données):", articlesRes.data);
                 const articlesData = Array.isArray(articlesRes.data) ? articlesRes.data : [];
-                // Trier les articles par ordre croissant de leur ID
                 const articlesTries = articlesData.sort((a, b) => a.id - b.id);
                 console.log("Articles après traitement et tri:", articlesTries);
                 setArticles(articlesTries);
 
-                // Debuggage des fiches de paie
                 console.log("Fiches de paie récupérées:", fichesRes.data);
 
-                // Filtrer les fiches de paie qui correspondent à ce contrat
-                // Convertir les deux IDs en number pour s'assurer d'une comparaison correcte
                 const contratId = Number(id);
                 const fichesDuContrat = Array.isArray(fichesRes.data)
                     ? fichesRes.data.filter(fiche => {
@@ -232,7 +210,6 @@ const ContratDeTravailDetail = () => {
                 setLoading(false);
             });
 
-
         ArticleContratTravailService.getByContratTravail(id)
             .then(refreshResponse => {
                 console.log("Articles rafraîchis:", refreshResponse.data);
@@ -248,22 +225,21 @@ const ContratDeTravailDetail = () => {
     if (loading) return <p className="loading">Chargement des données du contrat...</p>;
     if (!contrat) return <p>Contrat non trouvé.</p>;
 
-    // Formater une date pour l'affichage
     const formatDate = (dateString) => {
         if (!dateString) return "–";
         return dateString.slice(0, 10).split('-').reverse().join('/');
-    };    // Fonction pour télécharger ou afficher le PDF du contrat
+    };
     const handleViewPdf = () => {
         if (contrat.documentPdf) {
             setShowPdfPreview(!showPdfPreview);
         } else {
             alert("Aucun document PDF disponible pour ce contrat.");
         }
-    };    // Toutes les fonctions d'ajout et de toggle d'articles ont été retirées
+    };
     
     return (
         <div className="contrat-detail modern">
-            {/* Loader pour l'export PDF */}
+            {}
             {showExportLoader && (
                 <div className="export-loader">
                     <div className="export-loader-spinner"></div>
@@ -313,7 +289,7 @@ const ContratDeTravailDetail = () => {
                 </div>
             </div>
             
-            {/* Options d'export */}
+            {}
             {showExportOptions && (
                 <div className="export-options not-printable">
                     <div className="options-title">Options d'impression et d'export PDF</div>
@@ -380,7 +356,7 @@ const ContratDeTravailDetail = () => {
                 </span>
             </div>
             
-            {/* Prévisualiseur de PDF conditionnel */}
+            {}
             {showPdfPreview && contrat.documentPdf && (
                 <div className="pdf-preview-container">
                     <h3>Document PDF Original</h3>
@@ -403,9 +379,9 @@ const ContratDeTravailDetail = () => {
                     </div>
                 </div>
             )}
-              {/* Zone pour l'impression/export PDF */}
+              {}
             <div className="printable-content" ref={targetRef}>
-                {/* En-tête spécifique à l'impression */}
+                {}
                 <div className="print-header">
                     <div className="print-title">CONTRAT DE TRAVAIL</div>
                     <div className="print-subtitle">Référence: {contrat.referenceContrat}</div>
@@ -413,7 +389,7 @@ const ContratDeTravailDetail = () => {
                 
                 <div className="print-date">
                     Document généré le {new Date().toLocaleDateString()} à {new Date().toLocaleTimeString()}
-                </div>            {/* Informations générales du contrat - Style amélioré */}
+                </div>            {}
             <div className="info-section" style={{ 
                 backgroundColor: '#fff',
                 borderRadius: '8px',
@@ -514,7 +490,7 @@ const ContratDeTravailDetail = () => {
                         </div>
                     </div>
                 </div>
-            </div>{/* Informations sur l'agent */}
+            </div>{}
             <div className="info-section agent-highlight">
                 <h3>Agent de sécurité</h3>
                 <div className="info-block agent-info-block">
@@ -573,7 +549,7 @@ const ContratDeTravailDetail = () => {
                         <p>Aucune information d'agent disponible.</p>
                     )}
                 </div>
-            </div>            {/* Informations sur l'entreprise */}
+            </div>            {}
             <div className="info-section" style={{
                 backgroundColor: '#fff',
                 borderRadius: '8px',
@@ -726,7 +702,7 @@ const ContratDeTravailDetail = () => {
                 </div>
             </div>
 
-            {/* Description du contrat */}
+            {}
             {contrat.description && (
                 <div className="info-section" style={{
                     backgroundColor: '#fff',
@@ -766,12 +742,12 @@ const ContratDeTravailDetail = () => {
                 </div>
             )}
 
-            {/* Articles du contrat - Version plus conviviale quand vide */}            <div className="info-section articles-section">
+            {}            <div className="info-section articles-section">
                 <div className="section-header" style={{ marginBottom: '20px' }}>
                     <h3>Articles du contrat ({articles.length})</h3>
                 </div>
 
-                {/* Liste des articles - toujours affichée */}                {articles.length > 0 ? (
+                {}                {articles.length > 0 ? (
                     <div className="articles-list">
                         {articles.map(article => (
                             <div key={article.id} className="article-item" style={{
@@ -794,7 +770,7 @@ const ContratDeTravailDetail = () => {
                                     </h4>
                                 </div>
 
-                                {/* Affichage détaillé de l'article (toujours visible) */}
+                                {}
                                 <div className="article-content" style={{
                                     padding: '15px',
                                     backgroundColor: '#f8f9fa',
@@ -859,7 +835,7 @@ const ContratDeTravailDetail = () => {
                         </p>
                     </div>
                 )}
-            </div>            {/* Fiches de paie - Version améliorée */}
+            </div>            {}
             <div className="info-section fiches-paie-section">
                 <h3 style={{
                     color: '#2c3e50',
@@ -985,12 +961,12 @@ const ContratDeTravailDetail = () => {
                         </p>
                     </div>
                 )}
-            </div>            {/* Actions et liens */}
+            </div>            {}
             <div className="actions-container">
                 <Link to="/contrats-de-travail" className="back-link">⬅ Retour à la liste</Link>
                 <Link to={`/contrats-de-travail/edit/${id}`} className="edit-link">✏️ Modifier ce contrat</Link>
             </div>
-            </div> {/* Fermeture de la div printable-content */}
+            </div> {}
         </div>
     );
 };

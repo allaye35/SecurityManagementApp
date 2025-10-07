@@ -41,19 +41,15 @@ public class AuthController {
     private final AgentDeSecuriteRepository agentRepo;
     private final ClientRepository clientRepo;
 
-    // services
     private final AgentDeSecuriteService agentService;
     private final ClientService clientService;
     private final EmailVerificationService emailVerificationService;
     private final PasswordResetService passwordResetService;
 
-    /* ======================= LOGIN ======================= */
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
         String email = EmailUtil.normalize(req.getEmail());
 
-        // Vérifications préalables : email vérifié + approbation admin (agent ou client)
         AgentDeSecurite a = agentRepo.findByEmail(email).orElse(null);
         if (a != null) {
             if (!a.isEmailVerified()) {
@@ -90,13 +86,12 @@ public class AuthController {
             String access  = jwtService.generateAccessToken(user.getId(), user.getEmail(), user.getRole(), user.getUserType());
             String refresh = jwtService.generateRefreshToken(user.getId(), user.getEmail());
 
-            // Construire la réponse SANS Map.of (qui n'accepte pas les null)
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("accessToken",  access);
             body.put("refreshToken", refresh);
             body.put("userId",       user.getId());
             body.put("role",         user.getRole().name());
-            body.put("userType",     user.getUserType()); // "AGENT" ou "CLIENT"
+            body.put("userType",     user.getUserType());
             body.put("email",        user.getEmail());
 
             if ("AGENT".equals(user.getUserType()) && a != null) {
@@ -115,8 +110,6 @@ public class AuthController {
             return ResponseEntity.status(401).body(Map.of("message", "Email ou mot de passe invalide."));
         }
     }
-
-    /* ======================= REFRESH / LOGOUT ======================= */
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody Map<String, String> body) {
@@ -141,11 +134,8 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
-        // côté client: supprimer les tokens
         return ResponseEntity.ok(Map.of("message", "Déconnecté (supprime les tokens côté client)"));
     }
-
-    /* ============ INSCRIPTIONS PUBLIQUES (AGENT & CLIENT) ============ */
 
     @PostMapping("/register-agent")
     public ResponseEntity<?> registerAgent(@RequestBody AgentDeSecuriteCreationDto dto) {
@@ -158,7 +148,6 @@ public class AuthController {
 
         AgentDeSecuriteDto created = agentService.createAgent(dto);
 
-        // Envoi email de vérification (lien + code)
         emailVerificationService.sendVerificationEmailForAgent(created.getId(), created.getEmail());
 
         return ResponseEntity.created(URI.create("/api/agents/" + created.getId()))
@@ -175,16 +164,12 @@ public class AuthController {
 
         ClientDto created = clientService.createClient(dto);
 
-        // Envoi email de vérification (lien + code)
         emailVerificationService.sendVerificationEmailForClient(created.getId(), created.getEmail());
 
         return ResponseEntity.created(URI.create("/api/clients/" + created.getId()))
                 .body(Map.of("message", "Compte client créé. Vérifiez votre email pour activer le compte."));
     }
 
-    /* ================== VÉRIFICATION EMAIL / CODE ================== */
-
-    /** Lien cliqué depuis l’email — confirme l’adresse */
     @GetMapping("/verify-email")
     public ResponseEntity<Map<String, String>> verifyEmail(@RequestParam("token") String token) {
         try {
@@ -195,7 +180,6 @@ public class AuthController {
         }
     }
 
-    /** Vérification par code (email + code 6 chiffres) */
     @PostMapping("/verify-email/code")
     public ResponseEntity<?> verifyEmailByCode(@RequestBody Map<String, String> body) {
         String email = body.get("email");
@@ -207,7 +191,6 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Email vérifié."));
     }
 
-    /** ➕ Renvoyer un email de vérification (depuis l’adresse) */
     @PostMapping("/verify-email/resend")
     public ResponseEntity<?> resendVerifyEmail(@RequestBody Map<String, String> body) {
         String email = body.get("email");
@@ -215,13 +198,9 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("message", "Email requis."));
         }
         emailVerificationService.resend(email);
-        // Réponse générique
         return ResponseEntity.ok(Map.of("message", "Si un compte existe, un email de vérification a été envoyé."));
     }
 
-    /* ============================ RESET MDP ============================ */
-
-    /** Demande de réinitialisation (envoi d’un email) */
     @PostMapping("/password-reset/request")
     public ResponseEntity<?> requestPasswordReset(@RequestBody Map<String, String> body) {
         String email = body.get("email");
@@ -229,11 +208,9 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("message","L'email est requis."));
         }
         passwordResetService.requestReset(email);
-        // Réponse générique pour ne pas divulguer l’existence d’un compte
         return ResponseEntity.ok(Map.of("message","Si un compte existe pour cet email, un lien a été envoyé."));
     }
 
-    /** Confirmation via POST (JSON) */
     @PostMapping("/password-reset/confirm")
     public ResponseEntity<?> confirmPasswordReset(@RequestBody Map<String, String> body) {
         String token = body.get("token");
@@ -245,7 +222,6 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message","Mot de passe mis à jour."));
     }
 
-    /** Variante GET (utile si on clique directement le lien avec un paramètre) */
     @GetMapping("/password-reset/confirm")
     public ResponseEntity<?> confirmPasswordResetGet(@RequestParam("token") String token,
                                                      @RequestParam(value="newPassword", required = false) String newPassword) {

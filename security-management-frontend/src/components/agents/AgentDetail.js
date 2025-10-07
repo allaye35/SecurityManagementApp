@@ -15,7 +15,7 @@ const AgentDetail = () => {
     const [agent, setAgent] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState("contrats"); // Valeur initiale basée sur la capture d'écran
+    const [activeTab, setActiveTab] = useState("contrats");
 
     const fetchAgent = useCallback(() => {
         setLoading(true);
@@ -32,7 +32,6 @@ const AgentDetail = () => {
 
     useEffect(() => { fetchAgent(); }, [fetchAgent]);
 
-    // Fonction pour retourner la bonne couleur de badge selon le statut
     const getStatusBadgeVariant = (status) => {
         switch(status?.toUpperCase()) {
             case "ACTIF": return "success";

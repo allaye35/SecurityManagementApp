@@ -18,7 +18,7 @@ export default function FactureForm() {
 
     const [dto, setDto] = useState({
         referenceFacture: "",
-        dateEmission: new Date().toISOString().split('T')[0], // Date du jour par défaut
+        dateEmission: new Date().toISOString().split('T')[0],
         statut: STATUTS[0],
         montantHT: 0,
         montantTVA: 0,
@@ -26,33 +26,30 @@ export default function FactureForm() {
         devisId: "",
         entrepriseId: "",
         clientId: "",
-        missionIds: [], // missions sélectionnées
-        dateDebut: "", // période de facturation début
-        dateFin: ""    // période de facturation fin
+        missionIds: [],
+        dateDebut: "",
+        dateFin: ""
     });
     
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     
-    // Données pour les sélecteurs
     const [clients, setClients] = useState([]);
     const [entreprises, setEntreprises] = useState([]);
     const [devis, setDevis] = useState([]);
     const [missions, setMissions] = useState([]);
-    const [missionsOptions, setMissionsOptions] = useState([]); // Pour React Select
+    const [missionsOptions, setMissionsOptions] = useState([]);
     const [selectedMissions, setSelectedMissions] = useState([]);
     const [clientEntreprises, setClientEntreprises] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     
-    // Données calculées
     const [calculatedData, setCalculatedData] = useState({
         totalHT: 0,
         totalTVA: 0,
         totalTTC: 0,
-        detailsMissions: [] // Détails pour l'affichage
+        detailsMissions: []
     });
 
-    // Chargement initial des données
     useEffect(() => {
         setLoading(true);
         
@@ -60,7 +57,7 @@ export default function FactureForm() {
             ClientService.getAll(),
             EntrepriseService.getAllEntreprises(),
             DevisService.getAll(),
-            MissionService.getAllMissions() // Charger toutes les missions dès le départ
+            MissionService.getAllMissions()
         ])
         .then(([clientsRes, entreprisesRes, devisRes, missionsRes]) => {
             setClients(clientsRes.data || []);
@@ -77,7 +74,6 @@ export default function FactureForm() {
         })
         .finally(() => setLoading(false));
 
-        // En mode édition, charger les données de la facture
         if (isEdit) {
             setLoading(true);
             FactureService.getById(id)
@@ -97,7 +93,6 @@ export default function FactureForm() {
                         dateFin: data.dateFin || ""
                     });
                     
-                    // Charger les sélections en mode édition
                     if (data.clientId) {
                         loadClientData(data.clientId, data.missionIds);
                     }
@@ -108,29 +103,24 @@ export default function FactureForm() {
                 })
                 .finally(() => setLoading(false));
         } else {
-            // Générer une référence de facture par défaut pour les nouvelles factures
             const today = new Date();
             const referenceFacture = `FACT-${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
             setDto(prev => ({ ...prev, referenceFacture }));
         }
     }, [id, isEdit]);
 
-    // Chargement des données client (entreprises et missions)
     const loadClientData = (clientId, selectedMissionIds = []) => {
         if (!clientId) return;
         setLoading(true);
         setError("");
-        // Filtrage missions :
         let filteredMissions = missions.filter(mission =>
             mission.clientId === parseInt(clientId) || mission.devis?.clientId === parseInt(clientId)
         );
-        // Si un devis est sélectionné, filtrer aussi par devis
         if (dto.devisId) {
             filteredMissions = filteredMissions.filter(mission =>
                 mission.devisId === Number(dto.devisId)
             );
         }
-        // Si période définie, filtrer par période
         if (dto.dateDebut && dto.dateFin) {
             const start = new Date(dto.dateDebut);
             const end = new Date(dto.dateFin);
@@ -141,14 +131,12 @@ export default function FactureForm() {
                 return (missionStart <= end && missionEnd >= start);
             });
         }
-        // Créer les options pour React Select
         const options = filteredMissions.map(mission => ({
             value: mission.id,
             label: mission.titre || `Mission #${mission.id} - ${mission.typeMission || "N/A"}`,
             mission: mission
         }));
         setMissionsOptions(options);
-        // Sélectionner les missions si en mode édition
         if (selectedMissionIds && selectedMissionIds.length > 0) {
             const selected = options.filter(option => 
                 selectedMissionIds.includes(option.value)
@@ -156,21 +144,17 @@ export default function FactureForm() {
             setSelectedMissions(selected);
             calculateAmounts(selected.map(option => option.mission));
         }
-        // Si pas de période, afficher toutes les missions du client et de ses devis
         if (!dto.dateDebut || !dto.dateFin) {
             setMissionsOptions(options);
         }
-        // Utiliser toutes les entreprises disponibles car l'API /clients/{id}/entreprises ne fonctionne pas
         const clientEntreprisesMock = entreprises;
         setClientEntreprises(clientEntreprisesMock);
-        // Si une seule entreprise est disponible, la sélectionner automatiquement
         if (clientEntreprisesMock.length === 1) {
             setDto(prev => ({ ...prev, entrepriseId: clientEntreprisesMock[0].id }));
         }
         setLoading(false);
     };
 
-    // Filtre les missions en fonction des dates (ne pas utiliser missionsOptions juste après setState)
     const filterMissionsByDate = (allMissions, startDate, endDate) => {
         if (!startDate || !endDate || !allMissions.length) return;
         const start = new Date(startDate);
@@ -181,7 +165,6 @@ export default function FactureForm() {
             const missionEnd = new Date(mission.dateFin);
             return (missionStart <= end && missionEnd >= start);
         });
-        // Créer les options à partir de la liste filtrée
         const filteredOptions = filteredMissions.map(mission => ({
             value: mission.id,
             label: mission.titre || `Mission #${mission.id} - ${mission.typeMission || "N/A"}`,
@@ -191,9 +174,7 @@ export default function FactureForm() {
         setMissionsOptions(filteredOptions);
         calculateAmounts(filteredMissions);
     };
-    
 
-    // Calcul des montants en fonction des missions sélectionnées
     const calculateAmounts = async (selectedMissionsList) => {
         if (!selectedMissionsList || selectedMissionsList.length === 0) {
             setCalculatedData({
@@ -210,7 +191,6 @@ export default function FactureForm() {
             }));
             return;
         }
-        // Enrichir les missions avec leurs tarifs si nécessaire
         const missionDetails = await Promise.all(
             selectedMissionsList.map(async mission => {
                 if (mission.tarif) return mission;
@@ -220,7 +200,7 @@ export default function FactureForm() {
                         const tarif = tarifResponse.data;
                         const montantHT = mission.montantHT || 
                             (tarif.prixUnitaireHT * (mission.quantite || 1) * (mission.nombreAgents || 1));
-                        const tauxTVA = tarif.tauxTVA || 0.2; // 20% par défaut
+                        const tauxTVA = tarif.tauxTVA || 0.2;
                         const montantTVA = mission.montantTVA || (montantHT * tauxTVA);
                         const montantTTC = mission.montantTTC || (montantHT + montantTVA);
                         return {
@@ -232,7 +212,6 @@ export default function FactureForm() {
                         };
                     } catch (err) {
                         console.error("Erreur lors du chargement du tarif:", err);
-                        // Valeurs par défaut en cas d'erreur
                         return {
                             ...mission,
                             montantHT: mission.montantHT || 0,
@@ -241,7 +220,6 @@ export default function FactureForm() {
                         };
                     }
                 }
-                // Valeurs par défaut si pas de tarif disponible
                 return {
                     ...mission,
                     montantHT: mission.montantHT || 0,
@@ -250,7 +228,6 @@ export default function FactureForm() {
                 };
             })
         );
-        // Calculer les totaux
         const totalHT = missionDetails.reduce(
             (sum, mission) => sum + parseFloat(mission.montantHT || 0), 0
         );
@@ -274,14 +251,11 @@ export default function FactureForm() {
         }));
     };
 
-    // Déclaration correcte de handleChange
     const handleChange = e => {
         const { name, value } = e.target;
         setDto(d => ({ ...d, [name]: value }));
-        // Actions spécifiques selon le champ modifié
         if (name === "clientId" && value) {
             loadClientData(value);
-            // Réinitialiser l'entreprise car le client a changé
             setDto(d => ({ 
                 ...d, 
                 entrepriseId: "",
@@ -292,7 +266,6 @@ export default function FactureForm() {
         if (name === "devisId" && value) {
             loadDevisInfo(value);
         }
-        // Si les dates changent, filtrer les missions
         if ((name === "dateDebut" || name === "dateFin") && missions.length > 0) {
             const startDate = name === "dateDebut" ? value : dto.dateDebut;
             const endDate = name === "dateFin" ? value : dto.dateFin;
@@ -302,15 +275,12 @@ export default function FactureForm() {
         }
     };
     
-    // Gérer la sélection de missions avec React Select
     const handleMissionsChange = (selectedOptions) => {
         setSelectedMissions(selectedOptions || []);
         
-        // Mettre à jour les IDs des missions sélectionnées
         const selectedIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
         setDto(prev => ({ ...prev, missionIds: selectedIds }));
         
-        // Recalculer les montants
         const selectedMissionsList = selectedOptions ? 
             selectedOptions.map(option => option.mission) : [];
         calculateAmounts(selectedMissionsList);
@@ -368,13 +338,11 @@ export default function FactureForm() {
             .finally(() => setLoading(false));
     };
 
-    // Récupérer les informations du devis pour pré-remplir les montants
     const loadDevisInfo = (devisId) => {
         if (!devisId) return;
         setLoading(true);
         DevisService.getById(devisId)
             .then(({ data }) => {
-                // Mettre à jour les montants avec ceux du devis
                 setDto(prev => ({
                     ...prev,
                     montantHT: data.montantHT || prev.montantHT,
@@ -383,7 +351,6 @@ export default function FactureForm() {
                     clientId: data.clientId || prev.clientId,
                     entrepriseId: data.entrepriseId || prev.entrepriseId
                 }));
-                // Si le client a changé, charger ses données
                 if (data.clientId && data.clientId !== dto.clientId) {
                     loadClientData(data.clientId);
                 }
@@ -395,7 +362,6 @@ export default function FactureForm() {
             .finally(() => setLoading(false));
     };
 
-    // Filtrage des clients basé sur la recherche
     const filteredClients = searchTerm 
         ? clients.filter(client => 
             (client.nom && client.nom.toLowerCase().includes(searchTerm)) || 

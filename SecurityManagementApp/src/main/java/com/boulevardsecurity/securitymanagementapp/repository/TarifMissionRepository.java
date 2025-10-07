@@ -8,13 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
+// Repository JPA
 public interface TarifMissionRepository extends JpaRepository<TarifMission, Long> {
-    
-    /**
-     * Trouve un tarif par son type de mission
-     * @param typeMission le type de mission
-     * @return le tarif correspondant s'il existe
-     */
+
     Optional<TarifMission> findByTypeMission(TypeMission typeMission);
 }
 

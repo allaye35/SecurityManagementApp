@@ -1,4 +1,4 @@
-import api from "./api"; // axios.create({ baseURL: "http://localhost:8080/api" })
+import api from "./api";
 
 const LigneCotisationService = {
     getAll: () =>

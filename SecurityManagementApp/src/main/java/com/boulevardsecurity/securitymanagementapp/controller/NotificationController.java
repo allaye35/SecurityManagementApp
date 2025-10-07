@@ -15,7 +15,6 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    // 🔹 Envoi d'un email via JSON
     @PostMapping("/sendEmail")
     public ResponseEntity<String> sendEmail(@RequestBody Map<String, String> request) {
         String to = request.get("to");
@@ -30,8 +29,6 @@ public class NotificationController {
         return ResponseEntity.ok("✅ Email envoyé avec succès à " + to);
     }
 
-    // 🔹 Envoi d'un SMS
-    // Envoi d'un SMS (Version qui accepte un JSON en entrée)
     @PostMapping("/sendSMS")
     public ResponseEntity<String> sendSMS(@RequestBody Map<String, String> request) {
         String phoneNumber = request.get("phoneNumber");

@@ -17,7 +17,6 @@ public class FicheDePaieMapper {
     private final ContratDeTravailRepository contratRepo;
     private final LigneCotisationRepository ligneRepo;
 
-    /** Entity → DTO */
     public FicheDePaieDto toDto(FicheDePaie f) {
         return FicheDePaieDto.builder()
                 .id(f.getId())
@@ -46,7 +45,6 @@ public class FicheDePaieMapper {
                 .build();
     }
 
-    /** DTO création → Entity */
     public FicheDePaie toEntity(FicheDePaieCreationDto dto) {
         FicheDePaie f = new FicheDePaie();
         f.setReference(dto.getReference());
@@ -63,7 +61,6 @@ public class FicheDePaieMapper {
         f.setNetImposable(dto.getNetImposable());
         f.setNetAPayer(dto.getNetAPayer());
 
-        // associations
         agentRepo.findById(dto.getAgentId())
                 .ifPresentOrElse(
                         f::setAgentDeSecurite,
@@ -79,7 +76,6 @@ public class FicheDePaieMapper {
         return f;
     }
 
-    /** DTO mise à jour → Entity existant */
     public void updateEntityFromDto(FicheDePaieCreationDto dto, FicheDePaie f) {
         if (dto.getReference() != null) f.setReference(dto.getReference());
         if (dto.getPeriodeDebut() != null) f.setPeriodeDebut(dto.getPeriodeDebut());
@@ -94,6 +90,5 @@ public class FicheDePaieMapper {
         if (dto.getTotalBrut()!=null) f.setTotalBrut(dto.getTotalBrut());
         if (dto.getNetImposable()!=null) f.setNetImposable(dto.getNetImposable());
         if (dto.getNetAPayer()!=null) f.setNetAPayer(dto.getNetAPayer());
-        // associations idem création si besoin…
     }
 }

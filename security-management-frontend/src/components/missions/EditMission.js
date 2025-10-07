@@ -36,11 +36,9 @@ const EditMission = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        // Charger les données existantes de la mission
         const missionResponse = await MissionService.getMissionById(id);
         const missionData = missionResponse.data;
 
-        // Charger les entreprises, sites et plannings
         const [entreprisesData, sitesData, planningsData] = await Promise.all([
           EntrepriseService.getAllEntreprises(),
           SiteService.getAllSites(),

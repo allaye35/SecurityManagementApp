@@ -1,7 +1,6 @@
 // src/services/ArticleService.js
 import api from "./api";
 
-// → NOTE : on pointe ici sur "/articles-contrat", pas "/articles"
 const RESOURCE = "/articles-contrat";
 
 export default {

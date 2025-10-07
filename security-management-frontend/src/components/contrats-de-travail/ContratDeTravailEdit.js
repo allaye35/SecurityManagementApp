@@ -17,7 +17,6 @@ const ContratDeTravailEdit = () => {
     });
 
     useEffect(() => {
-        // Chargement du contrat
         ContratDeTravailService.getById(id)
             .then(res => {
                 const dto = res.data;
@@ -27,7 +26,6 @@ const ContratDeTravailEdit = () => {
             })
             .catch(() => setError("Impossible de charger le contrat."));
         
-        // Chargement des données de référence nécessaires aux menus déroulants
         Promise.all([
             MetaService.getMissions(),
             MetaService.getAgents(),
@@ -52,7 +50,6 @@ const ContratDeTravailEdit = () => {
     const handleSubmit = async e => {
         e.preventDefault(); setError(null);
         try {
-            // S'assurer que salaireDeBase est correctement formaté
             const dataToSubmit = { 
                 ...data,
                 salaireDeBase: Number(parseFloat(data.salaireDeBase).toFixed(2))

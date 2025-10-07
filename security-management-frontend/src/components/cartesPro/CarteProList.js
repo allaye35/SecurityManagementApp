@@ -12,32 +12,26 @@ import {
     FaExclamationCircle
 } from "react-icons/fa";
 
-// Services
 import CarteProService from "../../services/CarteProService";
 import AgentService from "../../services/AgentService";
 
 const CarteProList = () => {
-    // États principaux
     const [list, setList] = useState([]);
     const [filteredList, setFilteredList] = useState([]);
     const [agents, setAgents] = useState({});
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     
-    // États pour les filtres
     const [searchTerm, setSearchTerm] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [validiteFilter, setValiditeFilter] = useState("all");
     
-    // État pour modal de confirmation
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [carteToDelete, setCarteToDelete] = useState(null);
     
-    // État pour notification
     const [showNotification, setShowNotification] = useState(false);
     const [notification, setNotification] = useState({ message: "", variant: "success" });
     
-    // Types de cartes disponibles (extraits de l'enum TypeCarteProfessionnelle)
     const typeOptions = [
         "CQP_APS", 
         "GARDE_DU_CORPS", 
@@ -48,12 +42,10 @@ const CarteProList = () => {
         "AGENT_SURVEILLANCE_VIDEO"
     ];
 
-    // Fonction pour charger les données
     const loadData = () => {
         setLoading(true);
         setError(null);
         
-        // Récupérer toutes les cartes professionnelles et les agents
         Promise.all([
             CarteProService.getAll(),
             AgentService.getAllAgents()
@@ -63,7 +55,6 @@ const CarteProList = () => {
                 setList(cartesData);
                 setFilteredList(cartesData);
                 
-                // Créer un dictionnaire d'agents pour un accès facile par ID
                 const agentsMap = {};
                 agentsRes.data.forEach(agent => {
                     agentsMap[agent.id] = agent;
@@ -78,24 +69,20 @@ const CarteProList = () => {
             });
     };
 
-    // Charger les données au montage du composant
     useEffect(() => {
         loadData();
     }, []);
 
-    // Appliquer les filtres lorsque les filtres changent
     useEffect(() => {
         applyFilters();
     }, [searchTerm, typeFilter, validiteFilter, list]);
 
-    // Fonction pour afficher une notification temporaire
     const showTemporaryNotification = (message, variant = "success") => {
         setNotification({ message, variant });
         setShowNotification(true);
         setTimeout(() => setShowNotification(false), 5000);
     };
 
-    // Fonction pour vérifier la validité d'une carte
     const checkValidite = (dateDebut, dateFin) => {
         const now = new Date();
         const debut = new Date(dateDebut);
@@ -106,7 +93,6 @@ const CarteProList = () => {
         } else if (now > fin) {
             return { status: "expired", label: "Expirée", variant: "danger" };
         } else {
-            // Si la date d'expiration est dans moins de 30 jours
             const daysToExpire = Math.ceil((fin - now) / (1000 * 60 * 60 * 24));
             if (daysToExpire <= 30) {
                 return { status: "warning", label: `Expire dans ${daysToExpire} jour(s)`, variant: "warning" };
@@ -115,22 +101,18 @@ const CarteProList = () => {
         }
     };
 
-    // Fonction pour formater la date
     const formatDate = (dateString) => {
         const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
         return new Date(dateString).toLocaleDateString('fr-FR', options);
     };
 
-    // Fonction pour appliquer les filtres
     const applyFilters = () => {
         let result = [...list];
         
-        // Filtre par type de carte
         if (typeFilter) {
             result = result.filter(carte => carte.typeCarte === typeFilter);
         }
         
-        // Filtre par validité
         if (validiteFilter !== "all") {
             result = result.filter(carte => {
                 const validiteInfo = checkValidite(carte.dateDebut, carte.dateFin);
@@ -144,7 +126,6 @@ const CarteProList = () => {
             });
         }
         
-        // Filtre par terme de recherche (nom d'agent ou numéro de carte)
         if (searchTerm.trim() !== "") {
             const searchTermLower = searchTerm.toLowerCase();
             result = result.filter(carte => {
@@ -159,31 +140,26 @@ const CarteProList = () => {
         setFilteredList(result);
     };
 
-    // Fonction pour obtenir les détails d'un agent par son ID
     const getAgentInfo = (agentId) => {
         if (!agentId) return "Non assigné";
         const agent = agents[agentId];
         return agent ? `${agent.nom} ${agent.prenom}` : `Agent #${agentId}`;
     };
 
-    // Fonction pour demander la confirmation de suppression
     const confirmDelete = (carte) => {
         setCarteToDelete(carte);
         setShowDeleteModal(true);
     };
 
-    // Fonction pour supprimer après confirmation
     const handleDelete = () => {
         if (!carteToDelete) return;
         
         CarteProService.delete(carteToDelete.id)
             .then(() => {
-                // Mise à jour des listes après suppression
                 const updatedList = list.filter(carte => carte.id !== carteToDelete.id);
                 setList(updatedList);
                 applyFilters();
                 
-                // Notification de succès
                 showTemporaryNotification(`La carte ${carteToDelete.numeroCarte} a été supprimée avec succès.`, "success");
                 setShowDeleteModal(false);
             })
@@ -194,21 +170,18 @@ const CarteProList = () => {
             });
     };
 
-    // Fonction pour réinitialiser les filtres
     const resetFilters = () => {
         setSearchTerm("");
         setTypeFilter("");
         setValiditeFilter("all");
     };
 
-    // Helper pour les tooltips
     const renderTooltip = (text) => (
         <Tooltip id="button-tooltip">
             {text}
         </Tooltip>
     );
 
-    // Fonction pour obtenir une description du type de carte
     const getTypeDescription = (type) => {
         if (!type) return "";
         return type.replace(/_/g, " ");
@@ -216,7 +189,7 @@ const CarteProList = () => {
 
     return (
         <Container fluid className="py-4">
-            {/* Notification temporaire */}
+            {}
             {showNotification && (
                 <Alert 
                     variant={notification.variant} 
@@ -267,7 +240,7 @@ const CarteProList = () => {
                             </Alert>
                         )}
 
-                        {/* Barre de recherche et filtres */}
+                        {}
                         <Row className="mb-4 g-3 align-items-end">
                             <Col md={4}>
                                 <Form.Group>
@@ -372,7 +345,7 @@ const CarteProList = () => {
                             </div>
                         </div>
 
-                        {/* Contenu principal selon l'état */}
+                        {}
                         {loading ? (
                             <div className="text-center py-5">
                                 <Spinner animation="border" variant="primary" />
@@ -499,7 +472,7 @@ const CarteProList = () => {
                 </Card.Body>
             </Card>
             
-            {/* Modal de confirmation pour la suppression */}
+            {}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmer la suppression</Modal.Title>
@@ -518,7 +491,7 @@ const CarteProList = () => {
                 </Modal.Footer>
             </Modal>
             
-            {/* CSS pour les animations et styles spécifiques */}
+            {}
             <style>{`
                 @keyframes fadeIn {
                     from { opacity: 0; transform: translateY(-10px); }

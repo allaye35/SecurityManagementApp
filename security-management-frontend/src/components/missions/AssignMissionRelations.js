@@ -12,14 +12,12 @@ const AssignMissionRelations = () => {
   const { id: missionId } = useParams();
   const navigate = useNavigate();
 
-  // Listes d’options
   const [agents, setAgents] = useState([]);
   const [sites, setSites] = useState([]);
   const [plannings, setPlannings] = useState([]);
   const [entreprises, setEntreprises] = useState([]);
   const [geolocs, setGeolocs] = useState([]);
 
-  // Sélections faites par l’utilisateur
   const [selectedAgents, setSelectedAgents] = useState([]);
   const [selectedSite, setSelectedSite] = useState("");
   const [selectedPlanning, setSelectedPlanning] = useState("");
@@ -28,7 +26,6 @@ const AssignMissionRelations = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Charger toutes les listes au montage
   useEffect(() => {
     const fetchAll = async () => {
       try {
@@ -54,13 +51,11 @@ const AssignMissionRelations = () => {
     fetchAll();
   }, []);
 
-  // Gestion de la sélection multiple d’agents
   const handleAgentsSelect = (e) => {
     const selected = Array.from(e.target.selectedOptions, (opt) => opt.value);
     setSelectedAgents(selected);
   };
 
-  // Méthodes d'affectation
   const handleAssignAgents = async () => {
     try {
       if (selectedAgents.length === 0) return;
@@ -121,7 +116,7 @@ const AssignMissionRelations = () => {
       <h2>Affecter des relations à la mission (ID : {missionId})</h2>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
-      {/* Affecter des agents */}
+      {}
       <div style={{ marginBottom: "1rem" }}>
         <h3>Assigner des agents</h3>
         {agents.length > 0 ? (
@@ -141,7 +136,7 @@ const AssignMissionRelations = () => {
         )}
       </div>
 
-      {/* Affecter un site */}
+      {}
       <div style={{ marginBottom: "1rem" }}>
         <h3>Assigner un site</h3>
         {sites.length > 0 ? (
@@ -161,7 +156,7 @@ const AssignMissionRelations = () => {
         )}
       </div>
 
-      {/* Affecter un planning */}
+      {}
       <div style={{ marginBottom: "1rem" }}>
         <h3>Assigner un planning</h3>
         {plannings.length > 0 ? (
@@ -181,7 +176,7 @@ const AssignMissionRelations = () => {
         )}
       </div>
 
-      {/* Affecter une entreprise */}
+      {}
       <div style={{ marginBottom: "1rem" }}>
         <h3>Assigner une entreprise</h3>
         {entreprises.length > 0 ? (
@@ -201,7 +196,7 @@ const AssignMissionRelations = () => {
         )}
       </div>
 
-      {/* Affecter une géolocalisation */}
+      {}
       <div style={{ marginBottom: "1rem" }}>
         <h3>Assigner une géolocalisation</h3>
         {geolocs.length > 0 ? (

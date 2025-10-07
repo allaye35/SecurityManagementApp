@@ -24,21 +24,17 @@ import {
   FaBell
 } from 'react-icons/fa';
 
-
 import NotificationBadge from './NotificationBadge';
 
-// Importer le logo si disponible
 import logo from '../../assets/logo.jpg';
 
 const NavBar = ({ onToggleSidebar, sidebarVisible }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Récupérer les informations de l'utilisateur depuis le localStorage
   const userStr = localStorage.getItem('user');
   const user = userStr ? userStr : null;
   
-  // Notifications de démo
   const demoNotifications = [
     { 
       message: 'Nouvelle mission assignée', 
@@ -62,7 +58,6 @@ const NavBar = ({ onToggleSidebar, sidebarVisible }) => {
   
   const handleSearch = (e) => {
     e.preventDefault();
-    // Implémentation de la recherche globale
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
@@ -106,7 +101,7 @@ const NavBar = ({ onToggleSidebar, sidebarVisible }) => {
         
         <Navbar.Collapse id="navbar-main-nav">
           <Nav className="me-auto">
-            {/* Menus principaux pour l'affichage mobile ou comme alternative à la sidebar */}
+            {}
             <NavDropdown 
               title={<><FaUserShield className="me-1" /> RH</>}
               id="nav-dropdown-rh"
@@ -166,13 +161,13 @@ const NavBar = ({ onToggleSidebar, sidebarVisible }) => {
           </Form>
           
           <Nav className="ms-auto">
-            {/* Notifications */}
+            {}
             <NotificationBadge 
               count={2} 
               notifications={demoNotifications} 
             />
             
-            {/* Profil et menu utilisateur */}
+            {}
             {user ? (
               <Dropdown align="end">
                 <Dropdown.Toggle 

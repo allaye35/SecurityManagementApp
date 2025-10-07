@@ -57,12 +57,10 @@ const ZoneDetail = () => {
         }
     }, [zone, fetchAgents]);
 
-    // Gestionnaire pour afficher la modal de confirmation de suppression
     const handleShowDeleteModal = () => {
         setShowDeleteModal(true);
     };
 
-    // Gestionnaire pour supprimer la zone et rediriger vers la liste
     const handleDeleteZone = () => {
         ZoneService.remove(id)
             .then(() => {
@@ -75,7 +73,6 @@ const ZoneDetail = () => {
             });
     };
 
-    // Fonction pour obtenir la couleur du badge selon le type de zone
     const getZoneTypeBadge = (type) => {
         switch(type) {
             case "VILLE": return "success";
@@ -86,7 +83,6 @@ const ZoneDetail = () => {
         }
     };
 
-    // Affichage du chargement
     if (loading) {
         return (
             <Container className="text-center my-5">
@@ -96,7 +92,6 @@ const ZoneDetail = () => {
         );
     }
 
-    // Affichage de l'erreur
     if (error) {
         return (
             <Container className="my-5">
@@ -317,7 +312,7 @@ const ZoneDetail = () => {
                 </Col>
             </Row>
 
-            {/* Modal de confirmation de suppression */}
+            {}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmation de suppression</Modal.Title>

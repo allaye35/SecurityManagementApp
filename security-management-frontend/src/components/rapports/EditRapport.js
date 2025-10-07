@@ -23,7 +23,6 @@ export default function EditRapport() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
-    // 1) charger le rapport
     useEffect(() => {
         setLoading(true);
         RapportService.getRapportById(id)
@@ -38,7 +37,6 @@ export default function EditRapport() {
             });
     }, [id]);
 
-    // 2) charger la liste des missions
     useEffect(() => {
         MissionService.getAllMissions()
             .then(res => setMissions(res.data))

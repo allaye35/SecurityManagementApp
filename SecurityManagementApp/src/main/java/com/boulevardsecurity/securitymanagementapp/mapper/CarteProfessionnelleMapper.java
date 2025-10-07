@@ -14,7 +14,6 @@ public class CarteProfessionnelleMapper {
 
     private final AgentDeSecuriteRepository agentRepo;
 
-    /** === ENTITÉ → DTO de lecture / update === */
     public CarteProfessionnelleDto toDto(CarteProfessionnelle c) {
         return CarteProfessionnelleDto.builder()
                 .id(c.getId())
@@ -28,7 +27,6 @@ public class CarteProfessionnelleMapper {
                 .build();
     }
 
-    /** === DTO de création ➜ ENTITÉ === */
     public CarteProfessionnelle toEntity(CarteProfessionnelleCreationDto dto) {
         CarteProfessionnelle entity = CarteProfessionnelle.builder()
                 .typeCarte(dto.getTypeCarte())
@@ -37,7 +35,6 @@ public class CarteProfessionnelleMapper {
                 .dateFin(dto.getDateFin())
                 .build();
 
-        // Association à l’agent
         agentRepo.findById(dto.getAgentId())
                 .ifPresentOrElse(
                         entity::setAgentDeSecurite,
@@ -49,7 +46,6 @@ public class CarteProfessionnelleMapper {
         return entity;
     }
 
-    /** === DTO de mise à jour ➜ ENTITÉ === */
     public void updateEntityFromDto(CarteProfessionnelleDto dto, CarteProfessionnelle entity) {
         entity.setTypeCarte(dto.getTypeCarte());
         entity.setNumeroCarte(dto.getNumeroCarte());

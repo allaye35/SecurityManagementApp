@@ -3,7 +3,6 @@ import api, { plain } from "../api";
 import { tokenService } from "./tokenService";
 
 const AuthService = {
-  // --- Auth ---------------------------------------------------
   async login(email, password) {
     const { data } = await plain.post("/auth/login", { email, password });
     tokenService.setTokens({
@@ -38,7 +37,6 @@ const AuthService = {
     tokenService.clear();
   },
 
-  // --- Register ------------------------------------------------
   async registerAgent(dto) {
     const { data } = await plain.post("/auth/register-agent", dto);
     return data;
@@ -49,23 +47,18 @@ const AuthService = {
     return data;
   },
 
-  // --- Email verification -------------------------------------
-  // Vérif par lien ?token=...
   verifyEmailByToken(token) {
     return plain.get("/auth/verify-email", { params: { token } });
   },
 
-  // Vérif par code (email + code)
   verifyEmailByCode(email, code) {
     return plain.post("/auth/verify-email/code", { email, code });
   },
 
-  // Renvoyer l'email de vérification
   resendVerifyEmail(email) {
     return plain.post("/auth/verify-email/resend", { email });
   },
 
-  // --- Password reset -----------------------------------------
   requestPasswordReset(email) {
     return plain.post("/auth/password-reset/request", { email });
   },

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
+// Repository JPA
 public interface FactureRepository extends JpaRepository<Facture, Long> {
     Optional<Facture> findByReferenceFacture(String referenceFacture);
 }

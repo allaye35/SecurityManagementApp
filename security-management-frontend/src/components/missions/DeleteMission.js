@@ -13,7 +13,7 @@ const DeleteMission = ({ missionId, onDeleteSuccess }) => {
     setIsDeleting(true);
     MissionService.deleteMission(missionId)
       .then(() => {
-        onDeleteSuccess && onDeleteSuccess(); // Rafraîchir la liste des missions
+        onDeleteSuccess && onDeleteSuccess();
         setShowModal(false);
       })
       .catch((error) => {

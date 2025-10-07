@@ -32,12 +32,10 @@ export default function CreateContrat() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);    useEffect(() => {
-        // Charger les données nécessaires avec gestion d'erreur
         const loadData = async () => {
             setLoading(true);
             try {
                 const [devis, missions, articles] = await Promise.all([
-                    // Utiliser la méthode getDisponibles pour ne récupérer que les devis sans contrat
                     DevisService.getDisponibles(),
                     MissionService.getAllMissions(),
                     ArticleService.getAll()
@@ -63,7 +61,6 @@ export default function CreateContrat() {
         if (type === "checkbox") {
             setForm(f => ({ ...f, [name]: checked }));
         } else if (name === "missionIds" || name === "articleIds") {
-            // Pour les sélections multiples
             const selectedOptions = Array.from(e.target.selectedOptions, option => Number(option.value));
             setForm(f => ({ ...f, [name]: selectedOptions }));
         } else {
@@ -76,7 +73,7 @@ export default function CreateContrat() {
         setError("");
         setIsSubmitting(true);
 
-        try {            // Créer l'objet JSON pour l'envoi
+        try {
             const contratData = {
                 referenceContrat: form.referenceContrat,
                 dateSignature: form.dateSignature,
@@ -88,7 +85,6 @@ export default function CreateContrat() {
                 articleIds: form.articleIds
             };            
             
-            // Vérifions d'abord que le devis n'est pas déjà lié (double vérification)
             if (contratData.devisId !== null) {
                 const devisCheck = await DevisService.getById(contratData.devisId);
                 if (devisCheck.data && devisCheck.data.contratId) {
@@ -98,12 +94,10 @@ export default function CreateContrat() {
                 }
             }
             
-            // Envoi direct de l'objet
             await ContratService.create(contratData);
             navigate("/contrats");
         } catch (err) {
             console.error("Création contrat :", err.response || err);
-            // Gestion plus détaillée des erreurs
             if (err.response) {
                 const status = err.response.status;
                 const errorMessage = err.response.data?.message || "";
@@ -111,11 +105,10 @@ export default function CreateContrat() {
                 if (status === 500) {
                     if (errorMessage.includes("déjà lié") || errorMessage.includes("already linked")) {
                         setError("Ce devis est déjà lié à un autre contrat. Veuillez rafraîchir la page et choisir un autre devis.");
-                        // Rechargeons les devis disponibles
                         try {
                             const response = await DevisService.getDisponibles();
                             setDevisList(response.data || []);
-                            setForm(prev => ({ ...prev, devisId: "" })); // Reset le devis sélectionné
+                            setForm(prev => ({ ...prev, devisId: "" }));
                         } catch (e) {
                             console.error("Erreur lors du rechargement des devis:", e);
                         }
@@ -234,7 +227,7 @@ export default function CreateContrat() {
                                             <option value="" disabled>Aucun devis disponible</option>
                                         ) : (
                                             devisList
-                                                .filter(d => d.contratId === null) // Double vérification
+                                                .filter(d => d.contratId === null)
                                                 .map(d => (
                                                 <option key={d.id} value={d.id}>
                                                     {d.referenceDevis} ({new Date(d.dateValidite).toLocaleDateString()})

@@ -21,7 +21,6 @@ export default function AdminUserManagement() {
     setLoading(true);
     setError("");
     try {
-      // Charger les clients et agents avec extraction de .data
       const [clientsResp, agentsResp] = await Promise.all([
         ClientService.getAll(),
         AgentService.getAllAgents()
@@ -29,7 +28,6 @@ export default function AdminUserManagement() {
       const clients = clientsResp.data;
       const agents = agentsResp.data;
 
-      // Combiner et normaliser les données
       const allUsers = [
         ...clients.map(c => ({
           ...c,
@@ -62,12 +60,10 @@ export default function AdminUserManagement() {
   useEffect(() => {
     let filtered = users;
 
-    // Filtre par rôle
     if (filterRole !== "all") {
       filtered = filtered.filter(u => u.role === filterRole);
     }
 
-    // Filtre par statut
     if (filterStatus !== "all") {
       if (filterStatus === "approved") {
         filtered = filtered.filter(u => u.adminApproved);
@@ -78,7 +74,6 @@ export default function AdminUserManagement() {
       }
     }
 
-    // Filtre par terme de recherche
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(u => 
@@ -160,7 +155,7 @@ export default function AdminUserManagement() {
     setLoading(true);
     try {
       await adminSvc.changeClientRole(selectedUser.id, newRole);
-      await loadUsers(); // Recharger les données
+      await loadUsers();
       setShowRoleModal(false);
       setSelectedUser(null);
     } catch (err) {
@@ -201,7 +196,7 @@ export default function AdminUserManagement() {
         </div>
       )}
 
-      {/* Statistiques */}
+      {}
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon">👥</div>
@@ -247,7 +242,7 @@ export default function AdminUserManagement() {
         </div>
       </div>
 
-      {/* Filtres et recherche */}
+      {}
       <div className="filters-section">
         <div className="filters-row">
           <div className="filter-group">
@@ -291,7 +286,7 @@ export default function AdminUserManagement() {
         </div>
       </div>
 
-      {/* Liste des utilisateurs */}
+      {}
       <div className="users-section">
         <div className="section-header">
           <h3>📋 Utilisateurs ({filteredUsers.length})</h3>
@@ -372,7 +367,7 @@ export default function AdminUserManagement() {
         )}
       </div>
 
-      {/* Modal de modification de rôle */}
+      {}
       {showRoleModal && selectedUser && (
         <div className="modal-overlay" onClick={() => setShowRoleModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

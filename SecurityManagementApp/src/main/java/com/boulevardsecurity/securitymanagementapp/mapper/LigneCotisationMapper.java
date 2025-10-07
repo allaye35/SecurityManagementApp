@@ -13,7 +13,6 @@ public class LigneCotisationMapper {
 
     private final FicheDePaieRepository ficheRepo;
 
-    /** ENTITÉ → DTO */
     public LigneCotisationDto toDto(LigneCotisation e) {
         return LigneCotisationDto.builder()
                 .id(e.getId())
@@ -28,7 +27,6 @@ public class LigneCotisationMapper {
                 .build();
     }
 
-    /** DTO de création → ENTITÉ */
     public LigneCotisation toEntity(LigneCotisationCreationDto dto) {
         LigneCotisation e = new LigneCotisation();
         e.setLibelle(dto.getLibelle());
@@ -46,7 +44,6 @@ public class LigneCotisationMapper {
         return e;
     }
 
-    /** Mise à jour d’une ENTITÉ existante à partir d’un DTO de création */
     public void updateEntityFromDto(LigneCotisationCreationDto dto, LigneCotisation e) {
         if (dto.getLibelle()           != null) e.setLibelle(dto.getLibelle());
         if (dto.getTauxSalarial()      != null) e.setTauxSalarial(dto.getTauxSalarial());

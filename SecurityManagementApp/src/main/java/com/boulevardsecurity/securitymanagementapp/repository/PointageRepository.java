@@ -6,8 +6,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+// Repository JPA
 public interface PointageRepository extends JpaRepository<Pointage, Long> {
 
-    List<Pointage> findByMissionId(Long missionId);  // Récupérer tous les pointages d'une mission
+    List<Pointage> findByMissionId(Long missionId);
 }
 

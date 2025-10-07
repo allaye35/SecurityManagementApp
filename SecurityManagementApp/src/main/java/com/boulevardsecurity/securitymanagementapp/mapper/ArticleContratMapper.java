@@ -16,7 +16,6 @@ public class ArticleContratMapper {
 
     private final ContratRepository contratRepo;
 
-    /* ===== Entity ➜ DTO ===== */
     public ArticleContratDto toDto(ArticleContrat a) {
         return ArticleContratDto.builder()
                 .id(a.getId())
@@ -27,33 +26,28 @@ public class ArticleContratMapper {
                 .build();
     }
 
-    /* ===== DTO création ➜ Entity ===== */
     public ArticleContrat toEntity(ArticleContratCreateDto dto) {
         if (dto == null) {
             throw new IllegalArgumentException("Le DTO d'article ne peut pas être nul");
         }
 
-        // On commence à construire l'article
         ArticleContrat.ArticleContratBuilder builder = ArticleContrat.builder()
                 .numero(dto.getNumero())
                 .titre(dto.getTitre())
                 .contenu(dto.getContenu());
 
-        // Gestion du contrat
         if (dto.getContratId() != null) {
             Contrat contrat = contratRepo.findById(dto.getContratId())
                     .orElseThrow(() -> new NoSuchElementException(
                             "Contrat introuvable avec id=" + dto.getContratId()));
             builder.contrat(contrat);
         } else {
-            // Pas de contrat associé pour l’instant
             builder.contrat(null);
         }
 
         return builder.build();
     }
 
-    /* ===== Mise à jour partielle ===== */
     public void updateEntity(ArticleContrat entity, ArticleContratCreateDto dto) {
         if (dto.getNumero()  != null) entity.setNumero(dto.getNumero());
         if (dto.getTitre()   != null) entity.setTitre(dto.getTitre());

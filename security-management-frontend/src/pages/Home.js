@@ -19,7 +19,7 @@ export default function Home() {
         </p>
       </header>
 
-      {/* Si NON connecté : afficher les CTA. Si connecté : ne rien afficher ici. */}
+      {}
       {!isAuthenticated && (
         <div className="home-cta">
           <Link to="/login" className="btn-primary">Se connecter</Link>

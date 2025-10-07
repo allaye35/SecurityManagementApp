@@ -15,7 +15,6 @@ public class ZoneDeTravailMapper {
     private final AgentDeSecuriteMapper agentMapper;
     private final AgentDeSecuriteRepository agentRepo;
 
-    /** ENTITÉ → DTO */
     public ZoneDeTravailDto toDto(ZoneDeTravail entity) {
         return ZoneDeTravailDto.builder()
                 .id(entity.getId())
@@ -34,7 +33,6 @@ public class ZoneDeTravailMapper {
                 .build();
     }
 
-    /** DTO de création → ENTITÉ */
     public ZoneDeTravail toEntity(ZoneDeTravailCreateDto dto) {
         ZoneDeTravail z = ZoneDeTravail.builder()
                 .nom(dto.getNom())
@@ -58,7 +56,6 @@ public class ZoneDeTravailMapper {
         return z;
     }
 
-    /** DTO lecture/mise à jour partielle → ENTITÉ */
     public void updateEntity(ZoneDeTravailCreateDto dto, ZoneDeTravail entity) {
         if (dto.getNom() != null)          entity.setNom(dto.getNom());
         if (dto.getTypeZone() != null)     entity.setTypeZone(dto.getTypeZone());

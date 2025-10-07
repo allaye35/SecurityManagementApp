@@ -43,7 +43,6 @@ public class EntrepriseController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<EntrepriseDto> update(
             @PathVariable Long id,

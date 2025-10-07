@@ -6,7 +6,6 @@ import { FaUserShield, FaBriefcase, FaFileInvoiceDollar, FaSignOutAlt, FaUser, F
 import AuthService from "../../services/auth/AuthService";
 import { useAuth } from "../../context/AuthContext";
 
-
 export default function NavBarBootstrap() {
     const navigate = useNavigate();
     const { user, isAuthenticated, hasRole, logout } = useAuth();
@@ -34,7 +33,7 @@ export default function NavBarBootstrap() {
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/home" className="me-2">Accueil</Nav.Link>
                         
-                        {/* Menu Ressources Humaines */}
+                        {}
                         <NavDropdown 
                             title={<span><FaUserShield className="me-1" /> Ressources Humaines</span>} 
                             id="nav-dropdown-rh"
@@ -70,7 +69,7 @@ export default function NavBarBootstrap() {
                             <NavDropdown.Item as={Link} to="/lignes-cotisation/create">Créer Ligne Cotisation</NavDropdown.Item>
                         </NavDropdown>
 
-                        {/* Menu Opérations */}
+                        {}
                         <NavDropdown 
                             title={<span><FaBriefcase className="me-1" /> Opérations</span>} 
                             id="nav-dropdown-operations"
@@ -99,7 +98,7 @@ export default function NavBarBootstrap() {
                             <NavDropdown.Item as={Link} to="/notifications/create">Créer Notification</NavDropdown.Item>
                         </NavDropdown>
 
-                        {/* Menu Commercial */}
+                        {}
                         <NavDropdown 
                             title={<span><FaFileInvoiceDollar className="me-1" /> Commercial</span>} 
                             id="nav-dropdown-commercial"
@@ -127,7 +126,7 @@ export default function NavBarBootstrap() {
                             <NavDropdown.Item as={Link} to="/articles/create">Créer Article</NavDropdown.Item>
                         </NavDropdown>
 
-                        {/* Menu Administration - Visible uniquement pour les ADMIN */}
+                        {}
                         {isAuthenticated && hasRole("ADMIN") && (
                             <NavDropdown 
                                 title={<span><FaCog className="me-1" /> Administration</span>} 
@@ -154,7 +153,7 @@ export default function NavBarBootstrap() {
                         )}
                     </Nav>
                     
-                    {/* Profile & Auth */}
+                    {}
                     <Nav>
                         {user ? (
                             <>

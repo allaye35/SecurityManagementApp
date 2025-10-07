@@ -19,14 +19,12 @@ const DiplomeForm = ({ title, data, setData, onSubmit, error, agents = [], isSub
         dateExpiration: true
     });
 
-    // Options pour le niveau SSIAP
     const niveauOptions = [
         { value: "SSIAP_1", label: "SSIAP 1", description: "Agent de sécurité incendie" },
         { value: "SSIAP_2", label: "SSIAP 2", description: "Chef d'équipe de sécurité incendie" },
         { value: "SSIAP_3", label: "SSIAP 3", description: "Chef de service de sécurité incendie" }
     ];
 
-    // Transformer la liste des agents en options pour le select
     const agentOptions = agents.map(agent => ({
         value: agent.id,
         label: `${agent.nom || ""} ${agent.prenom || ""}`,
@@ -34,15 +32,13 @@ const DiplomeForm = ({ title, data, setData, onSubmit, error, agents = [], isSub
         telephone: agent.telephone
     }));
 
-    // Trouver l'option sélectionnée pour l'agent
     const selectedAgent = agentOptions.find(option => option.value === parseInt(data.agentId));
 
-    // Fonction pour valider le formulaire
     const validateForm = () => {
         const newValidation = {
             agentId: Boolean(data.agentId),
             niveau: Boolean(data.niveau),
-            dateObtention: true, // Optionnel
+            dateObtention: true,
             dateExpiration: !data.dateExpiration || !data.dateObtention || new Date(data.dateExpiration) >= new Date(data.dateObtention)
         };
         
@@ -50,7 +46,6 @@ const DiplomeForm = ({ title, data, setData, onSubmit, error, agents = [], isSub
         return Object.values(newValidation).every(v => v === true);
     };
 
-    // Gestion de la soumission avec validation
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
@@ -58,7 +53,6 @@ const DiplomeForm = ({ title, data, setData, onSubmit, error, agents = [], isSub
         }
     };
 
-    // Format de la sélection personnalisé
     const formatOptionLabel = ({ label, email, telephone }) => (
         <div className="d-flex flex-column">
             <div className="fw-bold">{label}</div>

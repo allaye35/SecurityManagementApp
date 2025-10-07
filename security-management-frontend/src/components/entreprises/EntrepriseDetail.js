@@ -13,7 +13,6 @@ export default function EntrepriseDetail() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
-    // États pour stocker les détails des devis et contrats associés
     const [devisList, setDevisList] = useState([]);
     const [contratsList, setContratsList] = useState([]);
     const [devisLoading, setDevisLoading] = useState(false);
@@ -25,12 +24,10 @@ export default function EntrepriseDetail() {
                 setEntreprise(entrepriseData);
                 setLoading(false);
                 
-                // Si l'entreprise a des devis, charger leurs détails
                 if (entrepriseData.devisIds && entrepriseData.devisIds.length > 0) {
                     loadDevisDetails(entrepriseData.devisIds);
                 }
                 
-                // Si l'entreprise a des contrats, charger leurs détails
                 if (entrepriseData.contratsDeTravailIds && entrepriseData.contratsDeTravailIds.length > 0) {
                     loadContratsDetails(entrepriseData.contratsDeTravailIds);
                 }
@@ -42,7 +39,6 @@ export default function EntrepriseDetail() {
             });
     }, [id]);
     
-    // Fonction pour charger les détails des devis
     const loadDevisDetails = (devisIds) => {
         setDevisLoading(true);
         Promise.all(
@@ -60,7 +56,6 @@ export default function EntrepriseDetail() {
             setDevisLoading(false);
         });
     };
-      // Fonction pour charger les détails des contrats
     const loadContratsDetails = (contratIds) => {
         setContratsLoading(true);
         Promise.all(
@@ -68,22 +63,7 @@ export default function EntrepriseDetail() {
                 ContratDeTravailService.getById(contratId)
                     .then(res => {
                         const contratData = res.data;
-                        
-                        // Si le contrat a un ID d'agent mais pas de nom, on pourrait enrichir les données ici
-                        // Note: Cette partie est commentée car elle nécessiterait un service pour récupérer les détails de l'agent
-                        /*
-                        if (contratData.agentDeSecuriteId && !contratData.agentNom) {
-                            return AgentService.getById(contratData.agentDeSecuriteId)
-                                .then(agentRes => {
-                                    return {
-                                        ...contratData,
-                                        agentNom: `${agentRes.data.nom} ${agentRes.data.prenom}`
-                                    };
-                                })
-                                .catch(() => contratData);
-                        }
-                        */
-                        
+
                         return contratData;
                     })
                     .catch(err => {
@@ -98,7 +78,6 @@ export default function EntrepriseDetail() {
         });
     };
 
-    // Fonction pour afficher le statut avec le bon badge de couleur
     const renderStatutBadge = (statut) => {
         switch(statut?.toUpperCase()) {
             case "ACCEPTÉ":
@@ -147,7 +126,7 @@ export default function EntrepriseDetail() {
     }
 
     if (!entreprise) return <p>Aucune donnée disponible</p>;    return (
-        <Container fluid className="py-4">            {/* La navigation fil d'Ariane a été supprimée */}            <div className="bg-light p-3 rounded-3 shadow-sm mb-4">
+        <Container fluid className="py-4">            {}            <div className="bg-light p-3 rounded-3 shadow-sm mb-4">
                 <div className="d-flex justify-content-between align-items-center">
                     <h2 className="mb-0 text-primary fw-bold">
                         <FontAwesomeIcon icon={faBuilding} className="me-2" />

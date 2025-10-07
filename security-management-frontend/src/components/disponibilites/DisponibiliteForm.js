@@ -23,7 +23,6 @@ const DisponibiliteForm = ({ title, data, setData, onSubmit, error, agents = [] 
     });
     const [showPreview, setShowPreview] = useState(false);
 
-    // Transformer la liste des agents en options pour le select avec informations pertinentes
     const agentOptions = agents.map(agent => ({
         value: agent.id,
         label: `${agent.nom || ""} ${agent.prenom || ""} ${agent.email ? `- ${agent.email}` : ""}${agent.telephone ? ` - Tél: ${agent.telephone}` : ""}`,
@@ -33,13 +32,11 @@ const DisponibiliteForm = ({ title, data, setData, onSubmit, error, agents = [] 
         telephone: agent.telephone || "",
         statut: agent.statut || "",
         role: agent.role || "",
-        avatar: agent.photo // Si disponible
+        avatar: agent.photo
     }));
 
-    // Trouver l'option sélectionnée pour l'agent
     const selectedAgent = agentOptions.find(option => option.value === parseInt(data.agentId));
     
-    // Fonction de validation du formulaire
     const validateForm = () => {
         const errors = {
             agent: !data.agentId,
@@ -51,7 +48,6 @@ const DisponibiliteForm = ({ title, data, setData, onSubmit, error, agents = [] 
         return !Object.values(errors).some(error => error);
     };
 
-    // Gérer la soumission du formulaire
     const handleSubmit = (e) => {
         e.preventDefault();
         setFormValidated(true);
@@ -62,7 +58,6 @@ const DisponibiliteForm = ({ title, data, setData, onSubmit, error, agents = [] 
         }
     };
 
-    // Formatage personnalisé pour le select d'agent
     const formatOptionLabel = ({ label, nom, prenom, email, statut }) => (
         <div className="agent-option">
             <div className="agent-initials">
@@ -85,7 +80,6 @@ const DisponibiliteForm = ({ title, data, setData, onSubmit, error, agents = [] 
         </div>
     );
 
-    // Conversion de l'intervalle de dates en texte lisible
     const getDateRangeText = () => {
         if (!data.dateDebut || !data.dateFin) return '';
         
@@ -93,7 +87,6 @@ const DisponibiliteForm = ({ title, data, setData, onSubmit, error, agents = [] 
             const debut = new Date(data.dateDebut);
             const fin = new Date(data.dateFin);
             
-            // Calculer la durée
             const diffHours = differenceInHours(fin, debut);
             const diffMinutes = differenceInMinutes(fin, debut) % 60;
             const days = Math.floor(diffHours / 24);
@@ -116,10 +109,8 @@ const DisponibiliteForm = ({ title, data, setData, onSubmit, error, agents = [] 
         }
     };
 
-    // Vérifier si les dates sont valides et si le formulaire est prêt
     const isFormReady = data.agentId && data.dateDebut && data.dateFin && new Date(data.dateDebut) < new Date(data.dateFin);
 
-    // Format de date pour l'affichage
     const formatDate = (dateStr) => {
         try {
             if (!dateStr) return '';
@@ -130,7 +121,6 @@ const DisponibiliteForm = ({ title, data, setData, onSubmit, error, agents = [] 
         }
     };
 
-    // Obtenir le statut de la disponibilité
     const getDisponibiliteStatus = () => {
         if (!data.dateDebut || !data.dateFin) return {};
         
@@ -162,7 +152,6 @@ const DisponibiliteForm = ({ title, data, setData, onSubmit, error, agents = [] 
         }
     };
 
-    // Status actuel
     const status = getDisponibiliteStatus();
 
     return (

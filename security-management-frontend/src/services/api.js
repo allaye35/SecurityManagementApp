@@ -2,23 +2,18 @@
 import axios from "axios";
 import { tokenService } from "./auth/tokenService";
 
-// ----- Base URL de l’API Spring -----
-// Tu peux changer ici ou via .env => REACT_APP_API_URL
 const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 
-// Instance SANS auth pour login/refresh/verify, etc.
 export const plain = axios.create({
   baseURL: BASE_URL,
   withCredentials: false,
 });
 
-// Instance AVEC auth pour toutes les routes protégées
 const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: false,
 });
 
-// --- Intercepteur: ajoute le Bearer token à chaque requête ---
 api.interceptors.request.use((config) => {
   const access = tokenService.getAccess();
   if (access) {
@@ -28,7 +23,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// --- Intercepteur: si 401, tente un refresh une seule fois puis rejoue la requête ---
 let isRefreshing = false;
 let pending = [];
 
@@ -56,11 +50,9 @@ api.interceptors.response.use(
 
       const refreshToken = tokenService.getRefresh();
       if (!refreshToken) {
-        // pas de refresh => logout côté appelant
         return Promise.reject(error);
       }
 
-      // File d’attente si un refresh est déjà en cours
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           pending.push({ resolve, reject, config: original });

@@ -12,7 +12,6 @@ import PointageService from "../../services/PointageService";
 import AgentService from "../../services/AgentService";
 import { Card, Container, Row, Col, Badge, ListGroup, Button, Table } from 'react-bootstrap';
 
-
 export default function MissionDetail() {
     const { id } = useParams();
     const [mission, setMission] = useState(null);
@@ -30,7 +29,6 @@ export default function MissionDetail() {
         MissionService.getMissionById(id)
             .then(async ({ data }) => {
                 setMission(data);
-                // Site
                 if (data.siteId && !data.site) {
                     SiteService.getSiteById(data.siteId)
                         .then(res => setSite(res.data))
@@ -38,7 +36,6 @@ export default function MissionDetail() {
                 } else if (data.site) {
                     setSite(data.site);
                 }
-                // Contrat
                 if ((data.contratId || (data.contrat && data.contrat.id)) && !data.contrat) {
                     const cid = data.contratId || (data.contrat && data.contrat.id);
                     ContratService.getById(cid)
@@ -47,7 +44,6 @@ export default function MissionDetail() {
                 } else if (data.contrat) {
                     setContrat(data.contrat);
                 }
-                // Devis
                 if ((data.devisId || (data.devis && data.devis.id)) && !data.devis) {
                     const did = data.devisId || (data.devis && data.devis.id);
                     DevisService.getById(did)
@@ -56,7 +52,6 @@ export default function MissionDetail() {
                 } else if (data.devis) {
                     setDevis(data.devis);
                 }
-                // Planning
                 if ((data.planningId || (data.planning && data.planning.id)) && !data.planning) {
                     const pid = data.planningId || (data.planning && data.planning.id);
                     PlanningService.getPlanningById(pid)
@@ -65,10 +60,8 @@ export default function MissionDetail() {
                 } else if (data.planning) {
                     setPlanning(data.planning);
                 }
-                // Factures (supporte mission.factures ou mission.factureIds)
                 if (Array.isArray(data.factures) && data.factures.length > 0) {
                     const facturesPromises = data.factures.map(f => {
-                        // Toujours hydrater si la date n'est pas présente
                         const hasDate = f && (f.dateFacture || f.date_emission || f.dateEmission || f.date || f.date_creation || f.createdAt);
                         if (f && f.id && !hasDate) {
                             return FactureService.getById(f.id).then(res => res.data).catch(() => null);
@@ -79,7 +72,6 @@ export default function MissionDetail() {
                     const facturesDetails = await Promise.all(facturesPromises);
                     setFactures(facturesDetails.filter(f => !!f));
                 } else if (Array.isArray(data.factureIds) && data.factureIds.length > 0) {
-                    // Ajout : supporte mission.factureIds (liste d'IDs)
                     const facturesPromises = data.factureIds.map(id =>
                         FactureService.getById(id).then(res => res.data).catch(() => null)
                     );
@@ -88,7 +80,6 @@ export default function MissionDetail() {
                 } else {
                     setFactures([]);
                 }
-                // Rapports (supporte mission.rapports ou mission.rapportIds)
                 if (Array.isArray(data.rapports) && data.rapports.length > 0) {
                     const rapportsPromises = data.rapports.map(r => {
                         if (r && r.id && (Object.keys(r).length === 1 || !r.dateIntervention)) {
@@ -100,7 +91,6 @@ export default function MissionDetail() {
                     const rapportsDetails = await Promise.all(rapportsPromises);
                     setRapports(rapportsDetails.filter(r => !!r));
                 } else if (Array.isArray(data.rapportIds) && data.rapportIds.length > 0) {
-                    // Ajout : supporte mission.rapportIds (liste d'IDs)
                     const rapportsPromises = data.rapportIds.map(id =>
                         RapportService.getRapportById(id).then(res => res.data).catch(() => null)
                     );
@@ -109,7 +99,6 @@ export default function MissionDetail() {
                 } else {
                     setRapports([]);
                 }
-                // Pointages (si mission.pointages est une liste d'IDs ou d'objets incomplets)
                 if (Array.isArray(data.pointages) && data.pointages.length > 0) {
                     const pointagesPromises = data.pointages.map(p => {
                         if (p && p.id && (Object.keys(p).length === 1 || !p.date)) {
@@ -123,7 +112,6 @@ export default function MissionDetail() {
                 } else {
                     setPointages([]);
                 }
-                // Agents (hydrate agent details if only IDs are present, or if only agentIds is present)
                 console.log('MissionDetail: data.agentIds =', data.agentIds);
                 if (Array.isArray(data.agents) && data.agents.length > 0) {
                     const agentsPromises = data.agents.map(a => {
@@ -137,7 +125,6 @@ export default function MissionDetail() {
                     setAgents(agentsDetails.filter(a => !!a));
                     console.log('MissionDetail: agents récupérés (via agents)', agentsDetails.filter(a => !!a));
                 } else if (Array.isArray(data.agentIds) && data.agentIds.length > 0) {
-                    // Si on reçoit uniquement une liste d'IDs, on hydrate chaque agent
                     const agentsPromises = data.agentIds.map(agentId =>
                         AgentService.getAgentById(agentId).then(res => res.data).catch((e) => {console.error('Erreur récupération agent', agentId, e); return null;})
                     );
@@ -197,14 +184,11 @@ export default function MissionDetail() {
         </Container>
     );
 
-    // Ajout d'une fonction pour parser les dates au format DD/MM/YYYY si besoin
     const parseDate = (d) => {
         if (!d) return null;
-        // Si format ISO ou timestamp
         if (/\d{4}-\d{2}-\d{2}/.test(d) || !isNaN(Date.parse(d))) {
             return new Date(d);
         }
-        // Si format DD/MM/YYYY
         if (/^\d{2}\/\d{2}\/\d{4}$/.test(d)) {
             const [day, month, year] = d.split('/');
             return new Date(`${year}-${month}-${day}`);
@@ -339,7 +323,6 @@ export default function MissionDetail() {
                                             <strong>Factures associées :</strong>{" "}
                                             {factures.length > 0 ? 
                                                 factures.map(f => {
-                                                    // Ajout : gestion de dateEmission (camelCase) et parsing DD/MM/YYYY
                                                     let dateValue = f.dateFacture || f.date_emission || f.dateEmission || f.date || f.date_creation || f.createdAt;
                                                     let dateAffiche = dateValue ? parseDate(dateValue) : null;
                                                     return (

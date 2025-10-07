@@ -11,12 +11,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-/**
- * Service de notification (email + SMS).
- * - Utilise app.mail.from comme adresse d’expéditeur si renseignée.
- * - Sinon, laisse Gmail définir l’expéditeur (compte SMTP).
- * - Envoi SMS via Textbelt (clé dans textbelt.api.key).
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -24,19 +18,12 @@ public class NotificationService {
 
     private final JavaMailSender mailSender;
 
-    /** Adresse d’expéditeur par défaut, ex: Boulevard Sécurité <allaye35@gmail.com> */
     @Value("${app.mail.from:}")
     private String defaultFrom;
 
-    /** Clé Textbelt (gratuite par défaut = "textbelt", limité) */
     @Value("${textbelt.api.key:textbelt}")
     private String textbeltApiKey;
 
-    /**
-     * Envoi d’un email en texte brut.
-     * Si app.mail.from est renseigné, on fait message.setFrom(defaultFrom)
-     * (Gmail acceptera un alias "Send As" validé ; sinon il remplacera par le compte SMTP).
-     */
     public void sendEmail(String to, String subject, String content) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -54,10 +41,6 @@ public class NotificationService {
         }
     }
 
-    /**
-     * Envoi d’un SMS avec Textbelt (1 SMS gratuit / jour avec la clé "textbelt").
-     * Pour la prod, achète une clé sur https://textbelt.com/.
-     */
     public void sendSMS(String phoneNumber, String message) {
         String apiUrl = "https://textbelt.com/text";
 

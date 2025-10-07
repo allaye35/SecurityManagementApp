@@ -19,7 +19,6 @@ const ZoneCreate = () => {
     const [selectedAgents, setSelectedAgents] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Charger la liste des agents disponibles
     useEffect(() => {
         const fetchAgents = async () => {
             try {
@@ -38,7 +37,6 @@ const ZoneCreate = () => {
         e.preventDefault();
         setError(null);
         
-        // Validation des données obligatoires
         if (!data.nom) {
             setError("Le nom de la zone est obligatoire.");
             return;
@@ -50,23 +48,19 @@ const ZoneCreate = () => {
         }
         
         try {
-            // Préparation des données à envoyer
             const dataToSend = {
                 nom: data.nom,
                 typeZone: data.typeZone,
-                // Ne pas envoyer les champs vides 
                 ...(data.ville && { ville: data.ville }),
                 ...(data.codePostal && { codePostal: data.codePostal }),
                 ...(data.departement && { departement: data.departement }),
                 ...(data.region && { region: data.region }),
                 ...(data.pays && { pays: data.pays }),
-                // Ajouter les agentIds si présents
                 agentIds: selectedAgents.length > 0 ? selectedAgents : []
             };
             
             console.log("Données envoyées au serveur:", JSON.stringify(dataToSend, null, 2));
             
-            // Utiliser createWithAgents qui est spécifiquement conçu pour inclure des agents
             const zoneResponse = await ZoneService.createWithAgents(dataToSend);
             console.log("Réponse du serveur:", zoneResponse);
             

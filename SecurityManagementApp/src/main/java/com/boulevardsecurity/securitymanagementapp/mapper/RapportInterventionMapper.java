@@ -15,7 +15,6 @@ public class RapportInterventionMapper {
 
     private final MissionRepository missionRepo;
 
-    /** ENTITÉ → DTO */
     public RapportInterventionDto toDto(RapportIntervention ent) {
         return RapportInterventionDto.builder()
                 .id(ent.getId())
@@ -32,7 +31,6 @@ public class RapportInterventionMapper {
                 .build();
     }
 
-    /** DTO de création → ENTITÉ */
     public RapportIntervention toEntity(RapportInterventionCreateDto dto) {
         var mission = missionRepo.findById(dto.getMissionId())
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -50,7 +48,6 @@ public class RapportInterventionMapper {
                 .build();
     }
 
-    /** MAJ partielle d’une ENTITÉ existante à partir du DTO de création */
     public void updateEntityFromDto(RapportInterventionCreateDto dto, RapportIntervention ent) {
         if (dto.getDateIntervention() != null) {
             ent.setDateIntervention(dto.getDateIntervention());

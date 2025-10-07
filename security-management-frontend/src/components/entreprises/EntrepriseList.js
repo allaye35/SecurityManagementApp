@@ -16,11 +16,9 @@ export default function EntrepriseList() {
     const [allContrats, setAllContrats] = useState([]);
     const [dataLoaded, setDataLoaded] = useState(false);
 
-    /* chargement initial */
     useEffect(() => {
         setLoading(true);
         
-        // Chargement des entreprises, devis et contrats en parallèle
         Promise.all([
             EntrepriseService.getAllEntreprises(),
             DevisService.getAll(),
@@ -39,7 +37,6 @@ export default function EntrepriseList() {
         });
     }, []);
 
-    /* suppression */
     const handleDelete = id => {
         if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette entreprise ?")) return;
         
@@ -56,7 +53,6 @@ export default function EntrepriseList() {
             });
     };
 
-    // Filtrer les entreprises en fonction du terme de recherche
     const filteredEntreprises = entreprises.filter(e => 
         e.nom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         e.siretPrestataire?.toLowerCase().includes(searchTerm.toLowerCase()) ||

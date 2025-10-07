@@ -18,14 +18,12 @@ public class GeolocalisationGpsController {
 
     private final GeolocalisationGpsService service;
 
-    /** Récupère toutes les géolocalisations */
     @GetMapping
     public ResponseEntity<List<GeolocalisationGpsDto>> getAll() {
         List<GeolocalisationGpsDto> list = service.getAll();
         return ResponseEntity.ok(list);
     }
 
-    /** Récupère une géolocalisation par son ID */
     @GetMapping("/{id}")
     public ResponseEntity<GeolocalisationGpsDto> getById(@PathVariable Long id) {
         return service.getById(id)
@@ -33,7 +31,6 @@ public class GeolocalisationGpsController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /** Crée une nouvelle géolocalisation */
     @PostMapping
     public ResponseEntity<GeolocalisationGpsDto> create(
             @RequestBody GeolocalisationGpsCreateDto dto
@@ -42,7 +39,6 @@ public class GeolocalisationGpsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    /** Met à jour une géolocalisation existante */
     @PutMapping("/{id}")
     public ResponseEntity<GeolocalisationGpsDto> update(
             @PathVariable Long id,
@@ -56,7 +52,6 @@ public class GeolocalisationGpsController {
         }
     }
 
-    /** Supprime une géolocalisation */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
@@ -67,10 +62,6 @@ public class GeolocalisationGpsController {
         }
     }
 
-    /**
-     * Lie une mission à une géolocalisation GPS.
-     * Renvoie la liste des IDs de missions associées après mise à jour.
-     */
     @PostMapping("/{gpsId}/missions/{missionId}")
     public ResponseEntity<List<Long>> addMission(
             @PathVariable Long gpsId,

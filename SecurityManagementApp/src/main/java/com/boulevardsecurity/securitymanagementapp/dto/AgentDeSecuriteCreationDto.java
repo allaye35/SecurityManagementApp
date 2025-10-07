@@ -13,14 +13,13 @@ public class AgentDeSecuriteCreationDto {
     private String nom;
     private String prenom;
     private String email;
-    private String password;     // sera hashé
+    private String password;
     private String telephone;
     private String adresse;
     private LocalDate dateNaissance;
     private StatutAgent statut;
     private Role role;
 
-    /* Identifiants des relations */
     private Set<Long> zonesDeTravailIds;
     private Set<Long> missionsIds;
     private List<Long> disponibilitesIds;

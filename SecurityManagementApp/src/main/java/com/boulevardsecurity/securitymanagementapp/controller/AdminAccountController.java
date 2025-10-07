@@ -19,28 +19,21 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin/accounts")
 @CrossOrigin(origins = "http://localhost:3000")
-//@PreAuthorize("hasAuthority('ADMIN')")
 @RequiredArgsConstructor
 public class AdminAccountController {
 
     private final AgentDeSecuriteRepository agentRepo;
     private final ClientRepository clientRepo;
 
-    /* ===================== LISTES EN ATTENTE ===================== */
-
-    /** Agents dont l’email est vérifié mais pas encore approuvé par un admin */
     @GetMapping("/pending/agents")
     public List<AgentDeSecurite> pendingAgents() {
         return agentRepo.findByEmailVerifiedTrueAndAdminApprovedFalse();
     }
 
-    /** Clients dont l’email est vérifié mais pas encore approuvé par un admin */
     @GetMapping("/pending/clients")
     public List<Client> pendingClients() {
         return clientRepo.findByEmailVerifiedTrueAndAdminApprovedFalse();
     }
-
-    /* ========================= ACTIONS =========================== */
 
     @PostMapping("/agents/{id}/approve")
     public ResponseEntity<?> approveAgent(@PathVariable Long id, Authentication auth) {
@@ -77,7 +70,6 @@ public class AdminAccountController {
         var a = agentRepo.findById(id).orElse(null);
         if (a == null) return ResponseEntity.notFound().build();
 
-        // Stratégie simple : suppression du compte non approuvé
         agentRepo.delete(a);
 
         String reason = body != null ? body.getOrDefault("reason", "") : "";
@@ -95,7 +87,6 @@ public class AdminAccountController {
         var c = clientRepo.findById(id).orElse(null);
         if (c == null) return ResponseEntity.notFound().build();
 
-        // Stratégie simple : suppression du compte non approuvé
         clientRepo.delete(c);
 
         String reason = body != null ? body.getOrDefault("reason", "") : "";
@@ -103,8 +94,6 @@ public class AdminAccountController {
                 "message", "Client refusé" + (reason.isBlank() ? "." : " : " + reason)
         ));
     }
-
-    /* ======================== UTILITAIRE ========================= */
 
     private Long getAdminId(Authentication auth) {
         try {

@@ -20,11 +20,9 @@ export default function SiteDetail() {
         const loadData = async () => {
             setLoading(true);
             try {
-                // Récupération du site
                 const { data: siteData } = await SiteService.getSiteById(id);
                 setSite(siteData);
 
-                // Si des missions associées, on les charge
                 if (Array.isArray(siteData.missionsIds) && siteData.missionsIds.length > 0) {
                     const fetches = siteData.missionsIds.map(mid =>
                         MissionService.getMissionById(mid).then(res => res.data)

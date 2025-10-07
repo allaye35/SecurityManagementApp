@@ -8,7 +8,7 @@ export default function GeolocalisationList() {
     const [loading, setLoading] = useState(true);
     const [error,   setError]   = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(6); // 6 géolocalisations par page
+    const [itemsPerPage] = useState(6);
 
     useEffect(() => {
         GeolocalisationService.getAllGeolocalisations()
@@ -24,7 +24,6 @@ export default function GeolocalisationList() {
             .catch(() => alert("Échec de la suppression."));
     };
 
-    // Calcul de la pagination
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentGeolocs = geolocs.slice(indexOfFirstItem, indexOfLastItem);
@@ -61,7 +60,7 @@ export default function GeolocalisationList() {
                 </Link>
             </div>
 
-            {/* Informations de pagination */}
+            {}
             <div className="pagination-info">
                 <p>
                     Affichage de {indexOfFirstItem + 1} à {Math.min(indexOfLastItem, geolocs.length)} sur {geolocs.length} géolocalisations
@@ -125,7 +124,7 @@ export default function GeolocalisationList() {
                 ))}
             </div>
 
-            {/* Pagination */}
+            {}
             {totalPages > 1 && (
                 <div className="pagination">
                     <button 

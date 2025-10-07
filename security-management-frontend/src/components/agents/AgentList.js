@@ -27,19 +27,16 @@ const AgentList = () => {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [message, setMessage] = useState({ text: "", type: "" });
     const [showConfirmValidation, setShowConfirmValidation] = useState(false);
-    // États pour la pagination
     const [currentPage, setCurrentPage] = useState(1);
     const agentsPerPage = 10;
 
-    // Options de rôles
     const roles = ["AGENT_SECURITE", "CHEF_EQUIPE", "MANAGER", "ADMIN"];
 
     const loadAgents = () => {
         setLoading(true);
         AgentService.getAllAgents()
             .then(res => {
-                console.log("Agents data received:", res.data); // Debug temporaire
-                // Debug pour voir la structure d'un agent
+                console.log("Agents data received:", res.data);
                 if (res.data.length > 0) {
                     console.log("Premier agent:", res.data[0]);
                 }
@@ -73,7 +70,6 @@ const AgentList = () => {
         } else {
             setFilteredAgents(agents);
         }
-        // Réinitialiser à la première page lors du filtrage
         setCurrentPage(1);
     }, [filter, agents]);
 
@@ -127,7 +123,6 @@ const AgentList = () => {
     const confirmValidateAccount = () => {
         adminAccountsService.approveAgent(selectedAgent.id)
             .then(() => {
-                // Recharger la liste des agents après validation
                 loadAgents();
                 setMessage({ 
                     text: `Compte de ${selectedAgent.nom} ${selectedAgent.prenom} validé avec succès`, 
@@ -152,17 +147,14 @@ const AgentList = () => {
     };
 
     const getStatusBadge = (agent) => {
-        console.log(`Agent ${agent.nom} - adminApproved:`, agent.adminApproved, typeof agent.adminApproved); // Debug
+        console.log(`Agent ${agent.nom} - adminApproved:`, agent.adminApproved, typeof agent.adminApproved);
         
-        // Si le compte n'est pas approuvé par l'admin
-        // Considérer false, 0, null, undefined comme non approuvé
         const isApproved = agent.adminApproved === true || agent.adminApproved === 1;
         
         if (!isApproved) {
             return <Badge bg="warning">En attente validation admin</Badge>;
         }
         
-        // Si approuvé, utiliser le statut normal
         const status = agent.statut;
         if (!status) return <Badge bg="secondary">Non défini</Badge>;
         
@@ -210,7 +202,6 @@ const AgentList = () => {
 
     if (error) return <Alert variant="danger">{error}</Alert>;
 
-    // Calculs pour la pagination
     const indexOfLastAgent = currentPage * agentsPerPage;
     const indexOfFirstAgent = indexOfLastAgent - agentsPerPage;
     const currentAgents = filteredAgents.slice(indexOfFirstAgent, indexOfLastAgent);
@@ -222,7 +213,7 @@ const AgentList = () => {
 
     return (
         <Container fluid className="agent-list-container my-4">
-            {/* En-tête avec titre et boutons d'action */}
+            {}
             <Card className="mb-4 border-0 shadow-sm">
                 <Card.Body>
                     <Row className="align-items-center mb-3">
@@ -241,7 +232,7 @@ const AgentList = () => {
                         </Col>
                     </Row>
                     
-                    {/* Barre de recherche */}
+                    {}
                     <Row>
                         <Col md={6} lg={4}>
                             <InputGroup>
@@ -271,7 +262,7 @@ const AgentList = () => {
                 </Card.Body>
             </Card>
 
-            {/* Tableau des agents */}
+            {}
             <Card className="shadow-sm">
                 <Card.Body className="p-0">
                     {loading ? (
@@ -389,7 +380,7 @@ const AgentList = () => {
                     )}
                 </Card.Body>
                 
-                {/* Pagination */}
+                {}
                 {totalPages > 1 && (
                     <Card.Footer>
                         <div className="d-flex justify-content-between align-items-center">
@@ -431,7 +422,7 @@ const AgentList = () => {
                     </Card.Footer>
                 )}
                 
-                {/* Footer sans pagination si une seule page */}
+                {}
                 {totalPages <= 1 && (
                     <Card.Footer className="d-flex justify-content-between align-items-center">
                         <div className="text-muted">
@@ -441,7 +432,7 @@ const AgentList = () => {
                 )}
             </Card>
 
-            {/* Modal pour changer le rôle */}
+            {}
             <Modal show={showRoleModal} onHide={() => setShowRoleModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Changer le rôle</Modal.Title>
@@ -474,7 +465,7 @@ const AgentList = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* Modal de confirmation de suppression */}
+            {}
             <Modal show={showConfirmDelete} onHide={() => setShowConfirmDelete(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmer la suppression</Modal.Title>
@@ -498,7 +489,7 @@ const AgentList = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* Modal de confirmation de validation de compte */}
+            {}
             <Modal show={showConfirmValidation} onHide={() => setShowConfirmValidation(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Valider le compte</Modal.Title>

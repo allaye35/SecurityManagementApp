@@ -1,7 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.dto;
 
-
-
 import lombok.*;
 
 import java.util.List;

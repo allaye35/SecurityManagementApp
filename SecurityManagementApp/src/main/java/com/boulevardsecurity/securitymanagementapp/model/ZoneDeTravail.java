@@ -20,35 +20,33 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ZoneDeTravail {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false)
-    private String nom;  // Nom de la zone (Paris, Île-de-France, 75000, etc.)
+    private String nom;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TypeZone typeZone;  // VILLE, DEPARTEMENT, REGION, CODE_POSTAL
+    private TypeZone typeZone;
 
     @Column(nullable = true)
-    private String codePostal;  // Code Postal (ex: 75001)
+    private String codePostal;
 
     @Column(nullable = true)
-    private String ville;  // Ville (ex: Paris)
+    private String ville;
 
     @Column(nullable = true)
-    private String departement;  // Département (ex: Paris)
+    private String departement;
 
     @Column(nullable = true)
-    private String region;  // Région (ex: Île-de-France)
+    private String region;
 
     @Column(nullable = true)
-    private String pays;  // Pays (ex: France)
+    private String pays;
 
-    //  Lien avec les agents qui peuvent travailler dans cette zone
     @ManyToMany(mappedBy = "zonesDeTravail", fetch = FetchType.EAGER)
     @Builder.Default
     private Set<AgentDeSecurite> agents = new HashSet<>();

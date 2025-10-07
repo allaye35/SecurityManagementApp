@@ -6,8 +6,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+// Repository JPA
 public interface DiplomeSSIAPRepository extends JpaRepository<DiplomeSSIAP, Long> {
 
-    List<DiplomeSSIAP> findByAgentDeSecuriteId(Long agentId);  // Récupérer tous les diplômes d'un agent
+    List<DiplomeSSIAP> findByAgentDeSecuriteId(Long agentId);
 }
 

@@ -7,7 +7,7 @@ export default function LogoutButton({ className }) {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await logout();          // efface tokens + user
+    await logout();
     navigate("/login", { replace: true });
   };
 

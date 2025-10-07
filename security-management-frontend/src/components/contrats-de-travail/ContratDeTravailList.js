@@ -13,11 +13,9 @@ const ContratDeTravailList = () => {
     const [agents, setAgents] = useState([]);
     const [entreprises, setEntreprises] = useState([]);
     
-    // État de pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     
-    // États des filtres
     const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState({
         typeContrat: "",
@@ -55,14 +53,12 @@ const ContratDeTravailList = () => {
     }, []);
 
     useEffect(() => {
-        // Appliquer les filtres à chaque changement de filtre ou de terme de recherche
         applyFilters();
     }, [searchTerm, filters]);
 
     const applyFilters = () => {
         let results = [...contrats];
         
-        // Filtrage par terme de recherche (référence ou infos générales)
         if (searchTerm.trim() !== "") {
             const term = searchTerm.toLowerCase();
             results = results.filter(contrat => 
@@ -71,34 +67,28 @@ const ContratDeTravailList = () => {
             );
         }
         
-        // Filtre par type de contrat
         if (filters.typeContrat) {
             results = results.filter(contrat => contrat.typeContrat === filters.typeContrat);
         }
         
-        // Filtre par entreprise
         if (filters.entrepriseId) {
             results = results.filter(contrat => contrat.entrepriseId === Number(filters.entrepriseId));
         }
         
-        // Filtre par agent
         if (filters.agentId) {
             results = results.filter(contrat => contrat.agentDeSecuriteId === Number(filters.agentId));
         }
         
-        // Filtre par date de début
         if (filters.dateDebut) {
             results = results.filter(contrat => new Date(contrat.dateDebut) >= new Date(filters.dateDebut));
         }
         
-        // Filtre par date de fin
         if (filters.dateFin) {
             results = results.filter(contrat => 
                 contrat.dateFin ? new Date(contrat.dateFin) <= new Date(filters.dateFin) : true
             );
         }
         
-        // Filtre par contrat actif ou non
         if (filters.actif === "actif") {
             const today = new Date();
             results = results.filter(contrat => 
@@ -137,16 +127,14 @@ const ContratDeTravailList = () => {
         });
         setSearchTerm("");
         setFilteredContrats(contrats);
-        setCurrentPage(1); // Réinitialiser la pagination lors de la réinitialisation des filtres
+        setCurrentPage(1);
     };
 
-    // Calculer les indices pour la pagination
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentContrats = filteredContrats.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredContrats.length / itemsPerPage);
 
-    // Gérer le changement de page
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -423,7 +411,7 @@ const ContratDeTravailList = () => {
                                 </div>
                             )}
                             
-                            {/* Pagination */}
+                            {}
                             {filteredContrats.length > 0 && (
                                 <div className="d-flex justify-content-between align-items-center mt-4">
                                     <div className="d-flex align-items-center">
@@ -457,7 +445,6 @@ const ContratDeTravailList = () => {
                                             />
                                             
                                             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                                // Logique pour montrer les pages autour de la page courante
                                                 let pageToShow;
                                                 if (totalPages <= 5) {
                                                     pageToShow = i + 1;

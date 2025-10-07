@@ -26,27 +26,22 @@ export default function ContratDeTravailForm({
     const [formValidated, setFormValidated] = useState(false);
     const [touchedFields, setTouchedFields] = useState({});
     
-    // Options pour les selects
     const [clausesOptions, setClausesOptions] = useState([]);
     const [fichesOptions, setFichesOptions] = useState([]);
     const [missionsOptions, setMissionsOptions] = useState([]);
     const [agentsOptions, setAgentsOptions] = useState([]);
     const [entreprisesOptions, setEntreprisesOptions] = useState([]);
     
-    // Format date pour l'affichage
     const formatDate = (dateString) => {
         if (!dateString) return "";
-        // Conversion explicite au format JJ/MM/AAAA
         const date = new Date(dateString);
         return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
     };
-      // Chargement des fiches de paie
     useEffect(() => {
         setFichesLoading(true);
         FicheDePaieService.getAll()
             .then(response => {
                 setFichesDePaie(response.data);
-                // Formatage pour React Select
                 setFichesOptions(response.data.map(fiche => ({
                     value: fiche.id,
                     label: `${fiche.reference} (${formatDate(fiche.periodeDebut)} - ${formatDate(fiche.periodeFin)})`
@@ -60,9 +55,7 @@ export default function ContratDeTravailForm({
             });
     }, []);
     
-    // Préparation des options pour les autres selects
     useEffect(() => {
-        // Options pour les clauses
         if (clauses && clauses.length > 0) {
             setClausesOptions(clauses.map(clause => ({
                 value: clause.id,
@@ -71,7 +64,6 @@ export default function ContratDeTravailForm({
             })));
         }
         
-        // Options pour les missions
         if (missions && missions.length > 0) {
             setMissionsOptions(missions.map(mission => ({
                 value: mission.id,
@@ -81,7 +73,6 @@ export default function ContratDeTravailForm({
             })));
         }
         
-        // Options pour les agents
         if (agents && agents.length > 0) {
             setAgentsOptions(agents.map(agent => ({
                 value: agent.id,
@@ -91,7 +82,6 @@ export default function ContratDeTravailForm({
             })));
         }
         
-        // Options pour les entreprises
         if (entreprises && entreprises.length > 0) {
             setEntreprisesOptions(entreprises.map(entreprise => ({
                 value: entreprise.id,
@@ -101,13 +91,11 @@ export default function ContratDeTravailForm({
             })));
         }
     }, [clauses, missions, agents, entreprises]);
-      // Dès que la mission change, on ajuste dates et horaires par défaut
     useEffect(() => {
         if (data.missionId && missions?.length) {
             const m = missions.find(x => x.id === Number(data.missionId));
             if (m) {
                 console.log("Mission sélectionnée:", m);
-                // Utiliser directement les dates de la mission pour le contrat
                 setDateError("");
                 setData(d => ({
                     ...d,
@@ -120,7 +108,6 @@ export default function ContratDeTravailForm({
         }
     }, [data.missionId, missions, setData]);
 
-    // Mise à jour de la date de fin lorsque le type de contrat change
     useEffect(() => {
         if (data.missionId && missions?.length && data.typeContrat) {
             const m = missions.find(x => x.id === Number(data.missionId));
@@ -133,25 +120,19 @@ export default function ContratDeTravailForm({
         }
     }, [data.typeContrat, data.missionId, missions, setData]);
     
-    // Gérer les changements dans les champs du formulaire
     const handleChange = e => {
         const { name, value, type, checked } = e.target;
         
-        // Marquer le champ comme touché
         setTouchedFields({...touchedFields, [name]: true});
         
         if (type === "checkbox") {
             setData(d => ({ ...d, [name]: checked }));
         } else if (name === "missionId") {
-            // Pour la mission, on met à jour directement et l'effect s'occupera des dates
             setData(d => ({ ...d, [name]: value }));
         } else if (name === "typeContrat") {
-            // Pour le type de contrat, on met à jour et l'effect s'occupera de la date de fin
             setData(d => ({ ...d, [name]: value }));
         } else if (name === "referenceContrat") {
-            // Pour la référence de contrat, on nettoie les espaces
             setData(d => ({ ...d, [name]: value.trim() }));
-            // Réinitialiser l'erreur si elle concernait la référence du contrat
             if (dateError && dateError.includes("référence")) {
                 setDateError("");
             }
@@ -160,12 +141,9 @@ export default function ContratDeTravailForm({
         }
     };
 
-    // Gérer les changements dans les sélecteurs React Select
     const handleSelectChange = (selectedOption, { name }) => {
-        // Marquer le champ comme touché
         setTouchedFields({...touchedFields, [name]: true});
         
-        // Pour les select simples
         if (!Array.isArray(selectedOption)) {
             setData(d => ({
                 ...d,
@@ -174,7 +152,6 @@ export default function ContratDeTravailForm({
             return;
         }
         
-        // Pour les select multiples
         const selectedValues = selectedOption.map(option => option.value);
         setData(d => ({
             ...d,
@@ -182,7 +159,6 @@ export default function ContratDeTravailForm({
         }));
     };
 
-    // Styles pour les selects
     const customSelectStyles = {
         control: (styles) => ({
             ...styles,
@@ -211,13 +187,11 @@ export default function ContratDeTravailForm({
         }),
     };
 
-    // Validation du formulaire avant soumission
     const validateForm = (e) => {
         const form = e.currentTarget;
         e.preventDefault();
         e.stopPropagation();
         
-        // Marquer tous les champs comme touchés
         const allFields = ["referenceContrat", "typeContrat", "dateDebut", "dateFin", "salaireDeBase", 
                           "periodiciteSalaire", "agentDeSecuriteId", "entrepriseId", "missionId"];
         const newTouchedFields = {};
@@ -231,7 +205,6 @@ export default function ContratDeTravailForm({
         setFormValidated(true);
     };
 
-    // Navigation entre les étapes
     const handleNext = () => {
         if (activeStep === "informations") setActiveStep("parties");
         else if (activeStep === "parties") setActiveStep("clauses");
@@ -242,7 +215,7 @@ export default function ContratDeTravailForm({
         if (activeStep === "documents") setActiveStep("clauses");
         else if (activeStep === "clauses") setActiveStep("parties");
         else if (activeStep === "parties") setActiveStep("informations");
-    };    // Vérifie si les champs requis sont remplis pour l'étape actuelle
+    };
     const canProceed = () => {
         console.log("Vérification des champs requis:", {
             referenceContrat: data.referenceContrat,
@@ -254,12 +227,10 @@ export default function ContratDeTravailForm({
         });
         
         if (activeStep === "informations") {
-            // Si une mission est sélectionnée, pas besoin de vérifier les dates
             if (data.missionId) {
                 return !!data.referenceContrat && !!data.typeContrat && !!data.salaireDeBase;
             }
             
-            // Sinon vérifier les dates manuellement saisies
             return !!data.referenceContrat && !!data.typeContrat && !!data.dateDebut && 
                   (data.typeContrat === "CDI" || !!data.dateFin) && !!data.salaireDeBase;
         }
@@ -269,7 +240,6 @@ export default function ContratDeTravailForm({
         return true;
     };
 
-    // Informations sur les entités liées
     const selectedAgent = agents?.find(a => a.id === Number(data.agentDeSecuriteId));
     const selectedEntreprise = entreprises?.find(e => e.id === Number(data.entrepriseId));
     const selectedMission = missions?.find(m => m.id === Number(data.missionId));
@@ -303,7 +273,7 @@ export default function ContratDeTravailForm({
                         </div>
                     )}
                     
-                    {/* Étapes du formulaire */}
+                    {}
                     <Tabs
                         activeKey={activeStep}
                         onSelect={(k) => setActiveStep(k)}

@@ -1,6 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
@@ -17,10 +16,8 @@ public class PointageDto {
     private boolean estPresent;
     private boolean estRetard;
 
-    /* Position GPS (embedded) */
     private double latitude;
     private double longitude;
 
-    /* Mission associée */
     private Long missionId;
 }

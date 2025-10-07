@@ -17,12 +17,10 @@ const DiplomeCreate = () => {
     const [error, setError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Chargement des agents au montage du composant
     useEffect(() => {
         setLoading(true);
         AgentService.getAllAgents()
             .then(response => {
-                // Trier les agents par nom pour une meilleure lisibilité
                 const sortedAgents = [...response.data].sort((a, b) => 
                     `${a.nom} ${a.prenom}`.localeCompare(`${b.nom} ${b.prenom}`)
                 );
@@ -41,7 +39,6 @@ const DiplomeCreate = () => {
         setError(null);
         setIsSubmitting(true);
         
-        // Vérifier que agentId est bien défini
         if (!data.agentId) {
             setError("Veuillez sélectionner un agent");
             setIsSubmitting(false);
@@ -49,7 +46,6 @@ const DiplomeCreate = () => {
         }
         
         try {
-            // Préparer le payload en s'assurant que tous les champs sont dans le bon format
             const payload = {
                 agentId: Number(data.agentId),
                 niveau: data.niveau,
@@ -57,15 +53,12 @@ const DiplomeCreate = () => {
                 dateExpiration: data.dateExpiration || null
             };
             
-            // Appel à l'API
             await DiplomeService.create(payload);
             
-            // Redirection après création réussie
             navigate("/diplomes-ssiap");
         } catch (err) {
             console.error("Erreur lors de la création:", err);
             
-            // Afficher un message d'erreur plus détaillé
             if (err.response) {
                 setError(`Échec de la création: ${err.response.data?.message || `Erreur ${err.response.status}`}`);
             } else if (err.request) {

@@ -21,13 +21,12 @@ public class ContratServiceImpl implements ContratService {
     private final DevisRepository           devisRepo;
     private final MissionRepository         missionRepo;
     private final ArticleContratRepository  articleRepo;
-    private final ContratMapper             mapper;    /* ---------- CREATE ---------- */
+    private final ContratMapper             mapper;    
     @Override
     public ContratDto createContrat(ContratCreateDto dto) {
-        /* Crée l'entité Contrat avec ou sans Devis */
+        
         Contrat c = mapper.toEntity(dto);
 
-        /* Relations - toutes optionnelles */
         if (dto.getMissionIds() != null && !dto.getMissionIds().isEmpty()) {
             c.setMissions(dto.getMissionIds().stream()
                     .map(id -> missionRepo.findById(id)
@@ -47,7 +46,6 @@ public class ContratServiceImpl implements ContratService {
         return mapper.toDto(contratRepo.save(c));
     }
 
-    /* ---------- UPDATE ---------- */
     @Override
     public ContratDto updateContrat(Long id, ContratCreateDto dto) {
         Contrat existing = contratRepo.findById(id)
@@ -58,7 +56,6 @@ public class ContratServiceImpl implements ContratService {
         return mapper.toDto(contratRepo.save(existing));
     }
 
-    /* ---------- READ ---------- */
     @Override 
     public List<ContratDto> getAllContrats() {
         return contratRepo.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
@@ -78,8 +75,7 @@ public class ContratServiceImpl implements ContratService {
     public java.util.Optional<ContratDto> getContratByDevisId(Long devisId) {
         return contratRepo.findByDevisId(devisId).map(mapper::toDto);
     }
-    
-    /* ---------- DELETE ---------- */
+
     @Override 
     public void deleteContrat(Long id) {
         if (!contratRepo.existsById(id))

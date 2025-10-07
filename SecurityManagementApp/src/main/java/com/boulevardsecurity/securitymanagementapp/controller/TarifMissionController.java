@@ -19,7 +19,6 @@ public class TarifMissionController {
 
     private final TarifMissionService service;
 
-    /** Créer un nouveau tarif (avec DTO) */
     @PostMapping
     public ResponseEntity<?> create(@RequestBody TarifMissionCreateDto dto) {
         try {
@@ -30,13 +29,11 @@ public class TarifMissionController {
         }
     }
 
-    /** Lister tous les tarifs */
     @GetMapping
     public ResponseEntity<List<TarifMissionDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
-    /** Récupérer un tarif par ID */
     @GetMapping("/{id}")
     public ResponseEntity<TarifMissionDto> getById(@PathVariable Long id) {
         return service.getById(id)
@@ -44,7 +41,6 @@ public class TarifMissionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /** Récupérer un tarif par type de mission */
     @GetMapping("/type/{type}")
     public ResponseEntity<TarifMissionDto> getByType(@PathVariable String type) {
         return service.getByType(type)
@@ -52,7 +48,6 @@ public class TarifMissionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /** Mettre à jour un tarif existant */
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
             @PathVariable Long id,
@@ -66,7 +61,6 @@ public class TarifMissionController {
         }
     }
 
-    /** Supprimer un tarif */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {

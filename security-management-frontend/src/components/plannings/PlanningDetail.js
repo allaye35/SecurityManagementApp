@@ -25,7 +25,6 @@ export default function PlanningDetail() {
     useEffect(() => {
         setLoading(true);
         
-        // Charger le planning, les agents et les missions en parallèle
         Promise.all([
             PlanningService.getPlanningById(id),
             AgentService.getAllAgents(),
@@ -44,19 +43,15 @@ export default function PlanningDetail() {
         });
     }, [id]);
 
-    // Helper pour récupérer les objets missions du planning
     const getMissionObjects = () => {
         if (!planning) return [];
         
-        // Si le backend renvoie déjà planning.missions (objet), on s'en sert
         if (Array.isArray(planning.missions)) return planning.missions;
         
-        // Sinon on reconstruit via planning.missionIds
         const ids = Array.isArray(planning.missionIds) ? planning.missionIds : [];
         return ids.map(id => missions.find(m => m.id === id)).filter(Boolean);
     };
 
-    // Helper pour le statut des missions
     const getMissionStatus = (mission) => {
         if (!mission.dateDebut || !mission.dateFin) return { status: 'pending', label: 'En attente', icon: faHourglassHalf };
         
@@ -69,7 +64,6 @@ export default function PlanningDetail() {
         return { status: 'active', label: 'En cours', icon: faCheckCircle };
     };
 
-    // Helper pour formater les dates
     const formatDate = (dateString) => {
         if (!dateString) return 'Non définie';
         return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -90,17 +84,14 @@ export default function PlanningDetail() {
         });
     };
 
-    // Helper pour récupérer les agents du planning
     const getAgentsForPlanning = () => {
         const missionObjs = getMissionObjects();
         const allAgents = [];
         
         missionObjs.forEach(mission => {
             if (Array.isArray(mission?.agents)) {
-                // Si la mission a déjà les objets agents complets
                 allAgents.push(...mission.agents);
             } else if (Array.isArray(mission?.agentIds)) {
-                // Si la mission a seulement les agentIds, récupérer les objets agents
                 const missionAgents = mission.agentIds
                     .map(agentId => agents.find(a => a.id === agentId))
                     .filter(Boolean);
@@ -108,7 +99,6 @@ export default function PlanningDetail() {
             }
         });
         
-        // Supprimer les doublons basés sur l'ID
         const uniqueAgents = allAgents.filter((agent, index, self) => 
             index === self.findIndex(a => a.id === agent.id)
         );
@@ -180,14 +170,14 @@ export default function PlanningDetail() {
                 </Card.Header>
 
                 <Card.Body className="p-4">
-                    {/* Statistiques rapides */}
+                    {}
                     <PlanningStats 
                         planning={planning} 
                         missions={planningMissions} 
                         agents={planningAgents} 
                     />
 
-                    {/* Section d'informations générales */}
+                    {}
                     <Row className="info-section">
                         <Col lg={6} className="mb-4">
                             <Card className="info-card slide-in-left">
@@ -291,7 +281,7 @@ export default function PlanningDetail() {
                         </Col>
                     </Row>
 
-                    {/* Section des missions */}
+                    {}
                     <Card className="missions-section">
                         <Card.Header className="missions-header">
                             <h4 className="missions-title">
@@ -395,10 +385,10 @@ export default function PlanningDetail() {
                         </Card.Body>
                     </Card>
 
-                    {/* Timeline des missions */}
+                    {}
                     <MissionTimeline missions={planningMissions} />
 
-                    {/* Navigation */}
+                    {}
                     <div className="navigation-section">
                         <Link to="/plannings">
                             <Button className="back-btn">

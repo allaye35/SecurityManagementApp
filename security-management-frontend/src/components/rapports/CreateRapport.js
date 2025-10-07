@@ -33,7 +33,6 @@ export default function CreateRapport() {
     });
     const [error, setError] = useState("");
 
-    // 1) charger toutes les missions
     useEffect(() => {
         MissionService.getAllMissions()
             .then(res => {
@@ -44,7 +43,7 @@ export default function CreateRapport() {
                 setError("Impossible de charger les missions");
                 setInitialLoading(false);
             });
-    }, []);    // 2) dès qu'on choisit une mission, on va chercher ses agents
+    }, []);
     useEffect(() => {
         const mid = form.missionId;
         if (!mid) {

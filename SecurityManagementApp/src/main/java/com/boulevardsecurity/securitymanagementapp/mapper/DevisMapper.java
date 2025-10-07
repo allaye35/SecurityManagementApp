@@ -18,7 +18,6 @@ public class DevisMapper {
     private final ClientRepository     clientRepo;
     private final MissionRepository    missionRepo;
 
-    /** Création → Entité */
     public Devis toEntity(DevisCreateDto dto) {
         Devis d = Devis.builder()
                 .referenceDevis(dto.getReferenceDevis())
@@ -38,12 +37,11 @@ public class DevisMapper {
                         .orElseThrow(() -> new IllegalArgumentException("Client introuvable"))
         );
 
-        // Attacher des missions existantes si fournies
         if (dto.getMissionIds() != null && !dto.getMissionIds().isEmpty()) {
             for (Long idM : dto.getMissionIds()) {
                 Mission m = missionRepo.findById(idM)
                         .orElseThrow(() -> new IllegalArgumentException("Mission introuvable id=" + idM));
-                m.setDevis(d); // côté mission
+                m.setDevis(d);
                 d.getMissions().add(m);
             }
             d.recalculerTotaux();
@@ -51,7 +49,6 @@ public class DevisMapper {
         return d;
     }
 
-    /** Entité → DTO lecture */
     public DevisDto toDto(Devis d) {
         return DevisDto.builder()
                 .id(d.getId())
@@ -71,7 +68,6 @@ public class DevisMapper {
                 .build();
     }
 
-    /** Mise à jour partielle si besoin */
     public void updateFromCreateDto(DevisCreateDto dto, Devis entity) {
         if (dto.getReferenceDevis() != null) entity.setReferenceDevis(dto.getReferenceDevis());
         if (dto.getDescription()      != null) entity.setDescription(dto.getDescription());
@@ -79,7 +75,6 @@ public class DevisMapper {
         if (dto.getDateValidite()     != null) entity.setDateValidite(dto.getDateValidite());
         if (dto.getConditionsGenerales()!=null) entity.setConditionsGenerales(dto.getConditionsGenerales());
         if (dto.getMissionIds() != null) {
-            // Réinitialiser et rattacher les missions données (stratégie simple)
             entity.getMissions().forEach(m -> m.setDevis(null));
             entity.getMissions().clear();
             for (Long idM : dto.getMissionIds()) {

@@ -23,16 +23,13 @@ export default function FactureDetail() {
         setLoading(true);
         setError("");
 
-        // Récupérer les détails de la facture
         FactureService.getById(id)
             .then(({ data }) => {
                 console.log("Facture récupérée:", data);
                 setFacture(data);
                 
-                // Stocker les promesses à résoudre
                 const promises = [];
                 
-                // Récupérer les infos du client
                 if (data.clientId) {
                     promises.push(
                         ClientService.getById(data.clientId)
@@ -47,7 +44,6 @@ export default function FactureDetail() {
                     );
                 }
                 
-                // Récupérer les infos de l'entreprise - CORRECTION : utiliser getEntrepriseById au lieu de getById
                 if (data.entrepriseId) {
                     promises.push(
                         EntrepriseService.getEntrepriseById(data.entrepriseId)
@@ -62,7 +58,6 @@ export default function FactureDetail() {
                     );
                 }
                 
-                // Récupérer les infos du devis si présent
                 if (data.devisId) {
                     promises.push(
                         DevisService.getById(data.devisId)
@@ -76,7 +71,6 @@ export default function FactureDetail() {
                     );
                 }
                 
-                // Récupérer les missions associées
                 if (data.missionIds && data.missionIds.length > 0) {
                     const missionPromises = data.missionIds.map(missionId => 
                         MissionService.getMissionById(missionId)
@@ -96,7 +90,6 @@ export default function FactureDetail() {
                     );
                 }
                 
-                // Attendre que toutes les promesses soient résolues
                 return Promise.all(promises);
             })
             .then(() => {
@@ -109,7 +102,6 @@ export default function FactureDetail() {
             });
     }, [id]);
 
-    // Formatter les dates dans un format plus lisible
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         const date = new Date(dateString);
@@ -120,7 +112,6 @@ export default function FactureDetail() {
         });
     };
 
-    // Formatter les montants avec 2 décimales et séparateur de milliers
     const formatMontant = (montant) => {
         if (montant === null || montant === undefined) return "-";
         return parseFloat(montant).toLocaleString('fr-FR', {
@@ -129,7 +120,6 @@ export default function FactureDetail() {
         }) + " €";
     };
 
-    // Obtenir la classe CSS pour le statut
     const getStatusClass = (statut) => {
         switch (statut) {
             case "PAYEE":
@@ -143,14 +133,11 @@ export default function FactureDetail() {
         }
     };
 
-    // Imprimer la facture
     const handlePrint = () => {
         window.print();
     };
 
-    // Télécharger en tant que PDF
     const handleDownload = () => {
-        // Message d'information spécifique indiquant que l'endpoint backend n'est pas implémenté
         const confirmAction = window.confirm(
             "L'endpoint API backend '/factures/{id}/pdf' n'est pas encore implémenté sur le serveur.\n\n" +
             "Pour résoudre ce problème, vous devez implémenter l'endpoint suivant côté serveur :\n" +
@@ -159,33 +146,26 @@ export default function FactureDetail() {
         );
         
         if (confirmAction) {
-            // Ouvrir la vue d'impression dans un nouvel onglet
             window.open(`/factures/print/${id}`, '_blank');
         } else {
-            // Essayer quand même si l'utilisateur insiste
             const tryAnyway = window.confirm("Voulez-vous quand même essayer l'appel à l'API? (Générera une erreur 404)");
             
             if (tryAnyway) {
                 setLoading(true);
                 FactureService.getPdf(id)
                     .then(response => {
-                        // Créer un URL pour le blob PDF
                         const url = window.URL.createObjectURL(new Blob([response.data]));
                         
-                        // Créer un lien de téléchargement temporaire
                         const link = document.createElement('a');
                         link.href = url;
                         
-                        // Définir le nom du fichier téléchargé
                         const filename = `facture-${facture.referenceFacture || id}.pdf`;
                         link.setAttribute('download', filename);
                         
-                        // Ajouter le lien au DOM, cliquer dessus, puis le supprimer
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
                         
-                        // Libérer l'URL de l'objet après le téléchargement
                         window.URL.revokeObjectURL(url);
                         setLoading(false);
                     })

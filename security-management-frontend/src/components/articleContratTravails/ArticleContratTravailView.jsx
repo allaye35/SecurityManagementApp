@@ -22,7 +22,6 @@ export default function ArticleContratTravailView() {
     const [loading, setLoading] = useState(true);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     
-    // Charger les données de l'article
     useEffect(() => {
         setLoading(true);
         ArticleContratTravailService.getById(id)
@@ -30,7 +29,6 @@ export default function ArticleContratTravailView() {
                 console.log("Article récupéré:", res.data);
                 setArticle(res.data);
                 
-                // Si l'article a un contrat associé, récupérer les infos du contrat
                 if (res.data.contratDeTravailId) {
                     loadContratDetails(res.data.contratDeTravailId);
                 } else {
@@ -44,7 +42,6 @@ export default function ArticleContratTravailView() {
             });
     }, [id]);
     
-    // Fonction pour charger les détails du contrat associé
     const loadContratDetails = (contratId) => {
         setContratLoading(true);
         ContratDeTravailService.getById(contratId)
@@ -54,7 +51,6 @@ export default function ArticleContratTravailView() {
             })
             .catch(err => {
                 console.error("Erreur lors du chargement des détails du contrat:", err);
-                // Ne pas bloquer l'affichage de l'article en cas d'erreur sur le contrat
             })
             .finally(() => {
                 setContratLoading(false);
@@ -271,7 +267,7 @@ export default function ArticleContratTravailView() {
                             </Card>
                         </Col>                    </Row>
 
-                    {/* Modal de confirmation de suppression */}
+                    {}
                     <div className={`delete-confirmation-modal ${showDeleteModal ? 'show' : ''}`}>
                         <div className="modal-content">
                             <div className="modal-header">

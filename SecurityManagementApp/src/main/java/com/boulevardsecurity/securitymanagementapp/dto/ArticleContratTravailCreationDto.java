@@ -4,9 +4,6 @@ package com.boulevardsecurity.securitymanagementapp.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-/**
- * DTO utilisé uniquement à la création d’un ArticleContratTravail.
- */
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ArticleContratTravailCreationDto {
     @NotBlank

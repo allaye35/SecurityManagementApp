@@ -24,13 +24,11 @@ export default function FacturePeriodeForm() {
   const [error, setError] = useState('');
   const [previewData, setPreviewData] = useState(null);
   const [clientEntreprises, setClientEntreprises] = useState([]);
-  const [autoSelectAll, setAutoSelectAll] = useState(true); // Option pour sélectionner automatiquement toutes les missions
+  const [autoSelectAll, setAutoSelectAll] = useState(true);
 
-  // Charger la liste des clients au chargement du composant
   useEffect(() => {
     setLoading(true);
     
-    // Chargement des clients
     ClientService.getAll()
       .then(response => {
         setClients(response.data);
@@ -39,7 +37,6 @@ export default function FacturePeriodeForm() {
         setError('Impossible de charger la liste des clients: ' + (err.response?.data?.message || err.message));
       });
     
-    // Chargement de toutes les entreprises
     EntrepriseService.getAllEntreprises()
       .then(response => {
         setEntreprises(response.data);
@@ -50,19 +47,16 @@ export default function FacturePeriodeForm() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Effet pour charger les missions quand on sélectionne un client
   useEffect(() => {
     if (formData.clientId) {
       setLoading(true);
       setError('');
       
-      // Récupérer les entreprises associées au client
       ClientService.getEntreprises(formData.clientId)
         .then(response => {
           const clientEnts = response.data;
           setClientEntreprises(clientEnts);
           
-          // S'il n'y a qu'une seule entreprise, la sélectionner automatiquement
           if (clientEnts.length === 1) {
             setFormData(prev => ({
               ...prev,
@@ -74,18 +68,15 @@ export default function FacturePeriodeForm() {
           console.error('Erreur lors du chargement des entreprises du client:', err);
         });
       
-      // Récupérer les missions actives du client
       ClientService.getMissionsActives(formData.clientId)
         .then(response => {
           console.log('Missions récupérées:', response.data);
           
-          // Enrichir chaque mission avec les détails de son tarif
           const missionPromises = response.data.map(mission => 
             mission.tarifId ? 
               TarifMissionService.getById(mission.tarifId)
                 .then(tarifResponse => {
                   const tarif = tarifResponse.data;
-                  // Calculer automatiquement les montants basés sur les informations de la mission
                   const montantHT = mission.montantHT || 
                     (tarif.prixUnitaireHT * (mission.quantite || 1) * (mission.nombreAgents || 1));
                   const tauxTVA = tarif.tauxTVA || 0.2;
@@ -100,7 +91,6 @@ export default function FacturePeriodeForm() {
                     montantTTC
                   };
                 }) : 
-              // Si pas de tarifId, retourner la mission telle quelle
               Promise.resolve(mission)
           );
           
@@ -109,7 +99,6 @@ export default function FacturePeriodeForm() {
               console.log('Missions avec tarifs:', missionsWithTarifs);
               setMissions(missionsWithTarifs);
               
-              // Si on a des missions, préremplir les dates avec la plus ancienne et la plus récente
               if (missionsWithTarifs.length > 0) {
                 const startDates = missionsWithTarifs
                   .filter(m => m.dateDebut)
@@ -129,7 +118,6 @@ export default function FacturePeriodeForm() {
                   }));
                 }
                 
-                // Sélection automatique de toutes les missions si l'option est activée
                 if (autoSelectAll) {
                   setSelectedMissions(missionsWithTarifs.map(m => m.id));
                 }
@@ -146,19 +134,16 @@ export default function FacturePeriodeForm() {
         })
         .finally(() => setLoading(false));
     } else {
-      // Réinitialiser les missions si aucun client n'est sélectionné
       setMissions([]);
       setSelectedMissions([]);
     }
   }, [formData.clientId, autoSelectAll]);
 
-  // Filtrer les missions en fonction des dates sélectionnées
   useEffect(() => {
     if (formData.dateDebut && formData.dateFin && missions.length > 0) {
       const periodeDebut = new Date(formData.dateDebut);
       const periodeFin = new Date(formData.dateFin);
       
-      // Filtrer les missions qui sont dans la période sélectionnée
       const filteredMissions = missions
         .filter(mission => {
           if (!mission.dateDebut || !mission.dateFin) return false;
@@ -166,13 +151,11 @@ export default function FacturePeriodeForm() {
           const missionDebut = new Date(mission.dateDebut);
           const missionFin = new Date(mission.dateFin);
           
-          // Vérifie si la mission chevauche la période
           return (missionDebut <= periodeFin && missionFin >= periodeDebut);
         });
       
       const filteredMissionIds = filteredMissions.map(m => m.id);
       
-      // Mettre à jour la sélection des missions en ne gardant que celles dans la période
       if (autoSelectAll) {
         setSelectedMissions(filteredMissionIds);
       } else {
@@ -190,7 +173,6 @@ export default function FacturePeriodeForm() {
       [name]: value
     }));
     
-    // Si on change le client, on réinitialise les missions sélectionnées et l'entreprise
     if (name === 'clientId') {
       setSelectedMissions([]);
       setFormData(prev => ({
@@ -199,7 +181,6 @@ export default function FacturePeriodeForm() {
         entrepriseId: ''
       }));
       
-      // Réinitialiser l'aperçu
       setPreviewData(null);
     }
   };
@@ -209,7 +190,6 @@ export default function FacturePeriodeForm() {
     setAutoSelectAll(isChecked);
     
     if (isChecked && missions.length > 0) {
-      // Sélectionner toutes les missions dans la période
       const filteredMissions = missions.filter(mission => {
         if (!mission.dateDebut || !mission.dateFin || !formData.dateDebut || !formData.dateFin) return false;
         
@@ -230,31 +210,24 @@ export default function FacturePeriodeForm() {
   };
 
   const handleMissionSelect = (missionId) => {
-    // Vérifier si la mission est déjà sélectionnée
     const isSelected = selectedMissions.includes(missionId);
     
     if (isSelected) {
-      // Désélectionner la mission
       setSelectedMissions(prev => prev.filter(id => id !== missionId));
     } else {
-      // Sélectionner la mission
       setSelectedMissions(prev => [...prev, missionId]);
     }
     
-    // Réinitialiser l'aperçu car la sélection a changé
     setPreviewData(null);
   };
 
   const handleSelectAllMissions = () => {
     if (selectedMissions.length === missions.length) {
-      // Si toutes les missions sont déjà sélectionnées, tout désélectionner
       setSelectedMissions([]);
     } else {
-      // Sinon sélectionner toutes les missions
       setSelectedMissions(missions.map(m => m.id));
     }
     
-    // Réinitialiser l'aperçu car la sélection a changé
     setPreviewData(null);
   };
   
@@ -271,18 +244,15 @@ export default function FacturePeriodeForm() {
     
     setLoading(true);
     
-    // Calculer le total des montants HT, TVA et TTC pour les missions sélectionnées
     const selectedMissionData = missions.filter(mission => selectedMissions.includes(mission.id));
     
     const totalHT = selectedMissionData.reduce((sum, mission) => sum + parseFloat(mission.montantHT || 0), 0);
     const totalTVA = selectedMissionData.reduce((sum, mission) => sum + parseFloat(mission.montantTVA || 0), 0);
     const totalTTC = selectedMissionData.reduce((sum, mission) => sum + parseFloat(mission.montantTTC || 0), 0);
     
-    // Récupérer le client et l'entreprise
     const client = clients.find(c => c.id === parseInt(formData.clientId));
     const entreprise = entreprises.find(e => e.id === parseInt(formData.entrepriseId));
     
-    // Générer une référence unique pour la facture
     const referenceFacture = `FACT-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     
     setPreviewData({
@@ -315,7 +285,6 @@ export default function FacturePeriodeForm() {
     setLoading(true);
     setError('');
 
-    // Préparation des données pour la création de la facture
     const factureData = {
       referenceFacture: previewData ? previewData.referenceFacture : `FACT-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
       clientId: parseInt(formData.clientId),
@@ -325,11 +294,9 @@ export default function FacturePeriodeForm() {
       missionIds: selectedMissions
     };
 
-    // Appel au service de facturation pour créer une facture sur la période
     FactureService.createForPeriod(factureData)
       .then(response => {
         console.log('Facture créée:', response.data);
-        // Redirection vers le détail de la facture créée
         navigate(`/factures/${response.data.id}`);
       })
       .catch(err => {
@@ -339,7 +306,6 @@ export default function FacturePeriodeForm() {
       });
   };
 
-  // Filtrage des clients basé sur la recherche
   const filteredClients = searchTerm 
     ? clients.filter(client => 
         (client.nom && client.nom.toLowerCase().includes(searchTerm)) || 
@@ -350,7 +316,6 @@ export default function FacturePeriodeForm() {
       )
     : clients;
 
-  // Calculer le total des missions sélectionnées
   const selectedCount = selectedMissions.length;
   const totalCount = missions.length;
 
@@ -491,7 +456,6 @@ export default function FacturePeriodeForm() {
             ) : (
               <div className="missions-list">
                 {missions.map(mission => {
-                  // Vérifier si la mission est dans la période sélectionnée
                   let isInPeriod = true;
                   if (formData.dateDebut && formData.dateFin) {
                     const missionDebut = new Date(mission.dateDebut);

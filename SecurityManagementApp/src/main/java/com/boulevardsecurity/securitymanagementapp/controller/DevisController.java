@@ -22,19 +22,16 @@ public class DevisController {
 
     private final DevisService service;
 
-    /** Tous les devis */
     @GetMapping
     public ResponseEntity<List<DevisDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
-    
-    /** Devis disponibles pour la création de contrats */
+
     @GetMapping("/disponibles")
     public ResponseEntity<List<DevisDto>> getDevisDisponibles() {
         return ResponseEntity.ok(service.getDevisDisponibles());
     }
 
-    /** Devis par ID */
     @GetMapping("/{id}")
     public ResponseEntity<DevisDto> getById(@PathVariable Long id) {
         return service.getById(id)
@@ -42,7 +39,6 @@ public class DevisController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /** Devis par référence */
     @GetMapping("/search")
     public ResponseEntity<DevisDto> getByReference(@RequestParam String reference) {
         return service.getByReference(reference)
@@ -50,7 +46,6 @@ public class DevisController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /** Création */
     @PostMapping
     public ResponseEntity<?> create(@RequestBody DevisCreateDto dto) {
         try {
@@ -67,7 +62,6 @@ public class DevisController {
         }
     }
 
-    /** Mise à jour */
     @PutMapping("/{id}")
     public ResponseEntity<?> update(
             @PathVariable Long id,
@@ -87,7 +81,6 @@ public class DevisController {
         }
     }
 
-    /** Suppression */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
@@ -104,7 +97,6 @@ public class DevisController {
         }
     }
 
-    /** Ajout de missions existantes à un devis */
     @PostMapping("/{id}/missions")
     public ResponseEntity<?> ajouterMissions(
             @PathVariable Long id,

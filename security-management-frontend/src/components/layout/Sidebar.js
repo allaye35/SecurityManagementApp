@@ -103,7 +103,6 @@ const Sidebar = ({ show, handleClose, windowWidth }) => {
     }
   ];
 
-  // Ajouter le menu Administration seulement pour les ADMIN
   if (isAuthenticated && hasRole("ADMIN")) {
     menuItems.push({
       title: 'Administration',

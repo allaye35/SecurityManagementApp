@@ -1,6 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.dto;
 
-
 import com.boulevardsecurity.securitymanagementapp.Enums.PeriodiciteSalaire;
 import com.boulevardsecurity.securitymanagementapp.Enums.TypeContrat;
 import com.boulevardsecurity.securitymanagementapp.model.ArticleContratTravail;
@@ -42,5 +41,5 @@ public class ContratDeTravailCreationDto {
     private Long entrepriseId;
     @Builder.Default
     private List<Long> articleContratTravailIds = new ArrayList<>();
-    private Long missionId;                // facultatif
+    private Long missionId;
 }

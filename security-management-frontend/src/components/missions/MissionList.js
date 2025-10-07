@@ -1,6 +1,5 @@
 // src/components/missions/MissionList.jsx
 import React, { useEffect, useState } from "react";
-// Fonction utilitaire pour confirmation et appel d'action
 import { useNavigate } from "react-router-dom";
 import MissionService from "../../services/MissionService";
 import SiteService from "../../services/SiteService";
@@ -13,13 +12,11 @@ import { Table, Button, Badge, Card, Container, Row, Col, Dropdown, Form, InputG
 import FactureService from '../../services/FactureService';
 import AssocierFactureModal from './AssocierFactureModal';
 
-
 function askAndCall(message, action, ...args) {
   if (window.confirm(`Voulez-vous vraiment ${message} ?`)) {
     action(...args);
   }
 }
-
 
 export default function MissionList() {
   const [missions, setMissions] = useState([]);
@@ -30,7 +27,6 @@ export default function MissionList() {
   const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
   const [currentPage, setCurrentPage] = useState(1);
   const [siteNames, setSiteNames] = useState({});
-  // Pour associer facture
   const [showFactureModal, setShowFactureModal] = useState(false);
   const [allFactures, setAllFactures] = useState([]);
   const [selectedFactureMissionId, setSelectedFactureMissionId] = useState(null);
@@ -40,15 +36,12 @@ export default function MissionList() {
   const [showSiteModal, setShowSiteModal] = useState(false);
   const [selectedMissionId, setSelectedMissionId] = useState(null);
   const [selectedSiteId, setSelectedSiteId] = useState("");
-  // Pour plannings
   const [allPlannings, setAllPlannings] = useState([]);
   const [showPlanningModal, setShowPlanningModal] = useState(false);
   const [selectedPlanningId, setSelectedPlanningId] = useState("");
-  // Pour agents
   const [allAgents, setAllAgents] = useState([]);
   const [showAgentModal, setShowAgentModal] = useState(false);
   const [selectedAgentIds, setSelectedAgentIds] = useState([]);
-    // Modal pour retirer agent(s)
     const [showRetirerAgentModal, setShowRetirerAgentModal] = useState(false);
     const [agentsMission, setAgentsMission] = useState([]);
     const [selectedRetirerAgentIds, setSelectedRetirerAgentIds] = useState([]);
@@ -68,7 +61,6 @@ export default function MissionList() {
         setMissions(missionsList);
         setFilteredMissions(missionsList);
 
-        // Sites
         const siteIds = [...new Set(missionsList.map(m => m.siteId).filter(Boolean))];
         siteIds.forEach(siteId => {
           if (!siteNames[siteId]) {
@@ -78,7 +70,6 @@ export default function MissionList() {
           }
         });
 
-        // Contrats
         const contratIds = [...new Set(missionsList.map(m => m.contratId || (m.contrat && m.contrat.id)).filter(Boolean))];
         contratIds.forEach(contratId => {
           if (!contratNames[contratId]) {
@@ -88,7 +79,6 @@ export default function MissionList() {
           }
         });
 
-        // Devis
         const devisIds = [...new Set(missionsList.map(m => m.devisId || (m.devis && m.devis.id)).filter(Boolean))];
         devisIds.forEach(devisId => {
           if (!devisNames[devisId]) {
@@ -105,7 +95,6 @@ export default function MissionList() {
       })
       .finally(() => setLoading(false));
 
-    // Charger tous les sites pour le sélecteur
     SiteService.getAllSites && SiteService.getAllSites()
       .then(res => {
         if (Array.isArray(res.data)) setAllSites(res.data);
@@ -113,7 +102,6 @@ export default function MissionList() {
       })
       .catch(() => setAllSites([]));
 
-    // Charger tous les agents pour le sélecteur
     AgentService.getAllAgents && AgentService.getAllAgents()
       .then(res => {
         if (Array.isArray(res.data)) setAllAgents(res.data);
@@ -121,7 +109,6 @@ export default function MissionList() {
       })
       .catch(() => setAllAgents([]));
 
-    // Charger tous les plannings pour le sélecteur
     PlanningService.getAllPlannings && PlanningService.getAllPlannings()
       .then(res => {
         if (Array.isArray(res.data)) setAllPlannings(res.data);
@@ -129,14 +116,13 @@ export default function MissionList() {
       })
       .catch(() => setAllPlannings([]));
 
-    // Charger toutes les factures pour le sélecteur
     FactureService.getAll()
       .then(res => {
         if (Array.isArray(res.data)) setAllFactures(res.data);
         else if (res.data && Array.isArray(res.data.content)) setAllFactures(res.data.content);
       })
       .catch(() => setAllFactures([]));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const results = missions.filter(mission =>
@@ -162,7 +148,6 @@ export default function MissionList() {
       .catch(() => alert("Échec de la suppression."));
   };
 
-  // Modal pour associer un site
   const handleShowSiteModal = (missionId) => {
     setSelectedMissionId(missionId);
     setSelectedSiteId("");
@@ -196,7 +181,6 @@ export default function MissionList() {
       .catch(e => alert("Erreur : " + (e.response?.data?.message || e.message)));
   };
 
-  // Modal pour associer un planning
   const handleShowPlanningModal = (missionId) => {
     setSelectedMissionId(missionId);
     setSelectedPlanningId("");
@@ -230,27 +214,22 @@ export default function MissionList() {
       .catch(e => alert("Erreur : " + (e.response?.data?.message || e.message)));
   };
 
-  // Modal pour affecter agent(s)
   const handleShowAgentModal = (missionId) => {
     setSelectedMissionId(missionId);
     setSelectedAgentIds([]);
     setShowAgentModal(true);
   };
 
-    // Modal pour retirer agent(s)
     const handleShowRetirerAgentModal = (missionId) => {
       setSelectedMissionId(missionId);
       setSelectedRetirerAgentIds([]);
       MissionService.getMissionById(missionId)
         .then(async res => {
           const data = res.data;
-          // Si agents est un tableau d'objets
           if (data && Array.isArray(data.agents) && data.agents.length > 0 && typeof data.agents[0] === 'object') {
             setAgentsMission(data.agents);
           }
-          // Si agentIds est un tableau d'IDs
           else if (data && Array.isArray(data.agentIds) && data.agentIds.length > 0) {
-            // Hydrate les agents
             const agentsDetails = await Promise.all(
               data.agentIds.map(id =>
                 window.AgentService && AgentService.getAgentById
@@ -325,7 +304,6 @@ export default function MissionList() {
       .catch(e => alert("Erreur : " + (e.response?.data?.message || e.message)));
   };
 
-  // Modal pour associer facture(s)
   const handleShowFactureModal = (missionId) => {
     setSelectedFactureMissionId(missionId);
     setShowFactureModal(true);
@@ -338,7 +316,6 @@ export default function MissionList() {
 
   const handleFactureModalSubmit = () => {
     if (!selectedFactureMissionId) return;
-    // Logique pour associer la facture à la mission
     alert("Facture associée !");
     handleFactureModalClose();
   };
@@ -396,7 +373,6 @@ export default function MissionList() {
     );
   }
 
-  // Pagination
   const indexOfLastMission = currentPage * missionsPerPage;
   const indexOfFirstMission = indexOfLastMission - missionsPerPage;
   const currentMissions = filteredMissions.slice(indexOfFirstMission, indexOfLastMission);
@@ -532,7 +508,7 @@ export default function MissionList() {
                           <i className="bi bi-list"></i> Actions
                         </Dropdown.Toggle>
 
-                        {/* ⬇️ le menu ne sera pas coupé + s’ouvre vers le haut si besoin */}
+                        {}
                         <Dropdown.Menu
                           renderOnMount
                           align="end"
@@ -619,7 +595,7 @@ export default function MissionList() {
           </div>
         )}
       </Card>
-  {/* Modal de sélection d'agent(s) */}
+  {}
     <Modal show={showAgentModal} onHide={handleAgentModalClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Affecter un ou plusieurs agents à la mission</Modal.Title>
@@ -652,7 +628,7 @@ export default function MissionList() {
         <Button variant="primary" onClick={handleAgentModalSubmit} disabled={selectedAgentIds.length === 0}>Affecter</Button>
       </Modal.Footer>
     </Modal>
-      {/* Modal de retrait d'agent(s) */}
+      {}
       <Modal show={showRetirerAgentModal} onHide={handleRetirerAgentModalClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Retirer un ou plusieurs agents de la mission</Modal.Title>
@@ -693,7 +669,7 @@ export default function MissionList() {
           <Button variant="danger" onClick={handleRetirerAgentModalSubmit} disabled={selectedRetirerAgentIds.length === 0}>Retirer</Button>
         </Modal.Footer>
       </Modal>
-    {/* Modal de sélection de site */}
+    {}
     <Modal show={showSiteModal} onHide={handleSiteModalClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Associer un site à la mission</Modal.Title>
@@ -722,7 +698,7 @@ export default function MissionList() {
       </Modal.Footer>
     </Modal>
 
-    {/* Modal de sélection de planning */}
+    {}
     <Modal show={showPlanningModal} onHide={handlePlanningModalClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Associer un planning à la mission</Modal.Title>
@@ -751,7 +727,7 @@ export default function MissionList() {
       </Modal.Footer>
     </Modal>
 
-    {/* Modal d'association de facture(s) */}
+    {}
     <AssocierFactureModal
       show={showFactureModal}
       onClose={handleFactureModalClose}

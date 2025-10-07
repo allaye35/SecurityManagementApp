@@ -20,7 +20,6 @@ export default function ArticleContratTravailListImproved() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     
-    // État pour la recherche et le filtrage
     const [filter, setFilter] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -28,46 +27,38 @@ export default function ArticleContratTravailListImproved() {
     const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
     const [showFilterMobile, setShowFilterMobile] = useState(false);
     
-    // État pour le tri
     const [sortConfig, setSortConfig] = useState({
         key: "id",
         direction: "ascending"
     });
     
-    // États pour les notifications
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
     
-    // États pour la suppression progressive
     const [deleteToastVisible, setDeleteToastVisible] = useState(false);
     const [pendingDeleteArticle, setPendingDeleteArticle] = useState(null);
     const [deleteProgress, setDeleteProgress] = useState(0);
     const [deleteTimer, setDeleteTimer] = useState(null);
-    const deleteDelay = 5000; // 5 secondes d'attente avant suppression effective
+    const deleteDelay = 5000;
     const deleteTimeoutRef = useRef(null);
     
-    // États pour l'amélioration de l'UI
-    const [viewMode, setViewMode] = useState(localStorage.getItem('articleViewMode') || 'table'); // 'table' ou 'card'
+    const [viewMode, setViewMode] = useState(localStorage.getItem('articleViewMode') || 'table');
     const [showPreview, setShowPreview] = useState(false);
     const [previewArticle, setPreviewArticle] = useState(null);
 
-    // Vérifier les messages de notification après redirection
     useEffect(() => {
         if (location.state?.message) {
             setToastMessage(location.state.message);
             setShowToast(true);
             
-            // Nettoyer le state pour éviter d'afficher le message à nouveau après un refresh
             window.history.replaceState({}, document.title);
         }
     }, [location]);
 
-    // Chargement initial des données
     useEffect(() => {
         loadArticles();
     }, []);
     
-    // Nettoyage des ressources lors du démontage du composant
     useEffect(() => {
         return () => {
             if (deleteTimer) {
@@ -79,12 +70,10 @@ export default function ArticleContratTravailListImproved() {
         };
     }, [deleteTimer]);
     
-    // Sauvegarde du mode d'affichage préféré
     useEffect(() => {
         localStorage.setItem('articleViewMode', viewMode);
     }, [viewMode]);
     
-    // Fonction pour charger ou rafraîchir les articles
     const loadArticles = () => {
         setLoading(true);
         setError(null);
@@ -102,19 +91,16 @@ export default function ArticleContratTravailListImproved() {
             });
     };
     
-    // Fonction pour rafraîchir la liste
     const handleRefresh = () => {
         setIsRefreshing(true);
         loadArticles();
     };
     
-    // Fonctions pour la gestion des suppressions
     const initiateProgressiveDelete = (article) => {
         setPendingDeleteArticle(article);
         setDeleteProgress(0);
         setDeleteToastVisible(true);
         
-        // Créer un intervalle pour mettre à jour la progression
         const startTime = Date.now();
         const intervalId = setInterval(() => {
             const elapsed = Date.now() - startTime;
@@ -132,7 +118,6 @@ export default function ArticleContratTravailListImproved() {
         setDeleteTimer(intervalId);
     };
     
-    // Fonction pour annuler la suppression en cours
     const cancelDelete = () => {
         if (deleteTimer) {
             clearInterval(deleteTimer);
@@ -145,18 +130,14 @@ export default function ArticleContratTravailListImproved() {
         setShowToast(true);
     };
     
-    // Fonction pour finaliser la suppression après le délai
     const finalizeDelete = (id) => {
-        // Nettoyer le timer si existant
         if (deleteTimer) {
             clearInterval(deleteTimer);
             setDeleteTimer(null);
         }
         
-        // Fermer le toast de suppression progressive
         setDeleteToastVisible(false);
         
-        // Appel API pour supprimer définitivement l'article
         ArticleContratTravailService.remove(id)
             .then(() => {
                 setArticles(articles.filter(article => article.id !== id));
@@ -171,7 +152,6 @@ export default function ArticleContratTravailListImproved() {
             });
     };
     
-    // Fonction pour gérer la sélection d'un article
     const handleArticleSelection = (articleId) => {
         setSelectedArticles(prevSelected => {
             if (prevSelected.includes(articleId)) {
@@ -182,7 +162,6 @@ export default function ArticleContratTravailListImproved() {
         });
     };
     
-    // Fonction pour gérer la sélection/désélection de tous les articles
     const handleSelectAllArticles = (checked) => {
         if (checked) {
             const allArticleIds = paginatedArticles.map(article => article.id);
@@ -192,7 +171,6 @@ export default function ArticleContratTravailListImproved() {
         }
     };
     
-    // Fonction pour supprimer plusieurs articles à la fois
     const bulkDeleteArticles = () => {
         setLoading(true);
         
@@ -217,7 +195,6 @@ export default function ArticleContratTravailListImproved() {
             });
     };
 
-    // Fonction pour trier les articles
     const requestSort = (key) => {
         let direction = 'ascending';
         if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -226,7 +203,6 @@ export default function ArticleContratTravailListImproved() {
         setSortConfig({ key, direction });
     };
 
-    // Fonction pour obtenir l'icône de tri appropriée
     const getSortDirectionIcon = (columnName) => {
         if (sortConfig.key !== columnName) return <FaSort className="ms-1 text-muted" size={12} />;
         return sortConfig.direction === 'ascending' ? 
@@ -234,25 +210,21 @@ export default function ArticleContratTravailListImproved() {
             <FaSortDown className="ms-1 text-primary" />;
     };
     
-    // Fonction pour effacer les filtres
     const clearFilters = () => {
         setFilter("");
         setCurrentPage(1);
     };
     
-    // Fonction pour afficher l'aperçu d'un article
     const handlePreview = (article) => {
         setPreviewArticle(article);
         setShowPreview(true);
     };
     
-    // Fonction pour changer le mode d'affichage
     const toggleViewMode = (mode) => {
         setViewMode(mode);
         localStorage.setItem('articleViewMode', mode);
     };
 
-    // Fonction pour obtenir les articles filtrés
     const getFilteredArticles = useCallback(() => {
         return articles.filter(article => {
             const textMatch = 
@@ -264,7 +236,6 @@ export default function ArticleContratTravailListImproved() {
         });
     }, [articles, filter]);
 
-    // Fonction pour obtenir les articles triés après filtrage
     const sortedArticles = useMemo(() => {
         const filteredArticles = getFilteredArticles();
         
@@ -284,33 +255,26 @@ export default function ArticleContratTravailListImproved() {
         });
     }, [getFilteredArticles, sortConfig]);
 
-    // Fonction pour obtenir les articles à afficher pour la pagination
     const paginatedArticles = useMemo(() => {
         const indexOfLastItem = currentPage * itemsPerPage;
         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
         return sortedArticles.slice(indexOfFirstItem, indexOfLastItem);
     }, [sortedArticles, currentPage, itemsPerPage]);
     
-    // Gestion de la pagination
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
         
-        // Faire défiler vers le haut de la liste
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Pagination
     const totalPages = Math.ceil(sortedArticles.length / itemsPerPage);
     
-    // Créer les éléments de pagination de manière réactive en fonction de la taille d'écran
     const renderPaginationItems = () => {
         const isMobile = window.innerWidth < 576;
         const items = [];
         
-        // Si pas de pages, ne rien afficher
         if (totalPages === 0) return items;
         
-        // Bouton précédent
         items.push(
             <Pagination.Prev 
                 key="prev" 
@@ -319,7 +283,6 @@ export default function ArticleContratTravailListImproved() {
             />
         );
         
-        // Premier élément toujours visible
         items.push(
             <Pagination.Item 
                 key={1} 
@@ -330,14 +293,11 @@ export default function ArticleContratTravailListImproved() {
             </Pagination.Item>
         );
         
-        // Pour les mobiles, montrer moins d'éléments
         if (isMobile) {
-            // Si la page courante est > 2, montrer ellipsis
             if (currentPage > 2) {
                 items.push(<Pagination.Ellipsis key="ellipsis1" />);
             }
             
-            // Page courante (si différente de 1 et totalPages)
             if (currentPage !== 1 && currentPage !== totalPages) {
                 items.push(
                     <Pagination.Item 
@@ -349,17 +309,14 @@ export default function ArticleContratTravailListImproved() {
                 );
             }
             
-            // Si la page courante est < totalPages-1, montrer ellipsis
             if (currentPage < totalPages - 1) {
                 items.push(<Pagination.Ellipsis key="ellipsis2" />);
             }
         } else {
-            // Version desktop avec plus d'éléments
             if (currentPage > 3) {
                 items.push(<Pagination.Ellipsis key="ellipsis1" />);
             }
             
-            // Pages autour de la page courante
             for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
                 items.push(
                     <Pagination.Item 
@@ -377,7 +334,6 @@ export default function ArticleContratTravailListImproved() {
             }
         }
         
-        // Dernier élément toujours visible si > 1
         if (totalPages > 1) {
             items.push(
                 <Pagination.Item 
@@ -390,7 +346,6 @@ export default function ArticleContratTravailListImproved() {
             );
         }
         
-        // Bouton suivant
         items.push(
             <Pagination.Next 
                 key="next" 
@@ -402,7 +357,6 @@ export default function ArticleContratTravailListImproved() {
         return items;
     };
 
-    // Affichage du chargement
     if (loading && !isRefreshing) {
         return (
             <Container className="text-center my-5">
@@ -414,7 +368,6 @@ export default function ArticleContratTravailListImproved() {
         );
     }
 
-    // Affichage de l'erreur
     if (error) {
         return (
             <Container className="my-5">
@@ -434,7 +387,6 @@ export default function ArticleContratTravailListImproved() {
         );
     }
 
-    // Rendu du mode carte
     const renderCardView = () => {
         if (sortedArticles.length === 0) {
             return (
@@ -534,7 +486,6 @@ export default function ArticleContratTravailListImproved() {
         );
     };
 
-    // Rendu du mode tableau
     const renderTableView = () => {
         if (sortedArticles.length === 0) {
             return (
@@ -698,7 +649,7 @@ export default function ArticleContratTravailListImproved() {
                     </Table>
                 </div>
                 
-                {/* Affichage de la pagination si nécessaire */}
+                {}
                 {totalPages > 1 && (
                     <div className="d-flex justify-content-center mt-4">
                         <Pagination>{renderPaginationItems()}</Pagination>
@@ -710,13 +661,13 @@ export default function ArticleContratTravailListImproved() {
 
     return (
         <Container fluid className="article-contrat-list-container py-4 px-4">
-            {/* Toast pour les notifications */}
+            {}
             <ToastContainer 
                 className="p-3" 
                 position="top-end"
                 style={{ zIndex: 1060 }}
             >
-                {/* Toast pour les messages de succès */}
+                {}
                 <Toast 
                     show={showToast} 
                     onClose={() => setShowToast(false)}
@@ -732,7 +683,7 @@ export default function ArticleContratTravailListImproved() {
                     <Toast.Body>{toastMessage}</Toast.Body>
                 </Toast>
                   
-                {/* Toast pour la suppression progressive avec barre de progression */}
+                {}
                 <Toast 
                     show={deleteToastVisible} 
                     onClose={cancelDelete}
@@ -809,7 +760,7 @@ export default function ArticleContratTravailListImproved() {
                                             value={filter}
                                             onChange={e => {
                                                 setFilter(e.target.value);
-                                                setCurrentPage(1); // Reset pagination on search
+                                                setCurrentPage(1);
                                             }}
                                             aria-label="Rechercher des articles"
                                         />
@@ -885,7 +836,7 @@ export default function ArticleContratTravailListImproved() {
                 </Card.Header>
 
                 <Card.Body>
-                    {/* Bouton pour afficher/masquer les filtres sur mobile */}
+                    {}
                     <div className="d-md-none mb-3">
                         <Button 
                             variant="outline-secondary" 
@@ -897,7 +848,7 @@ export default function ArticleContratTravailListImproved() {
                         </Button>
                     </div>
 
-                    {/* Indicateur de filtres actifs */}
+                    {}
                     {filter && (
                         <div className="d-flex align-items-center mb-3 flex-wrap filter-indicators">
                             <span className="me-2 text-muted">Filtres actifs:</span>
@@ -929,7 +880,7 @@ export default function ArticleContratTravailListImproved() {
                         </div>
                     )}
 
-                    {/* Astuce pour les utilisateurs */}
+                    {}
                     <div className="d-flex align-items-center mb-3 bg-light p-2 rounded">
                         <FaRegLightbulb className="text-warning me-2" />
                         <small className="text-muted">
@@ -946,7 +897,7 @@ export default function ArticleContratTravailListImproved() {
                         </small>
                     </div>
                     
-                    {/* Affichage conditionnel selon le mode de vue sélectionné */}
+                    {}
                     {viewMode === 'table' ? renderTableView() : renderCardView()}
                 </Card.Body>
                 
@@ -968,7 +919,7 @@ export default function ArticleContratTravailListImproved() {
                                 value={itemsPerPage}
                                 onChange={(e) => {
                                     setItemsPerPage(Number(e.target.value));
-                                    setCurrentPage(1); // Retour à la première page
+                                    setCurrentPage(1);
                                 }}
                                 aria-label="Nombre d'articles par page"
                             >
@@ -982,7 +933,7 @@ export default function ArticleContratTravailListImproved() {
                 </Card.Footer>
             </Card>
             
-            {/* Modal de confirmation pour la suppression en lot */}
+            {}
             <Modal show={showBulkDeleteModal} onHide={() => setShowBulkDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>
@@ -1014,7 +965,7 @@ export default function ArticleContratTravailListImproved() {
                 </Modal.Footer>
             </Modal>
 
-            {/* Modal d'aperçu rapide */}
+            {}
             <Modal 
                 show={showPreview} 
                 onHide={() => setShowPreview(false)}
@@ -1099,7 +1050,7 @@ export default function ArticleContratTravailListImproved() {
                 </Modal.Footer>
             </Modal>
             
-            {/* Barre d'action mobile */}
+            {}
             <div className="d-md-none">
                 <div className={`mobile-action-bar ${selectedArticles.length > 0 ? 'd-flex' : 'd-none'}`}>
                     <Button

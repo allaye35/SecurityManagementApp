@@ -6,9 +6,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO de lecture d’un rapport d’intervention.
- */
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class RapportInterventionDto {
 
@@ -23,10 +20,8 @@ public class RapportInterventionDto {
 
     private RapportStatus   status;
 
-    /** Horodatage d’audit */
     private LocalDateTime   dateCreation;
     private LocalDateTime   dateModification;
 
-    /** Mission rattachée (ID uniquement) */
     private Long            missionId;
 }

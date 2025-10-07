@@ -20,13 +20,10 @@ public class AgentDeSecuriteDto {
     private StatutAgent statut;
     private Role role;
 
-    /** Pour l'UI : savoir si l'email est confirmé */
     private boolean emailVerified;
-    
-    /** Pour l'UI : savoir si le compte est approuvé par un admin */
+
     private boolean adminApproved;
 
-    /* Identifiants des relations */
     private Set<Long> zonesDeTravailIds;
     private Set<Long> missionsIds;
     private List<Long> disponibilitesIds;

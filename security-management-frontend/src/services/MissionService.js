@@ -11,7 +11,6 @@ const MissionService = {
   getMissionsByClient: (clientId) => api.get(`${PATH}/client/${clientId}`),
   getActivesByClient: (clientId) => api.get(`${PATH}/client/${clientId}/actives`),
 
-  // 👇 NOUVEAU : missions sans devis (global)
   getSansDevis: () => api.get(`${PATH}/sans-devis`),
 
   createMission: (missionData) => api.post(PATH, missionData),

@@ -10,8 +10,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
-
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ContratDeTravailDto {
     private Long id;
@@ -23,7 +21,6 @@ public class ContratDeTravailDto {
     private BigDecimal salaireDeBase;
     private PeriodiciteSalaire periodiciteSalaire;
 
-    // relations (IDs uniquement)
     private Long agentDeSecuriteId;
     private Long entrepriseId;
     private Long missionId;
@@ -31,9 +28,7 @@ public class ContratDeTravailDto {
     private List<Long> ficheDePaieIds;
     private List<Long> clauseIds;
 
-    // audit
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 
 }

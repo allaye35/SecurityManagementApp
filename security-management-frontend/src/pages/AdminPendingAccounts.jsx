@@ -13,7 +13,6 @@ export default function AdminPendingAccounts() {
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
 
-  // --- pagination (ajoute ceci avec les autres useState) ---
   const PAGE_SIZE = 8;
   const [pageAgents, setPageAgents] = useState(1);
   const [pageClients, setPageClients] = useState(1);
@@ -22,7 +21,6 @@ export default function AdminPendingAccounts() {
     setLoading(true);
     setError("");
     try {
-      // Utiliser directement les services admin pour récupérer les comptes en attente
       const [pendingClients, pendingAgents] = await Promise.all([
         adminSvc.getPendingClients(),
         adminSvc.getPendingAgents()
@@ -31,7 +29,6 @@ export default function AdminPendingAccounts() {
       setClients(pendingClients);
       setAgents(pendingAgents);
       
-      // Réinitialiser la pagination après refresh des données
       setPageAgents(1);
       setPageClients(1);
     } catch (err) {
@@ -46,10 +43,8 @@ export default function AdminPendingAccounts() {
     loadData();
   }, []);
 
-  // Filtrer les données selon le filtre sélectionné
   const filteredAgents = agents.filter(agent => {
     if (filter === "all") return true;
-    // Vous pouvez ajouter d'autres filtres ici selon vos besoins
     return true;
   });
 
@@ -60,19 +55,16 @@ export default function AdminPendingAccounts() {
     return true;
   });
 
-  // --- pages & tranches visibles ---
   const pagedAgents = filteredAgents.slice((pageAgents - 1) * PAGE_SIZE, pageAgents * PAGE_SIZE);
   const pagedClients = filteredClients.slice((pageClients - 1) * PAGE_SIZE, pageClients * PAGE_SIZE);
   const pagesAgents = Math.max(1, Math.ceil(filteredAgents.length / PAGE_SIZE));
   const pagesClients = Math.max(1, Math.ceil(filteredClients.length / PAGE_SIZE));
 
-  // quand le filtre change
   useEffect(() => {
     setPageAgents(1);
     setPageClients(1);
   }, [filter]);
 
-  // quand on bascule d'onglet
   useEffect(() => {
     if (activeTab === "agents") setPageAgents(1);
     if (activeTab === "clients") setPageClients(1);
@@ -82,7 +74,7 @@ export default function AdminPendingAccounts() {
     try {
       setLoading(true);
       await adminSvc.approveAgent(agentId);
-      await loadData(); // Recharger les données
+      await loadData();
     } catch (err) {
       setError("Erreur lors de l'approbation de l'agent");
       console.error("Erreur:", err);
@@ -95,7 +87,7 @@ export default function AdminPendingAccounts() {
     try {
       setLoading(true);
       await adminSvc.approveClient(clientId);
-      await loadData(); // Recharger les données
+      await loadData();
     } catch (err) {
       setError("Erreur lors de l'approbation du client");
       console.error("Erreur:", err);
@@ -110,7 +102,7 @@ export default function AdminPendingAccounts() {
     try {
       setLoading(true);
       await adminSvc.rejectAgent(agentId);
-      await loadData(); // Recharger les données
+      await loadData();
     } catch (err) {
       setError("Erreur lors du rejet de l'agent");
       console.error("Erreur:", err);
@@ -125,7 +117,7 @@ export default function AdminPendingAccounts() {
     try {
       setLoading(true);
       await adminSvc.rejectClient(clientId);
-      await loadData(); // Recharger les données
+      await loadData();
     } catch (err) {
       setError("Erreur lors du rejet du client");
       console.error("Erreur:", err);
@@ -164,7 +156,7 @@ export default function AdminPendingAccounts() {
         </div>
       )}
 
-      {/* Filtres */}
+      {}
       <div className="filters-section">
         <div className="filter-group">
           <label>🔍 Filtre par statut :</label>
@@ -184,7 +176,7 @@ export default function AdminPendingAccounts() {
         </div>
       </div>
 
-      {/* Onglets */}
+      {}
       <div className="tabs-container">
         <button
           className={`tab-button ${activeTab === "agents" ? "active" : ""}`}
@@ -200,7 +192,7 @@ export default function AdminPendingAccounts() {
         </button>
       </div>
 
-      {/* Contenu des onglets */}
+      {}
       <div className="tab-content">
         {loading ? (
           <div className="loading-overlay">
@@ -208,7 +200,7 @@ export default function AdminPendingAccounts() {
           </div>
         ) : (
           <>
-            {/* Onglet Agents */}
+            {}
             {activeTab === "agents" && (
               <div className="agents-section">
                 {pagedAgents.length === 0 ? (
@@ -262,7 +254,7 @@ export default function AdminPendingAccounts() {
                   </div>
                 )}
 
-                {/* Pagination Agents */}
+                {}
                 {activeTab === "agents" && filteredAgents.length > PAGE_SIZE && (
                   <div className="pagination">
                     <button 
@@ -287,7 +279,7 @@ export default function AdminPendingAccounts() {
               </div>
             )}
 
-            {/* Onglet Clients */}
+            {}
             {activeTab === "clients" && (
               <div className="clients-section">
                 {pagedClients.length === 0 ? (
@@ -348,7 +340,7 @@ export default function AdminPendingAccounts() {
                   </div>
                 )}
 
-                {/* Pagination Clients */}
+                {}
                 {activeTab === "clients" && filteredClients.length > PAGE_SIZE && (
                   <div className="pagination">
                     <button 

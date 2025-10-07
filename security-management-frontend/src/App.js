@@ -7,50 +7,42 @@ import "./styles/Layout.css";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AppLayout from "./components/layout/AppLayout";
 
-/* ───── Pages publiques / Auth ───── */
 import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import Unauthorized from "./pages/Unauthorized";
 
-/* 🔹 Pages d'inscription (agent + client + sélecteur) */
 import RegisterChooserPage from "./pages/RegisterChooserPage";
 import RegisterClientPage from "./pages/RegisterClientPage";
 import RegisterAgentPage from "./pages/RegisterAgentPage";
 
-/* Vérification email + reset mdp */
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import VerifyEmailCodePage from "./pages/VerifyEmailCodePage";
 import VerifyEmailResendPage from "./pages/VerifyEmailResendPage";
 import PasswordResetRequestPage from "./pages/PasswordResetRequestPage";
 import PasswordResetConfirmPage from "./pages/PasswordResetConfirmPage";
 
-/* ───── Pointages ───── */
 import PointageList from "./components/pointages/PointageList";
 import PointageForm from "./components/pointages/PointageForm";
 import PointageDetail from "./components/pointages/PointageDetail";
 
-/* ───── Agents ───── */
 import AgentList from "./components/agents/AgentList";
 import AgentCreate from "./components/agents/CreateAgent";
 import AgentEdit from "./components/agents/EditAgent";
 import AgentDetail from "./components/agents/AgentDetail";
 import DeleteAgent from "./components/agents/DeleteAgent";
 
-/* ───── Entreprises ───── */
 import EntrepriseList from "./components/entreprises/EntrepriseList";
 import CreateEntreprise from "./components/entreprises/CreateEntreprise";
 import EditEntreprise from "./components/entreprises/EditEntreprise";
 import EntrepriseDetail from "./components/entreprises/EntrepriseDetail";
 import DeleteEntreprise from "./components/entreprises/DeleteEntreprise";
 
-/* ───── Géolocalisations ───── */
 import GeolocalisationList from "./components/geolocalisations/GeolocalisationList";
 import CreateGeolocalisation from "./components/geolocalisations/CreateGeolocalisation";
 import EditGeolocalisation from "./components/geolocalisations/EditGeolocalisation";
 import GeolocalisationDetail from "./components/geolocalisations/GeolocalisationDetail";
 import DeleteGeolocalisation from "./components/geolocalisations/DeleteGeolocalisation";
 
-/* ───── Missions ───── */
 import MissionList from "./components/missions/MissionList";
 import CreateMission from "./components/missions/CreateMission";
 import EditMission from "./components/missions/EditMission";
@@ -58,76 +50,64 @@ import MissionDetail from "./components/missions/MissionDetail";
 import DeleteMission from "./components/missions/DeleteMission";
 import AssignMissionRelations from "./components/missions/AssignMissionRelations";
 
-/* ───── Plannings ───── */
 import PlanningList from "./components/plannings/PlanningList";
 import CreatePlanning from "./components/plannings/CreatePlanning";
 import EditPlanning from "./components/plannings/EditPlanning";
 import PlanningDetail from "./components/plannings/PlanningDetail";
 import DeletePlanning from "./components/plannings/DeletePlanning";
 
-/* ───── Sites ───── */
 import SiteList from "./components/sites/SiteList";
 import CreateSite from "./components/sites/CreateSite";
 import EditSite from "./components/sites/EditSite";
 import SiteDetail from "./components/sites/SiteDetail";
 import DeleteSite from "./components/sites/DeleteSite";
 
-/* ───── Rapports ───── */
 import RapportList from "./components/rapports/RapportList";
 import CreateRapport from "./components/rapports/CreateRapport";
 import EditRapport from "./components/rapports/EditRapport";
 import RapportDetail from "./components/rapports/RapportDetail";
 import DeleteRapport from "./components/rapports/DeleteRapport";
 
-/* ───── Clients ───── */
 import ClientList from "./components/clients/ClientList";
 import CreateClient from "./components/clients/CreateClient";
 import EditClient from "./components/clients/EditClient";
 import ClientDetail from "./components/clients/ClientDetail";
 import DeleteClient from "./components/clients/DeleteClient";
 
-/* ───── Articles ───── */
 import ArticleList from "./components/articles/ArticleList";
 import CreateArticle from "./components/articles/CreateArticle";
 import EditArticle from "./components/articles/EditArticle";
 import ArticleDetail from "./components/articles/ArticleDetail";
 
-/* ───── Zones ───── */
 import ZoneList from "./components/zones/ZoneList";
 import ZoneCreate from "./components/zones/ZoneCreate";
 import ZoneEdit from "./components/zones/ZoneEdit";
 import ZoneDetail from "./components/zones/ZoneDetail";
 
-/* ───── Disponibilités ───── */
 import DisponibiliteList from "./components/disponibilites/DisponibiliteList";
 import DisponibiliteCreate from "./components/disponibilites/DisponibiliteCreate";
 import DisponibiliteEdit from "./components/disponibilites/DisponibiliteEdit";
 import DisponibiliteDetail from "./components/disponibilites/DisponibiliteDetail";
 
-/* ───── Cartes pro ───── */
 import CarteProList from "./components/cartesPro/CarteProList";
 import CarteProCreate from "./components/cartesPro/CarteProCreate";
 import CarteProEdit from "./components/cartesPro/CarteProEdit";
 import CarteProDetail from "./components/cartesPro/CarteProDetail";
 
-/* ───── Diplômes SSIAP ───── */
 import DiplomeList from "./components/diplomes/DiplomeList";
 import DiplomeCreate from "./components/diplomes/DiplomeCreate";
 import DiplomeEdit from "./components/diplomes/DiplomeEdit";
 import DiplomeDetail from "./components/diplomes/DiplomeDetail";
 
-/* ───── Notifications ───── */
 import NotificationList from "./components/notifications/NotificationList";
 import NotificationCreate from "./components/notifications/NotificationCreate";
 import NotificationEdit from "./components/notifications/NotificationEdit";
 
-/* ───── Contrats de travail ───── */
 import ContratDeTravailList from "./components/contrats-de-travail/ContratDeTravailList";
 import ContratDeTravailCreate from "./components/contrats-de-travail/ContratDeTravailCreate";
 import ContratDeTravailEdit from "./components/contrats-de-travail/ContratDeTravailEdit";
 import ContratDeTravailDetail from "./components/contrats-de-travail/ContratDeTravailDetail";
 
-/* ───── Devis / Factures / Fiches paie / Articles contrat ───── */
 import DevisList from "./components/devis/DevisList";
 import DevisForm from "./components/devis/DevisForm";
 import DevisDetail from "./components/devis/DevisDetail";
@@ -145,13 +125,11 @@ import ArticleContratTravailList from "./components/articleContratTravails/Artic
 import ArticleContratTravailForm from "./components/articleContratTravails/ArticleContratTravailForm";
 import ArticleContratTravailView from "./components/articleContratTravails/ArticleContratTravailView";
 
-/* ───── Contrats ───── */
 import ContratList from "./components/contrats/ContratList";
 import ContratDetail from "./components/contrats/ContratDetail";
 import CreateContrat from "./components/contrats/CreateContrat";
 import EditContrat from "./components/contrats/EditContrat";
 
-/* ───── Lignes de cotisation / Tarifs ───── */
 import LigneCotisationList from "./components/lignesCotisation/LigneCotisationList";
 import LigneCotisationForm from "./components/lignesCotisation/LigneCotisationForm";
 import LigneCotisationDetail from "./components/lignesCotisation/LigneCotisationDetail";
@@ -160,7 +138,6 @@ import TarifMissionList from "./components/tarifs/TarifMissionList";
 import TarifMissionForm from "./components/tarifs/TarifMissionForm";
 import TarifMissionDetail from "./components/tarifs/TarifMissionDetail";
 
-/* ───── Admin ───── */
 import AdminPendingAccounts from "./pages/AdminPendingAccounts";
 import AdminUserManagement from "./pages/AdminUserManagement";
 
@@ -170,60 +147,60 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirection racine */}
+        {}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* ───────── Routes publiques ───────── */}
+        {}
         <Route path="/login" element={<LoginPage />} />
-        {/* Sélecteur d’inscription + déclinaisons */}
+        {}
         <Route path="/register" element={<RegisterChooserPage />} />
         <Route path="/register/agent" element={<RegisterAgentPage />} />
         <Route path="/register/client" element={<RegisterClientPage />} />
 
-        {/* Vérification email */}
+        {}
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/verify-email/code" element={<VerifyEmailCodePage />} />
         <Route path="/verify-email/resend" element={<VerifyEmailResendPage />} />
 
-        {/* Mot de passe oublié */}
+        {}
         <Route path="/password-reset/request" element={<PasswordResetRequestPage />} />
         <Route path="/password-reset/confirm" element={<PasswordResetConfirmPage />} />
 
         <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* ───────── Routes protégées ───────── */}
+        {}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route path="/home" element={<Home />} />
 
-            {/* Zone Admin uniquement */}
+            {}
             <Route element={<ProtectedRoute roles={['ADMIN']} />}>
               <Route path="/admin/pending-accounts" element={<AdminPendingAccounts />} />
               <Route path="/admin/users" element={<AdminUserManagement />} />
             </Route>
 
-            {/* Agents */}
+            {}
             <Route path="/agents" element={<AgentList />} />
             <Route path="/agents/create" element={<AgentCreate />} />
             <Route path="/agents/edit/:id" element={<AgentEdit />} />
             <Route path="/agents/delete/:id" element={<DeleteAgent />} />
             <Route path="/agents/:id" element={<AgentDetail />} />
 
-            {/* Entreprises */}
+            {}
             <Route path="/entreprises" element={<EntrepriseList />} />
             <Route path="/entreprises/create" element={<CreateEntreprise />} />
             <Route path="/entreprises/edit/:id" element={<EditEntreprise />} />
             <Route path="/entreprises/delete/:id" element={<DeleteEntreprise />} />
             <Route path="/entreprises/:id" element={<EntrepriseDetail />} />
 
-            {/* Géolocalisations */}
+            {}
             <Route path="/geolocalisations" element={<GeolocalisationList />} />
             <Route path="/geolocalisations/create" element={<CreateGeolocalisation />} />
             <Route path="/geolocalisations/edit/:id" element={<EditGeolocalisation />} />
             <Route path="/geolocalisations/delete/:id" element={<DeleteGeolocalisation />} />
             <Route path="/geolocalisations/:id" element={<GeolocalisationDetail />} />
 
-            {/* Missions */}
+            {}
             <Route path="/missions" element={<MissionList />} />
             <Route path="/missions/create" element={<CreateMission />} />
             <Route path="/missions/edit/:id" element={<EditMission />} />
@@ -231,82 +208,82 @@ export default function App() {
             <Route path="/missions/:id" element={<MissionDetail />} />
             <Route path="/missions/:id/assign" element={<AssignMissionRelations />} />
 
-            {/* Plannings */}
+            {}
             <Route path="/plannings" element={<PlanningList />} />
             <Route path="/plannings/create" element={<CreatePlanning />} />
             <Route path="/plannings/edit/:id" element={<EditPlanning />} />
             <Route path="/plannings/delete/:id" element={<DeletePlanning />} />
             <Route path="/plannings/:id" element={<PlanningDetail />} />
 
-            {/* Sites */}
+            {}
             <Route path="/sites" element={<SiteList />} />
             <Route path="/sites/create" element={<CreateSite />} />
             <Route path="/sites/edit/:id" element={<EditSite />} />
             <Route path="/sites/delete/:id" element={<DeleteSite />} />
             <Route path="/sites/:id" element={<SiteDetail />} />
 
-            {/* Pointages */}
+            {}
             <Route path="/pointages" element={<PointageList />} />
             <Route path="/pointages/create" element={<PointageForm />} />
             <Route path="/pointages/edit/:id" element={<PointageForm />} />
             <Route path="/pointages/:id" element={<PointageDetail />} />
 
-            {/* Rapports */}
+            {}
             <Route path="/rapports" element={<RapportList />} />
             <Route path="/rapports/create" element={<CreateRapport />} />
             <Route path="/rapports/edit/:id" element={<EditRapport />} />
             <Route path="/rapports/delete/:id" element={<DeleteRapport />} />
             <Route path="/rapports/:id" element={<RapportDetail />} />
 
-            {/* Clients */}
+            {}
             <Route path="/clients" element={<ClientList />} />
             <Route path="/clients/create" element={<CreateClient />} />
             <Route path="/clients/edit/:id" element={<EditClient />} />
             <Route path="/clients/delete/:id" element={<DeleteClient />} />
             <Route path="/clients/:id" element={<ClientDetail />} />
 
-            {/* Articles */}
+            {}
             <Route path="/articles" element={<ArticleList />} />
             <Route path="/articles/create" element={<CreateArticle />} />
             <Route path="/articles/edit/:id" element={<EditArticle />} />
             <Route path="/articles/:id" element={<ArticleDetail />} />
 
-            {/* Zones */}
+            {}
             <Route path="/zones" element={<ZoneList />} />
             <Route path="/zones/create" element={<ZoneCreate />} />
             <Route path="/zones/edit/:id" element={<ZoneEdit />} />
             <Route path="/zones/:id" element={<ZoneDetail />} />
 
-            {/* Disponibilités */}
+            {}
             <Route path="/disponibilites" element={<DisponibiliteList />} />
             <Route path="/disponibilites/create" element={<DisponibiliteCreate />} />
             <Route path="/disponibilites/edit/:id" element={<DisponibiliteEdit />} />
             <Route path="/disponibilites/:id" element={<DisponibiliteDetail />} />
 
-            {/* Cartes Pro */}
+            {}
             <Route path="/cartes-professionnelles" element={<CarteProList />} />
             <Route path="/cartes-professionnelles/create" element={<CarteProCreate />} />
             <Route path="/cartes-professionnelles/edit/:id" element={<CarteProEdit />} />
             <Route path="/cartes-professionnelles/:id" element={<CarteProDetail />} />
 
-            {/* Diplômes */}
+            {}
             <Route path="/diplomes-ssiap" element={<DiplomeList />} />
             <Route path="/diplomes-ssiap/create" element={<DiplomeCreate />} />
             <Route path="/diplomes-ssiap/edit/:id" element={<DiplomeEdit />} />
             <Route path="/diplomes-ssiap/:id" element={<DiplomeDetail />} />
 
-            {/* Notifications */}
+            {}
             <Route path="/notifications" element={<NotificationList />} />
             <Route path="/notifications/create" element={<NotificationCreate />} />
             <Route path="/notifications/edit/:id" element={<NotificationEdit />} />
 
-            {/* Contrats de travail */}
+            {}
             <Route path="/contrats-de-travail" element={<ContratDeTravailList />} />
             <Route path="/contrats-de-travail/create" element={<ContratDeTravailCreate />} />
             <Route path="/contrats-de-travail/edit/:id" element={<ContratDeTravailEdit />} />
             <Route path="/contrats-de-travail/:id" element={<ContratDeTravailDetail />} />
 
-            {/* Devis / Factures / Fiches / Contrats */}
+            {}
             <Route path="/devis" element={<DevisList />} />
             <Route path="/devis/create" element={<DevisForm />} />
             <Route path="/devis/edit/:id" element={<DevisForm />} />
@@ -333,7 +310,7 @@ export default function App() {
             <Route path="/contrats/:id" element={<ContratDetail />} />
             <Route path="/contrats" element={<ContratList />} />
 
-            {/* Lignes de cotisation / Tarifs */}
+            {}
             <Route path="/lignes-cotisation" element={<LigneCotisationList />} />
             <Route path="/lignes-cotisation/create" element={<LigneCotisationForm />} />
             <Route path="/lignes-cotisation/edit/:id" element={<LigneCotisationForm />} />
@@ -346,7 +323,7 @@ export default function App() {
           </Route>
         </Route>
 
-        {/* Fallback */}
+        {}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

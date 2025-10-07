@@ -11,9 +11,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Représente la facture générée pour un client, à partir d'un devis.
- */
 @Entity
 @Table(name = "factures")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
@@ -30,7 +27,7 @@ public class Facture {
     private LocalDate dateEmission;
 
     @Enumerated(EnumType.STRING)
-    private StatutFacture statut; // EN_ATTENTE, PAYÉE, EN_RETARD, etc.
+    private StatutFacture statut;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal montantHT;
@@ -40,8 +37,6 @@ public class Facture {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal montantTTC;
-
-    // === Liaisons ===
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "devis_id")
@@ -55,9 +50,6 @@ public class Facture {
     @JoinColumn(name = "client_id")
     private Client client;
 
-
-
-    // Si tu veux rattacher plusieurs missions facturées
     @ManyToMany
     @JoinTable(
             name = "facture_missions",
@@ -66,6 +58,5 @@ public class Facture {
     )
     @Builder.Default
     private List<Mission> missions = new ArrayList<>();
-
 
 }

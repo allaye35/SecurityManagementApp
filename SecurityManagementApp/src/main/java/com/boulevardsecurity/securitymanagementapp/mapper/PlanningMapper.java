@@ -16,7 +16,6 @@ public class PlanningMapper {
 
     private final MissionRepository missionRepo;
 
-    /** ENTITÉ → DTO (lecture) */
     public PlanningDto toDto(Planning entity) {
         return PlanningDto.builder()
                 .id(entity.getId())
@@ -28,7 +27,6 @@ public class PlanningMapper {
                 .build();
     }
 
-    /** DTO de création → ENTITÉ */
     public Planning toEntity(PlanningCreateDto dto) {
         Planning p = Planning.builder().build();
         if (dto.getMissionIds() != null) {
@@ -41,7 +39,6 @@ public class PlanningMapper {
         return p;
     }
 
-    /** Mise à jour partielle (patch) */
     public void updateEntity(Planning entity, PlanningCreateDto dto) {
         if (dto.getMissionIds() != null) {
             entity.setMissions(dto.getMissionIds().stream()

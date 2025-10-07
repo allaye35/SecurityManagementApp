@@ -25,27 +25,23 @@ const CarteProCreate = () => {
         setIsSubmitting(true);
         
         try {
-            // S'assurer que agentId est un nombre
             const formattedData = {
                 ...data,
                 agentId: parseInt(data.agentId, 10)
             };
             
-            // Vérifier que toutes les données requises sont présentes
             if (!formattedData.agentId || isNaN(formattedData.agentId)) {
                 throw new Error("Veuillez sélectionner un agent valide");
             }
             
             const response = await CarteProService.create(formattedData);
             
-            // Afficher un toast de succès
             setToastMessage({
                 text: `Carte professionnelle ${response.data.numeroCarte || ''} créée avec succès !`,
                 variant: 'success'
             });
             setShowToast(true);
             
-            // Redirection après un court délai
             setTimeout(() => {
                 navigate("/cartes-professionnelles");
             }, 1500);
@@ -54,7 +50,6 @@ const CarteProCreate = () => {
             setError(err.response?.data?.message || err.message || "Échec de la création de la carte professionnelle");
             setIsSubmitting(false);
             
-            // Afficher un toast d'erreur
             setToastMessage({
                 text: "Erreur lors de la création de la carte professionnelle",
                 variant: 'danger'

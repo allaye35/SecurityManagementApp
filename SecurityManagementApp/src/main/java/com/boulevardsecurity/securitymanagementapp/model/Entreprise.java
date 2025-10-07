@@ -11,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "entreprises")
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
@@ -27,23 +26,20 @@ public class Entreprise {
 
     @Column(nullable = false, unique = true)
     private String nom;
-    // ==== Informations Prestataire ====
-    private String siretPrestataire;        // ex: "521 478 800"
-    private String representantPrestataire; // ex: "Madame Yolande Kamal"
+    private String siretPrestataire;
+    private String representantPrestataire;
 
     private String numeroRue;
-    private String rue;         // ex. "Cas du Vauniel"
+    private String rue;
     private String codePostal;
     private String ville;
     private String pays;
-
 
     @Column(nullable = false, unique = true)
     private String telephone;
 
     private String email;
 
-    // Relation avec les devis (OPTIONNEL : si tu veux stocker quel devis a été fait par quelle entreprise)
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<Devis> devisList = new ArrayList<>();
@@ -51,7 +47,6 @@ public class Entreprise {
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<ContratDeTravail> contratsDeTravail = new ArrayList<>();
-
 
             ;
 }

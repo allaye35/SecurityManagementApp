@@ -13,7 +13,6 @@ public class DiplomeSsiapMapper {
 
     private final AgentDeSecuriteRepository agentRepo;
 
-    /** ENTITÉ → DTO */
     public DiplomeSsiapDto toDto(DiplomeSSIAP d) {
         return DiplomeSsiapDto.builder()
                 .id(d.getId())
@@ -26,7 +25,6 @@ public class DiplomeSsiapMapper {
                 .build();
     }
 
-    /** DTO de création → ENTITÉ */
     public DiplomeSSIAP toEntity(DiplomeSsiapCreationDto dto) {
         DiplomeSSIAP ent = DiplomeSSIAP.builder()
                 .niveau(dto.getNiveau())
@@ -34,7 +32,6 @@ public class DiplomeSsiapMapper {
                 .dateExpiration(dto.getDateExpiration())
                 .build();
 
-        // affectation de l'agent
         ent.setAgentDeSecurite(
                 agentRepo.findById(dto.getAgentId())
                         .orElseThrow(() -> new IllegalArgumentException(
@@ -43,7 +40,6 @@ public class DiplomeSsiapMapper {
         return ent;
     }
 
-    /** Mise à jour partielle d’une ENTITÉ existante à partir d’un DTO */
     public void updateEntityFromDto(DiplomeSsiapDto dto, DiplomeSSIAP ent) {
         if (dto.getNiveau() != null) {
             ent.setNiveau(dto.getNiveau());

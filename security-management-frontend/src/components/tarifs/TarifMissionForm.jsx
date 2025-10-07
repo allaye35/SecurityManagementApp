@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEuroSign, faPercent, faSave, faArrowLeft, faPlus, faMinus, faMoon, faCalendarWeek, faCalendarDay, faCalendarCheck, faList } from "@fortawesome/free-solid-svg-icons";
 import "../../styles/TarifMissionFormV2.css";
 
-// ⚠️ Liste exacte validée avec les types autorisés par le backend
 const TYPE_MISSIONS = [
     "GARDE_DU_CORPS",
     "SECURITE_EVENEMENTIELLE",
@@ -41,11 +40,10 @@ export default function TarifMissionForm() {
     const [allMissions, setAllMissions] = useState([]);
     const [missionsLoading, setMissionsLoading] = useState(false);
     const [selectedMissions, setSelectedMissions] = useState([]);
-    const [affichageTTC, setAffichageTTC] = useState(false);    // Charger les données initiales (tarif et missions)
+    const [affichageTTC, setAffichageTTC] = useState(false);
     useEffect(() => {
         setLoading(true);
 
-        // Récupérer toutes les missions disponibles
         setMissionsLoading(true);
         MissionService.getAllMissions()
             .then(({ data }) => {
@@ -57,7 +55,6 @@ export default function TarifMissionForm() {
                 setMissionsLoading(false);
             });
 
-        // Si en mode édition, charger le tarif existant
         if (isEdit) {
             TarifMissionService.getById(id)
                 .then(({ data }) => {
@@ -72,7 +69,6 @@ export default function TarifMissionForm() {
                         missionIds:      data.missionIds || []
                     });
                     
-                    // Si le tarif a des missions associées, les marquer comme sélectionnées
                     if (data.missionIds && data.missionIds.length > 0) {
                         setSelectedMissions(data.missionIds);
                     }
@@ -83,7 +79,6 @@ export default function TarifMissionForm() {
                     setLoading(false);
                 });
         } else {
-            // En mode création, initialiser avec des valeurs par défaut
             setDto(prev => ({
                 ...prev,
                 majorationNuit: 0,
@@ -99,7 +94,6 @@ export default function TarifMissionForm() {
         setDto(d => ({ ...d, [name]: value }));
     };
     
-    // Basculer une mission comme sélectionnée ou non
     const toggleMissionSelection = (missionId) => {
         if (selectedMissions.includes(missionId)) {
             setSelectedMissions(selectedMissions.filter(id => id !== missionId));
@@ -108,14 +102,12 @@ export default function TarifMissionForm() {
         }
     };
     
-    // Calculer le prix TTC à partir du prix HT et de la TVA
     const calculerPrixTTC = () => {
         if (!dto.prixUnitaireHT || !dto.tauxTVA) return "";
         const prixTTC = Number(dto.prixUnitaireHT) * (1 + Number(dto.tauxTVA) / 100);
         return prixTTC.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
     };
     
-    // Calculer le prix avec majoration
     const calculerPrixMajore = (majoration) => {
         if (!dto.prixUnitaireHT || majoration === undefined) return "";
         const prixMajore = Number(dto.prixUnitaireHT) * (1 + Number(majoration) / 100);
@@ -125,7 +117,6 @@ export default function TarifMissionForm() {
         setError("");
         setLoading(true);
         
-        // Vérification préalable des données
         if (isNaN(dto.prixUnitaireHT) || dto.prixUnitaireHT <= 0) {
             setError("Le prix unitaire HT doit être un nombre positif");
             setLoading(false);
@@ -154,24 +145,19 @@ export default function TarifMissionForm() {
                 navigate("/tarifs");
             })            .catch(err => {
                 console.error("Erreur détaillée:", err);
-                // Vérifier si la réponse d'erreur est un objet et extraire un message convivial
                 let errorMessage = "Erreur lors de l'enregistrement du tarif";
                 
                 if (err.response) {
                     if (typeof err.response.data === 'object') {
-                        // Traitement spécial pour les erreurs d'enum TypeMission
                         if (err.response.data.message && err.response.data.message.includes("TypeMission")) {
                             errorMessage = "Type de mission invalide. Veuillez en sélectionner un dans la liste déroulante.";
                         } 
-                        // Traitement pour les autres erreurs de validation
                         else if (err.response.data.message) {
                             errorMessage = err.response.data.message;
-                            // Rendre le message plus convivial
                             errorMessage = errorMessage
                                 .replace(/JSON parse error: /g, "")
                                 .replace(/Cannot deserialize value of type/g, "Impossible de traiter la valeur");
                         } else {
-                            // Fallback pour les autres erreurs
                             errorMessage = JSON.stringify(err.response.data);
                         }
                     } else if (err.response.data) {

@@ -17,40 +17,33 @@ import { useAuth } from "../../context/AuthContext";
 import "../../styles/ClientList.css";
 
 export default function ClientList() {
-  /* ─── context ──────────────────────────────────────────── */
+  
   const { user } = useAuth();
   const isAdmin = user && user.role === 'ADMIN';
 
-  /* ─── state ────────────────────────────────────────────── */
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   
-  // Filtres et tri
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState('id');
   const [sortDirection, setSortDirection] = useState('asc');
   const [filterType, setFilterType] = useState('');
-  const [filterStatus, setFilterStatus] = useState(''); // Nouveau filtre pour le statut
+  const [filterStatus, setFilterStatus] = useState('');
   const [clientTypes, setClientTypes] = useState([]);
-  const [pendingCount, setPendingCount] = useState(0); // Compteur des comptes en attente
+  const [pendingCount, setPendingCount] = useState(0);
 
-  /* ─── fetch data with pagination ───────────────────────── */
   useEffect(() => {
-    let mounted = true;                         // évite le setState après un unmount
+    let mounted = true;
     setLoading(true);
-      // Dans un environnement réel, l'API devrait supporter la pagination côté serveur
-    // Ici, nous simulons avec une gestion côté client
     ClientService.getAll()
       .then(response => {
         const allClients = response.data;
         if (mounted) {
-          // Extraire les types de clients uniques pour le filtre
           const types = new Set();
           console.log("Clients reçus:", allClients);
           allClients.forEach(client => {
@@ -61,16 +54,13 @@ export default function ClientList() {
           });
           setClientTypes(Array.from(types));
           
-          // Calculer le nombre de comptes en attente
           const pendingClients = allClients.filter(client => 
             client.accountValidated === false || client.accountValidated === undefined
           );
           setPendingCount(pendingClients.length);
           
-          // Appliquer les filtres et le tri
           let filteredClients = applyFiltersAndSort(allClients);
           setTotalItems(filteredClients.length);
-          // Pagination
           const indexOfLastItem = currentPage * itemsPerPage;
           const indexOfFirstItem = indexOfLastItem - itemsPerPage;
           const currentItems = filteredClients.slice(indexOfFirstItem, indexOfLastItem);
@@ -86,14 +76,11 @@ export default function ClientList() {
         }
       });
 
-    return () => (mounted = false);             // clean up
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => (mounted = false);
   }, [currentPage, itemsPerPage, searchTerm, sortField, sortDirection, filterType, filterStatus]);
-  // Fonction pour normaliser les données des clients
   const normalizeClientData = (client) => {
     return {
       ...client,
-      // Ajouter des valeurs par défaut pour les champs qui pourraient être undefined
       id: client.id,
       nom: client.nom || '',
       prenom: client.prenom || '',
@@ -111,18 +98,14 @@ export default function ClientList() {
       numeroSiret: client.numeroSiret || '',
       modeContactPrefere: client.modeContactPrefere || '',
       username: client.username || '',
-      // Correction: utiliser le bon champ du backend
       accountValidated: client.adminApproved === true,
       emailVerified: client.emailVerified === true
     };
   };
 
-  // Fonction utilitaire pour appliquer les filtres et le tri
   const applyFiltersAndSort = (clientsList) => {
-    // Normaliser les données avant de les utiliser
     let result = clientsList.map(client => normalizeClientData(client));
     
-    // Filtrage par terme de recherche
     if (searchTerm) {
       result = result.filter(client => 
         client.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -133,12 +116,10 @@ export default function ClientList() {
       );
     }
     
-    // Filtrage par type
     if (filterType) {
       result = result.filter(client => client.typeClient === filterType);
     }
     
-    // Filtrage par statut de validation
     if (filterStatus) {
       if (filterStatus === 'validated') {
         result = result.filter(client => client.accountValidated === true);
@@ -147,7 +128,6 @@ export default function ClientList() {
       }
     }
     
-    // Tri
     result.sort((a, b) => {
       const aValue = a[sortField] || '';
       const bValue = b[sortField] || '';
@@ -166,30 +146,24 @@ export default function ClientList() {
     return result;
   };
 
-  /* ─── delete one client ───────────────────────────────── */
   const handleDelete = async id => {
     if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) return;
     try {
       setLoading(true);
       await ClientService.delete(id);
-        // Rafraîchir la liste après suppression
       ClientService.getAll()
         .then(response => {
           const allClients = response.data;
-                    // Re-appliquer les filtres et tri
           let filteredClients = applyFiltersAndSort(allClients);
           
-          // Calculer le nombre de comptes en attente
           const pendingClients = allClients.filter(client => 
             client.accountValidated === false || client.accountValidated === undefined
           );
           setPendingCount(pendingClients.length);
           
-          // Ajuster la page courante si nécessaire
           const maxPage = Math.ceil(filteredClients.length / itemsPerPage);
           const newCurrentPage = currentPage > maxPage ? maxPage || 1 : currentPage;
           
-          // Appliquer la pagination
           const indexOfLastItem = newCurrentPage * itemsPerPage;
           const indexOfFirstItem = indexOfLastItem - itemsPerPage;
           const currentItems = filteredClients.slice(indexOfFirstItem, indexOfLastItem);
@@ -210,8 +184,7 @@ export default function ClientList() {
       setLoading(false);
     }
   };
-  
-  /* ─── validate client account ──────────────────────────── */
+
   const handleValidateAccount = async (clientId, clientName) => {
     if (!window.confirm(`Êtes-vous sûr de vouloir valider le compte de ${clientName} ?`)) return;
     
@@ -219,12 +192,10 @@ export default function ClientList() {
       setLoading(true);
       await adminAccountsService.approveClient(clientId);
       
-      // Rafraîchir la liste après validation
       ClientService.getAll()
         .then(response => {
           const allClients = response.data;
           if (allClients) {
-            // Extraire les types de clients uniques pour le filtre
             const types = new Set();
             allClients.forEach(client => {
               if (client.typeClient) {
@@ -233,17 +204,14 @@ export default function ClientList() {
             });
             setClientTypes(Array.from(types));
             
-            // Calculer le nombre de comptes en attente
             const pendingClients = allClients.filter(client => 
               client.accountValidated === false || client.accountValidated === undefined
             );
             setPendingCount(pendingClients.length);
             
-            // Appliquer les filtres et le tri
             let filteredClients = applyFiltersAndSort(allClients);
             setTotalItems(filteredClients.length);
             
-            // Pagination
             const indexOfLastItem = currentPage * itemsPerPage;
             const indexOfFirstItem = indexOfLastItem - itemsPerPage;
             const currentItems = filteredClients.slice(indexOfFirstItem, indexOfLastItem);
@@ -251,7 +219,6 @@ export default function ClientList() {
             setClients(currentItems);
             setLoading(false);
             
-            // Message de succès (optionnel)
             alert(`Le compte de ${clientName} a été validé avec succès !`);
           }
         })
@@ -268,8 +235,7 @@ export default function ClientList() {
       alert("Erreur lors de la validation du compte. Veuillez réessayer.");
     }
   };
-  
-  /* ─── change client role ───────────────────────────────── */
+
   const handleChangeRole = async (clientId, clientName, newRole) => {
     if (!window.confirm(`Êtes-vous sûr de vouloir changer le rôle de ${clientName} vers ${newRole} ?`)) return;
     
@@ -277,17 +243,14 @@ export default function ClientList() {
       setLoading(true);
       console.log(`Tentative de changement de rôle pour le client ${clientId} vers ${newRole}`);
       
-      // Utiliser le nouvel endpoint spécialisé pour éviter les problèmes de lazy loading
       console.log("Envoi de la mise à jour du rôle...");
       await adminAccountsService.changeClientRole(clientId, newRole);
       console.log("Mise à jour réussie !");
       
-      // Rafraîchir la liste après modification
       const allClientsResponse = await ClientService.getAll();
       const allClients = allClientsResponse.data;
       
       if (allClients) {
-        // Extraire les types de clients uniques pour le filtre
         const types = new Set();
         allClients.forEach(client => {
           if (client.typeClient) {
@@ -296,17 +259,14 @@ export default function ClientList() {
         });
         setClientTypes(Array.from(types));
         
-        // Calculer le nombre de comptes en attente
         const pendingClients = allClients.filter(client => 
           client.adminApproved === false || client.adminApproved === undefined
         );
         setPendingCount(pendingClients.length);
         
-        // Appliquer les filtres et le tri
         let filteredClients = applyFiltersAndSort(allClients);
         setTotalItems(filteredClients.length);
         
-        // Pagination
         const indexOfLastItem = currentPage * itemsPerPage;
         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
         const currentItems = filteredClients.slice(indexOfFirstItem, indexOfLastItem);
@@ -323,7 +283,6 @@ export default function ClientList() {
       console.error("Response status:", err.response?.status);
       console.error("Response headers:", err.response?.headers);
       
-      // Message d'erreur plus spécifique selon le type d'erreur
       let errorMessage = "Une erreur s'est produite lors du changement de rôle.";
       if (err.response) {
         switch (err.response.status) {
@@ -349,30 +308,25 @@ export default function ClientList() {
     }
   };
   
-  // Gestion du changement de page
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
   
-  // Gestion du changement d'éléments par page
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
-    setCurrentPage(1); // Retour à la première page
+    setCurrentPage(1);
   };
   
-  // Gestion du tri
   const handleSort = (field) => {
     const newDirection = sortField === field && sortDirection === 'asc' ? 'desc' : 'asc';
     setSortField(field);
     setSortDirection(newDirection);
   };
-    // Gestion de la recherche
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Retour à la première page
+    setCurrentPage(1);
   };
   
-  // Réinitialiser les filtres
   const handleResetFilters = () => {
     setSearchTerm('');
     setFilterType('');
@@ -382,12 +336,10 @@ export default function ClientList() {
     setCurrentPage(1);
   };
   
-  // Afficher le console.log pour le débogage
   useEffect(() => {
     console.log("État actuel des clients:", clients);
   }, [clients]);
   
-  // Fonction pour afficher l'icône de tri appropriée
   const renderSortIcon = (field) => {
     if (sortField !== field) {
       return <FontAwesomeIcon icon={faSort} className="ms-1 text-muted" />;
@@ -397,12 +349,10 @@ export default function ClientList() {
       : <FontAwesomeIcon icon={faSortDown} className="ms-1 text-primary" />;
   };
   
-  // Générer les items de pagination
   const renderPaginationItems = () => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     let items = [];
     
-    // Ajouter "Premier" et "Précédent"
     items.push(
       <Pagination.First 
         key="first" 
@@ -418,7 +368,6 @@ export default function ClientList() {
       />
     );
     
-    // Limiter le nombre de pages affichées
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, startPage + 4);
     
@@ -426,7 +375,6 @@ export default function ClientList() {
       startPage = Math.max(1, endPage - 4);
     }
     
-    // Première page
     if (startPage > 1) {
       items.push(
         <Pagination.Item key={1} onClick={() => handlePageChange(1)}>
@@ -438,7 +386,6 @@ export default function ClientList() {
       }
     }
     
-    // Pages centrales
     for (let i = startPage; i <= endPage; i++) {
       items.push(
         <Pagination.Item 
@@ -451,7 +398,6 @@ export default function ClientList() {
       );
     }
     
-    // Dernière page
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         items.push(<Pagination.Ellipsis key="ellipsis2" />);
@@ -466,7 +412,6 @@ export default function ClientList() {
       );
     }
     
-    // Ajouter "Suivant" et "Dernier"
     items.push(
       <Pagination.Next 
         key="next" 
@@ -485,7 +430,6 @@ export default function ClientList() {
     return items;
   };
 
-  /* ─── UI states ───────────────────────────────────────── */
   if (loading) {
     return (
       <Container className="my-5 text-center">
@@ -539,7 +483,6 @@ export default function ClientList() {
     );
   }
 
-  /* ─── render table ─────────────────────────────────────── */
   return (
     <Container fluid className="my-5">
       <Card className="shadow-sm border-0">
@@ -592,7 +535,7 @@ export default function ClientList() {
             </div>
           </Card.Title>
           
-          {/* Filtres et recherche */}
+          {}
           <Row className="mb-4 g-3">
             <Col md={6} lg={4}>
               <InputGroup>
@@ -672,7 +615,7 @@ export default function ClientList() {
             </Col>
           </Row>
           
-          {/* Message si aucun résultat avec les filtres */}
+          {}
           {clients.length === 0 && (searchTerm || filterType || filterStatus) && (
             <Alert variant="info">
               Aucun client ne correspond à vos critères de recherche.
@@ -686,7 +629,7 @@ export default function ClientList() {
             </Alert>
           )}
           
-          {/* Affichage de la table */}
+          {}
           {clients.length > 0 && (
             <>
               <div className="table-responsive">
@@ -801,7 +744,7 @@ export default function ClientList() {
                         </td>
                         <td>
                           <div className="d-flex justify-content-center gap-2">
-                            {/* Boutons d'action normaux */}
+                            {}
                             <Button 
                               as={Link} 
                               to={`/clients/${client.id}`}
@@ -829,7 +772,7 @@ export default function ClientList() {
                               <FontAwesomeIcon icon={faTrashAlt} />
                             </Button>
                             
-                            {/* Menu d'actions admin */}
+                            {}
                             {isAdmin && (
                               <Dropdown>
                                 <Dropdown.Toggle 
@@ -906,7 +849,7 @@ export default function ClientList() {
                 </Table>
               </div>
               
-              {/* Pagination */}
+              {}
               <Row className="mt-3">
                 <Col className="d-flex align-items-center">
                   <span className="text-muted">

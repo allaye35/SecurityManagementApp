@@ -19,7 +19,6 @@ export default function CreatePlanning() {
   const [success, setSuccess] = useState(false);
   const nav = useNavigate();
 
-  // Charger les missions disponibles
   useEffect(() => {
     setLoading(true);
     MissionService.getAllMissions()
@@ -54,7 +53,6 @@ export default function CreatePlanning() {
     setSubmitting(true);
 
     try {
-      // Créer le planning
       const planningData = { 
         dateCreation: `${date}T00:00:00`,
         description: description
@@ -63,7 +61,6 @@ export default function CreatePlanning() {
       const response = await PlanningService.createPlanning(planningData);
       const newPlanningId = response.data.id;
 
-      // Si des missions sont sélectionnées, les ajouter au planning
       if (selectedMissions.length > 0) {
         await Promise.all(
           selectedMissions.map(missionId => 
@@ -74,7 +71,6 @@ export default function CreatePlanning() {
 
       setSuccess(true);
       
-      // Rediriger après 1.5 secondes pour montrer le message de succès
       setTimeout(() => {
         nav("/plannings");
       }, 1500);

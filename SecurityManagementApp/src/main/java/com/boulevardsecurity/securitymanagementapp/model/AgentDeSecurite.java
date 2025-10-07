@@ -41,18 +41,16 @@ public class AgentDeSecurite {
     private LocalDate dateNaissance;
 
     @Enumerated(EnumType.STRING)
-    private StatutAgent statut; // EN_SERVICE, EN_CONGE, ABSENT
+    private StatutAgent statut;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Role role = Role.AGENT_SECURITE;
 
-    /* ─── Sécurité / activation ───────────────────────── */
     @Column(nullable = false)
     @Builder.Default
     private boolean emailVerified = false;
 
-    /** ➕ Validation par un administrateur (nouveau) */
     @Column(nullable = false)
     @Builder.Default
     private boolean adminApproved = false;
@@ -60,10 +58,8 @@ public class AgentDeSecurite {
     private Instant adminApprovedAt;
     private Long adminApprovedById;
 
-    /** Maj à chaque changement de mot de passe */
     private Instant passwordChangedAt;
 
-    /* ─── Relations ───────────────────────────────────── */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "agents_zones",

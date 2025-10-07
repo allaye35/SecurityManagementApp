@@ -10,5 +10,5 @@ public class DisponibiliteDto {
     private Long id;
     private Date dateDebut;
     private Date dateFin;
-    private Long agentId;        // relation vers l’agent
+    private Long agentId;
 }

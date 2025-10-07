@@ -1,6 +1,3 @@
-// -------------------------------------------------------------
-// ContratService.java
-// -------------------------------------------------------------
 package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.dto.*;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import FicheDePaieService               from "../../services/FicheDePaieService";
-import "../../styles/FicheDePaieForm.css"; // réutilise le style du form
+import "../../styles/FicheDePaieForm.css";
 
 export default function FicheDePaieDetail() {
     const { id } = useParams();

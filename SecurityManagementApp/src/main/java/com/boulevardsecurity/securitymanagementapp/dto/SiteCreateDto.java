@@ -1,14 +1,9 @@
 package com.boulevardsecurity.securitymanagementapp.dto;
 
-
 import lombok.*;
 
 import java.util.List;
 
-/**
- *  DTO utilisé pour la création / mise-à-jour partielle.
- *  L’id n’est pas envoyé, mais on peut passer la liste des missions à rattacher.
- */
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class SiteCreateDto {
 
@@ -21,6 +16,6 @@ public class SiteCreateDto {
     private String region;
     private String pays;
 
-    private List<Long> missionsIds;   // facultatif
+    private List<Long> missionsIds;
 }
 

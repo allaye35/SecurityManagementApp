@@ -27,16 +27,15 @@ import java.time.LocalDateTime;
         private String message;
 
         @Column(nullable = false)
-        private String destinataire; // Peut être l'email, le username, ou "TOUS"
+        private String destinataire;
 
         @Enumerated(EnumType.STRING)
         @Column(nullable = false)
         private TypeNotification typeNotification;
-        // Exemple: INFO, WARNING, ALERT, SUCCESS
 
         @Column(nullable = false)
         @Builder.Default
-        private boolean lu = false;  // Permet de savoir si le destinataire a lu la notification
+        private boolean lu = false;
 
         @Column(nullable = false)
         private LocalDateTime dateEnvoi;
@@ -46,7 +45,6 @@ import java.time.LocalDateTime;
             this.dateEnvoi = LocalDateTime.now();
         }
 
-        // Relation facultative : à qui est liée la notification (agent, admin, client...)
         @ManyToOne
         @JoinColumn(name = "agent_id")
         private AgentDeSecurite agentDeSecurite;
@@ -54,7 +52,6 @@ import java.time.LocalDateTime;
         @ManyToOne
         @JoinColumn(name = "client_id")
         private Client client;
-
 
     }
 

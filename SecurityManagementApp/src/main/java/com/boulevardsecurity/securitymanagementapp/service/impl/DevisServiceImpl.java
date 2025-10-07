@@ -44,7 +44,6 @@ public class DevisServiceImpl implements DevisService {
 @Transactional
 public DevisDto create(DevisCreateDto dto) {
 
-    // 1) Charger/valider les missions si fournies
     List<Mission> missions = Collections.emptyList();
     if (dto.getMissionIds() != null && !dto.getMissionIds().isEmpty()) {
         missions = missionRepo.findAllById(dto.getMissionIds());
@@ -58,13 +57,10 @@ public DevisDto create(DevisCreateDto dto) {
         }
     }
 
-    // 2) Construire le devis (sans l'enregistrer encore)
-    Devis devis = mapper.toEntity(dto); // idéalement sans attacher de missions dans le mapper
+    Devis devis = mapper.toEntity(dto);
 
-    // 3) Enregistrer le devis
     Devis saved = repo.save(devis);
 
-    // 4) Attacher les missions validées
     if (!missions.isEmpty()) {
         for (Mission m : missions) {
             m.setDevis(saved);
@@ -72,7 +68,6 @@ public DevisDto create(DevisCreateDto dto) {
         missionRepo.saveAll(missions);
     }
 
-    // 5) Recalculer les totaux et sauvegarder
     saved.recalculerTotaux();
     return mapper.toDto(repo.save(saved));
 }
@@ -84,11 +79,9 @@ public DevisDto create(DevisCreateDto dto) {
 
         mapper.updateFromCreateDto(dto, existing);
 
-        // Si missionIds est fourni dans dto, on synchronise l’association
         if (dto.getMissionIds() != null) {
             Set<Long> newIds = new HashSet<>(dto.getMissionIds());
 
-            // détacher les missions qui n'y sont plus
             List<Mission> currently = missionRepo.findAll().stream()
                     .filter(m -> m.getDevis() != null && m.getDevis().getId().equals(existing.getId()))
                     .toList();
@@ -99,7 +92,6 @@ public DevisDto create(DevisCreateDto dto) {
             }
             missionRepo.saveAll(currently);
 
-            // attacher les nouvelles
             List<Mission> toAttach = missionRepo.findAllById(newIds);
             for (Mission m : toAttach) {
                 if (m.getDevis() != null && !m.getDevis().getId().equals(existing.getId())) {
@@ -109,7 +101,6 @@ public DevisDto create(DevisCreateDto dto) {
             }
             missionRepo.saveAll(toAttach);
 
-            // maintenir la collection côté devis (si elle existe)
             if (existing.getMissions() != null) {
                 existing.getMissions().clear();
                 existing.getMissions().addAll(toAttach);
@@ -163,12 +154,10 @@ public DevisDto create(DevisCreateDto dto) {
 
     @Override
     public List<DevisDto> getDevisDisponibles() {
-        // devis sans contrat associé
         return repo.findAll().stream()
                 .filter(devis -> devis.getContrat() == null)
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    
 }

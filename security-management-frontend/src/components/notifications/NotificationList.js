@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import NotificationService from "../../services/NotificationService";
-import "../../styles/AgentList.css"; // réutilise le style de tableau
+import "../../styles/AgentList.css";
 
 const NotificationList = () => {
     const [list, setList]   = useState([]);

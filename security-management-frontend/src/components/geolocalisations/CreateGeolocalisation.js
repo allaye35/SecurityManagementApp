@@ -11,18 +11,15 @@ import {
   FaBuilding, FaArrowLeft, FaTimes, FaCheck 
 } from "react-icons/fa";
 
-// Composants React-Leaflet + L pour corriger l'icône par défaut
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
 
-// Services & styles
 import GeolocalisationService from "../../services/GeolocalisationService";
 import MissionService from "../../services/MissionService";
 import SiteService from "../../services/SiteService";
 import "../../styles/GeolocalisationForm.css";
 import "leaflet/dist/leaflet.css";
 
-// ─── Fix des icônes Leaflet pour Webpack / CRA ───────────────────────────────
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
@@ -30,7 +27,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 
-// Composant pour mettre à jour le centre de la carte automatiquement
 function MapUpdater({ center }) {
   const map = useMap();
   useEffect(() => {
@@ -42,28 +38,25 @@ function MapUpdater({ center }) {
 export default function CreateGeolocalisation() {
   const navigate = useNavigate();
 
-  // État du formulaire
   const [form, setForm] = useState({
     gpsPrecision: 5,
-    latitude: 48.8566, // Paris par défaut
+    latitude: 48.8566,
     longitude: 2.3522,
-    missionId: "", // optionnel
+    missionId: "",
   });
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [siteAddress, setSiteAddress] = useState(""); // Adresse du site de la mission
-  const [geocoding, setGeocoding] = useState(false); // État du géocodage
-  const [coordsLocked, setCoordsLocked] = useState(false); // Coordonnées verrouillées après géocodage
+  const [siteAddress, setSiteAddress] = useState("");
+  const [geocoding, setGeocoding] = useState(false);
+  const [coordsLocked, setCoordsLocked] = useState(false);
 
-  // 1) Chargement des missions pour le select
   useEffect(() => {
     MissionService.getAllMissions()
       .then(({ data }) => setMissions(data))
       .catch(() => setError("Impossible de charger la liste des missions."));
   }, []);
 
-  // 2) Lorsque l'on choisit une mission, on géocode automatiquement son adresse de site
   useEffect(() => {
     if (!form.missionId) {
       setSiteAddress("");
@@ -75,12 +68,10 @@ export default function CreateGeolocalisation() {
         setGeocoding(true);
         setError(null);
         
-        // Récupérer la mission
         console.log("🔍 Récupération de la mission ID:", form.missionId);
         const { data: mission } = await MissionService.getMissionById(form.missionId);
         console.log("📦 Mission récupérée:", mission);
         
-        // Vérifier si la mission a un site_id (essayer toutes les propriétés possibles)
         const siteId = mission.site_mission || mission.siteId || mission.site?.id || mission.site_id;
         console.log("🏢 Site ID trouvé:", siteId);
         
@@ -92,12 +83,10 @@ export default function CreateGeolocalisation() {
           return;
         }
 
-        // Récupérer les informations du site via SiteService
         console.log("🔍 Récupération du site ID:", siteId);
         const { data: site } = await SiteService.getSiteById(siteId);
         console.log("🏢 Site récupéré:", site);
         
-        // Essayer différentes propriétés pour l'adresse
         const address = site.adresse || site.address || site.rue || site.voie;
         console.log("📍 Adresse trouvée:", address);
         
@@ -111,7 +100,6 @@ export default function CreateGeolocalisation() {
 
         setSiteAddress(address);
 
-        // Géocoder l'adresse via Nominatim
         console.log("🌍 Géocodage de l'adresse:", address);
         const resp = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
@@ -147,7 +135,6 @@ export default function CreateGeolocalisation() {
     })();
   }, [form.missionId]);
 
-  // Handle input change
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(f =>
@@ -157,7 +144,6 @@ export default function CreateGeolocalisation() {
     );
   };
 
-  // Fonction pour obtenir la position actuelle de l'utilisateur
   const handleGetCurrentPosition = () => {
     if (!navigator.geolocation) {
       setError("La géolocalisation n'est pas supportée par votre navigateur.");
@@ -183,14 +169,12 @@ export default function CreateGeolocalisation() {
     );
   };
 
-  // Fonction pour déverrouiller les coordonnées (saisie manuelle)
   const handleUnlockCoords = () => {
     setCoordsLocked(false);
     setForm(f => ({ ...f, missionId: "" }));
     setSiteAddress("");
   };
 
-  // Submit création + association
   const handleSubmit = async e => {
     e.preventDefault();
     setError(null);

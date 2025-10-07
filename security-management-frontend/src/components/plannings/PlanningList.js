@@ -17,23 +17,21 @@ import "../../styles/PlanningList.css";
 export default function PlanningList() {
   const [plannings, setPlannings] = useState([]);
   const [missions, setMissions] = useState([]);
-  const [agents, setAgents] = useState([]); // Nouvel état pour les agents
-  const [selection, setSelection] = useState({}); // { [planningId]: missionId }
+  const [agents, setAgents] = useState([]);
+  const [selection, setSelection] = useState({});
   const [filters, setFilters] = useState({ agent: "", mission: "", d1: "", d2: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [planningToDelete, setPlanningToDelete] = useState(null);
-  const [viewMode, setViewMode] = useState('table'); // 'table' ou 'cards'
+  const [viewMode, setViewMode] = useState('table');
 
-  // Map rapide missionId -> mission
   const missionById = useMemo(() => {
     const map = new Map();
     missions.forEach(m => map.set(m.id, m));
     return map;
   }, [missions]);
 
-  // Map rapide agentId -> agent
   const agentById = useMemo(() => {
     const map = new Map();
     agents.forEach(a => map.set(a.id, a));
@@ -88,10 +86,7 @@ export default function PlanningList() {
       .finally(() => setLoading(false));
   }
 
-  // Helpers d'affichage: reconstruit les missions/agents d'un planning
   const getMissionObjects = (p) => {
-    // Si le backend renvoie déjà p.missions (objet), on s'en sert;
-    // sinon on reconstruit via p.missionIds.
     if (Array.isArray(p?.missions)) return p.missions;
     const ids = Array.isArray(p?.missionIds) ? p.missionIds : [];
     return ids.map(id => missionById.get(id)).filter(Boolean);
@@ -99,14 +94,11 @@ export default function PlanningList() {
 
   const getAgentsForPlanning = (p) => {
     const mis = getMissionObjects(p);
-    // Pour chaque mission, récupérer les agents via agentIds
     const allAgents = [];
     mis.forEach(mission => {
       if (Array.isArray(mission?.agents)) {
-        // Si la mission a déjà les objets agents complets
         allAgents.push(...mission.agents);
       } else if (Array.isArray(mission?.agentIds)) {
-        // Si la mission a seulement les agentIds, récupérer les objets agents
         const missionAgents = mission.agentIds
           .map(agentId => agentById.get(agentId))
           .filter(Boolean);
@@ -114,7 +106,6 @@ export default function PlanningList() {
       }
     });
     
-    // Supprimer les doublons basés sur l'ID
     const uniqueAgents = allAgents.filter((agent, index, self) => 
       index === self.findIndex(a => a.id === agent.id)
     );
@@ -122,7 +113,6 @@ export default function PlanningList() {
     return uniqueAgents;
   };
 
-  // Suppression planning
   const confirmDelete = (id) => { setPlanningToDelete(id); setShowDeleteModal(true); };
 
   const deletePlanning = () => {
@@ -139,16 +129,14 @@ export default function PlanningList() {
       });
   };
 
-  // Ajouter / retirer une mission
   const addMission = (planningId) => {
-    const mid = Number(selection[planningId]); // IMPORTANT: en nombre
+    const mid = Number(selection[planningId]);
     if (!mid) {
       setError("Veuillez sélectionner une mission à ajouter");
       setTimeout(() => setError(""), 3000);
       return;
     }
 
-    // Empêche les doublons côté UI
     const current = plannings.find(p => p.id === planningId);
     const currentIds = Array.isArray(current?.missionIds)
       ? current.missionIds
@@ -164,7 +152,7 @@ export default function PlanningList() {
     PlanningService.addMissionToPlanning(planningId, mid)
       .then(() => {
         loadAll();
-        setSelection({ ...selection, [planningId]: "" }); // reset le select
+        setSelection({ ...selection, [planningId]: "" });
       })
       .catch(err => {
         setError("Erreur lors de l'ajout de la mission");
@@ -186,7 +174,6 @@ export default function PlanningList() {
       });
   };
 
-  // Filtrage
   const runFilter = async () => {
     const { agent, mission, d1, d2 } = filters;
     setLoading(true);
@@ -241,7 +228,7 @@ export default function PlanningList() {
               </Button>
             </Link>
             
-            {/* Boutons de changement de vue */}
+            {}
             <div className="d-flex gap-2 ms-3">
               <OverlayTrigger
                 placement="bottom"
@@ -279,7 +266,7 @@ export default function PlanningList() {
             </Alert>
           )}
 
-          {/* Filtres améliorés */}
+          {}
           <Card className="filters-card slide-in">
             <Card.Header className="filters-header">
               <h5 className="mb-0">
@@ -361,7 +348,7 @@ export default function PlanningList() {
             </Card.Body>
           </Card>
 
-          {/* Tableau des plannings amélioré */}
+          {}
           {loading ? (
             <div className="loading-container">
               <div className="loading-spinner"></div>
@@ -385,7 +372,6 @@ export default function PlanningList() {
           ) : (
             <>
               {viewMode === 'table' ? (
-                // Vue tableau
                 <div className="planning-table">
                   <Table responsive hover className="align-middle mb-0">
                     <thead className="table-header">
@@ -429,7 +415,7 @@ export default function PlanningList() {
                               </div>
                             </td>
 
-                            {/* Agents améliorés */}
+                            {}
                             <td>
                               <div className="text-center">
                                 {agents.length === 0 ? (
@@ -462,7 +448,7 @@ export default function PlanningList() {
                               </div>
                             </td>
 
-                            {/* Missions considérablement améliorées */}
+                            {}
                             <td>
                               <div className="mission-container">
                                 <div className="mb-3">
@@ -520,7 +506,7 @@ export default function PlanningList() {
                                   )}
                                 </div>
 
-                                {/* Sélecteur de mission amélioré */}
+                                {}
                                 <div className="mission-selector">
                                   <Form.Select
                                     className="mission-select"
@@ -554,7 +540,7 @@ export default function PlanningList() {
                               </div>
                             </td>
 
-                            {/* Actions améliorées */}
+                            {}
                             <td>
                               <div className="action-buttons">
                                 <OverlayTrigger
@@ -598,7 +584,6 @@ export default function PlanningList() {
                   </Table>
                 </div>
               ) : (
-                // Vue cartes
                 <Row className="g-4">
                   {plannings.map((p, index) => {
                     const missionObjs = getMissionObjects(p);
@@ -650,7 +635,7 @@ export default function PlanningList() {
                           </Card.Header>
                           
                           <Card.Body>
-                            {/* Informations de dates */}
+                            {}
                             <div className="mb-3">
                               <small className="text-muted d-block">
                                 <FontAwesomeIcon icon={faCalendarAlt} className="me-1" />
@@ -662,7 +647,7 @@ export default function PlanningList() {
                               </small>
                             </div>
 
-                            {/* Agents */}
+                            {}
                             <div className="mb-3">
                               <h6 className="mb-2">
                                 <FontAwesomeIcon icon={faUsers} className="me-1 text-info" />
@@ -683,7 +668,7 @@ export default function PlanningList() {
                               )}
                             </div>
 
-                            {/* Missions */}
+                            {}
                             <div className="mb-3">
                               <h6 className="mb-2">
                                 <FontAwesomeIcon icon={faTasks} className="me-1 text-success" />
@@ -723,7 +708,7 @@ export default function PlanningList() {
                               )}
                             </div>
 
-                            {/* Ajouter une mission */}
+                            {}
                             <div className="mission-selector">
                               <Form.Select
                                 className="mission-select mb-2"
@@ -762,7 +747,7 @@ export default function PlanningList() {
         </Card.Body>
       </Card>
 
-      {/* Modal de confirmation de suppression amélioré */}
+      {}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} className="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>

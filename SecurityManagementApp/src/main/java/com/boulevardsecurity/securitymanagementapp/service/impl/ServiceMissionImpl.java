@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 @Transactional
 public class ServiceMissionImpl implements IMissionService {
 
-    /* ─────────────── Dépendances ─────────────── */
     private final MissionRepository             repMission;
     private final AgentDeSecuriteRepository     repAgent;
     private final RapportInterventionRepository repRapport;
@@ -41,7 +40,6 @@ public class ServiceMissionImpl implements IMissionService {
     private final FactureRepository             factureRepository;
     private final TarificationDomainService     tarificationService;
 
-    /* ─────────────── Lecture ─────────────── */
     @Override public List<MissionDto> listerToutes() {
         return repMission.findAll().stream().map(mappeur::toDto).toList();
     }
@@ -50,20 +48,15 @@ public class ServiceMissionImpl implements IMissionService {
         return mappeur.toDto(trouverMission(id));
     }
 
-    /* ─────────────── Création ─────────────── */
     @Override
     public MissionDto creerMission(MissionCreateDto dto, String adresseSite) {
 
         Mission mission = mappeur.toEntity(dto);
 
-        // Géolocalisation facultative
         if (adresseSite != null && !adresseSite.isBlank()) {
             mission.setGeolocalisationGPS(creerEtSauverGeoloc(adresseSite));
         }
 
-        
-
-        // --- Tarifs / devis (devis optionnel) ---
 TarifMission tarif = repTarif.findById(dto.getTarifMissionId())
         .orElseThrow(() -> new NoSuchElementException("Tarif introuvable id=" + dto.getTarifMissionId()));
 mission.setTarif(tarif);
@@ -73,7 +66,7 @@ if (dto.getDevisId() != null) {
             .orElseThrow(() -> new NoSuchElementException("Devis introuvable id=" + dto.getDevisId()));
     mission.setDevis(devis);
 } else {
-    mission.setDevis(null); // explicite (facultatif)
+    mission.setDevis(null);
 }
         appliquerChiffrage(mission, tarif);
 
@@ -83,7 +76,6 @@ if (dto.getDevisId() != null) {
     }
     @Override public MissionDto creerMission(MissionCreateDto dto){ return creerMission(dto,null); }
 
-    /* ─────────────── Mise à jour ─────────────── */
     @Override
     public MissionDto majMission(Long id, MissionCreateDto dto, String nouvelleAdresse) {
         Mission existante = trouverMission(id);
@@ -103,14 +95,12 @@ if (dto.getDevisId() != null) {
     }
     @Override public MissionDto majMission(Long id, MissionCreateDto dto){ return majMission(id,dto,null); }
 
-    /* ─────────────── Suppression ─────────────── */
     @Override public void supprimerMission(Long id){
         Mission m = trouverMission(id);
         notifierAgentsSuppression(m);
         repMission.delete(m);
     }
 
-    /* ───── Affectation / retrait d’agents ───── */
     @Override
     public MissionDto affecterAgents(Long idMission, List<Long> idsAgents) {
         Mission mission = trouverMission(idMission);
@@ -142,7 +132,6 @@ if (dto.getDevisId() != null) {
         return mappeur.toDto(mission);
     }
 
-    /* ───── Autres associations (planning, site…) ───── */
     @Override public MissionDto associerRapport(Long idM, Long idR){
         Mission m = trouverMission(idM);
         RapportIntervention r = repRapport.findById(idR)
@@ -182,15 +171,12 @@ if (dto.getDevisId() != null) {
     public MissionDto dissocierGeoloc(Long idMission) {
         Mission mission = trouverMission(idMission);
         if (mission.getGeolocalisationGPS() != null) {
-            // on peut supprimer physiquement ou juste vider la référence
-            // repGeoloc.delete(mission.getGeolocalisationGPS());
             mission.setGeolocalisationGPS(null);
             repMission.save(mission);
         }
         return mappeur.toDto(mission);
     }
 
-    /* ─────────────── Recherches simples ─────────────── */
     @Override public List<MissionDto> missionsCommencantApres(LocalDate d){
         return repMission.findByDateDebutAfter(d).stream().map(mappeur::toDto).toList();
     }
@@ -213,23 +199,18 @@ if (dto.getDevisId() != null) {
 
     @Override
     public MissionDto simulerCalcul(MissionCreateDto dto) {
-        // Créer une mission temporaire pour simulation sans la persister
         Mission mission = mappeur.toEntity(dto);
         
-        // Récupérer le tarif
         TarifMission tarif = repTarif.findById(dto.getTarifMissionId())
                 .orElseThrow(() -> new NoSuchElementException("Tarif introuvable id=" + dto.getTarifMissionId()));
         
         mission.setTarif(tarif);
         
-        // Appliquer les calculs via le service de tarification
         appliquerChiffrage(mission, tarif);
         
-        // Retourner le DTO sans sauvegarder la mission
         return mappeur.toDto(mission);
     }
 
-    /* ─────────────── Outils privés ─────────────── */
     private Mission trouverMission(Long id){
         return repMission.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Mission introuvable id="+id));
@@ -242,17 +223,13 @@ if (dto.getDevisId() != null) {
         return geo;
     }
     private void appliquerChiffrage(Mission m, TarifMission t){
-        // Utilise le service de tarification pour calculer le montant HT en tenant compte des majorations
         BigDecimal ht = tarificationService.montantHT(m);
-        // Calcule la TVA en utilisant le taux du tarif mission
         BigDecimal tva = tarificationService.tva(ht, t.getTauxTVA());
-        // Stocke les montants calculés dans la mission
         m.setMontantHT(ht);
         m.setMontantTVA(tva);
         m.setMontantTTC(tarificationService.ttc(ht, tva));
     }
 
-    /* ─────────────── Notifications ─────────────── */
     private void notifierAgentsNouvelleMission(Mission m){
         m.getAgents().forEach(a -> envoyerNotif(a,
                 "[Nouvelle mission] "+m.getTitre(),
@@ -282,7 +259,6 @@ if (dto.getDevisId() != null) {
         if (a.getTelephone() != null && !a.getTelephone().isBlank()) svcNotif.sendSMS(a.getTelephone(), corps);
     }
 
-    /* ─────────────── Validations ─────────────── */
     private void validerAgentAvantAffectation(AgentDeSecurite a, Mission m){
         if (!zoneCompatible(a, m))                     throw new IllegalArgumentException("Zone incompatible");
         if (!disponible(a, m))                         throw new IllegalArgumentException("Indisponible");
@@ -291,15 +267,13 @@ if (dto.getDevisId() != null) {
         if (!diplomeSSIAPValide(a, m.getTypeMission()))throw new IllegalArgumentException("Diplôme SSIAP manquant");
     }
 
-    /* ---------- helpers validation ---------- */
     private static boolean egIc(String a, String b){
         return a != null && b != null && a.equalsIgnoreCase(b);
     }
 
-    /** Si la mission n’a pas encore de site, on accepte l’affectation. */
     private boolean zoneCompatible(AgentDeSecurite a, Mission m){
         Site s = m.getSite();
-        if (s == null) return true;                            // ← modifié
+        if (s == null) return true;
 
         return a.getZonesDeTravail().stream().anyMatch(z ->
                 egIc(z.getVille(),       s.getVille())      ||
@@ -309,7 +283,6 @@ if (dto.getDevisId() != null) {
                         egIc(z.getPays(),        s.getPays()));
     }
 
-    /** Disponibilité valide si elle **chevauche** la mission. */
     private boolean disponible(AgentDeSecurite a, Mission m){
         LocalDateTime deb = LocalDateTime.of(m.getDateDebut(),
                 Optional.ofNullable(m.getHeureDebut()).orElse(LocalTime.MIN));
@@ -319,7 +292,7 @@ if (dto.getDevisId() != null) {
         return a.getDisponibilites().stream().anyMatch(d -> {
             LocalDateTime ds = d.getDateDebut().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
             LocalDateTime de = d.getDateFin().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            return !fin.isBefore(ds) && !deb.isAfter(de);      // ← chevauchement
+            return !fin.isBefore(ds) && !deb.isAfter(de);
         });
     }
 
@@ -368,16 +341,16 @@ if (dto.getDevisId() != null) {
                 .orElseThrow(() -> new NoSuchElementException("Facture introuvable id=" + idFacture));
 
         mission.getFactures().add(facture);
-        facture.getMissions().add(mission); // bidirectionnel, si nécessaire
+        facture.getMissions().add(mission);
 
         repMission.save(mission);
         return mappeur.toDto(mission);
     }
- /* 👇 NOUVEAU : missions sans devis (global) */
+ 
     @Override
     public List<MissionDto> missionsSansDevis() {
         return repMission.findAll().stream()
-                .filter(m -> m.getDevis() == null) // non rattachées à un devis
+                .filter(m -> m.getDevis() == null)
                 .map(mappeur::toDto)
                 .toList();
     }

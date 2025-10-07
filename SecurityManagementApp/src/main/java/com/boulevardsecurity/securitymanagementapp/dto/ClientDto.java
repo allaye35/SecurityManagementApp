@@ -11,17 +11,15 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ClientDto {
     private Long id;
-    private Role role;                 // CLIENT / ADMIN / etc.
-    private TypeClient typeClient;     // PARTICULIER ou ENTREPRISE
+    private Role role;
+    private TypeClient typeClient;
 
-    /* — Infos personne / société — */
     private String nom;
     private String prenom;
     private String siege;
     private String representant;
     private String numeroSiret;
 
-    /* — Coordonnées — */
     private String email;
     private String telephone;
     private String adresse;
@@ -31,11 +29,9 @@ public class ClientDto {
     private String pays;
     private ModeContactPrefere modeContactPrefere;
 
-    /* — Flags sécurité — */
-    private boolean emailVerified;     // lu seule
-    private boolean adminApproved;     // lu seule
+    private boolean emailVerified;
+    private boolean adminApproved;
 
-    /* — relations exposées sous forme d’ID — */
     private List<Long> devisIds;
     private List<Long> notificationIds;
 }

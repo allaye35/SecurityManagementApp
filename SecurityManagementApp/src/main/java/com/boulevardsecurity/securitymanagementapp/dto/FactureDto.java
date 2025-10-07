@@ -19,9 +19,8 @@ public class FactureDto {
     private BigDecimal      montantTVA;
     private BigDecimal      montantTTC;
 
-    /* Relations (IDs only) */
     private Long            devisId;
     private Long            entrepriseId;
     private Long            clientId;
-    private List<Long>      missionIds;    // 0..n
+    private List<Long>      missionIds;
 }

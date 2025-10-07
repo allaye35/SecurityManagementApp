@@ -30,7 +30,6 @@ export default function CreateSite() {
     const [validated, setValidated] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
-    // Charger la liste des missions existantes
     useEffect(() => {
         setLoadingMissions(true);
         MissionService.getAllMissions()
@@ -51,7 +50,6 @@ export default function CreateSite() {
     const handleChange = e => {
         const { name, value } = e.target;
         setSite(s => ({ ...s, [name]: value }));
-        // Réinitialiser le message d'erreur lorsque l'utilisateur commence à modifier un champ
         if (error) setError("");
     };
 
@@ -66,14 +64,12 @@ export default function CreateSite() {
         e.preventDefault();
         const form = e.currentTarget;
         
-        // Validation du formulaire
         setValidated(true);
         if (form.checkValidity() === false) {
             e.stopPropagation();
             return;
         }
         
-        // Vérification minimale
         if (!site.nom.trim()) {
             setError("Le nom du site est obligatoire");
             return;
@@ -82,7 +78,6 @@ export default function CreateSite() {
         setLoading(true);
         try {
             await SiteService.createSite(site);
-            // Afficher le message de succès brièvement avant la redirection
             setShowSuccess(true);
             setTimeout(() => {
                 nav("/sites");
@@ -94,11 +89,8 @@ export default function CreateSite() {
         }
     };
 
-    // Récupération automatique du code postal et ville via une API (simulé)
     const handlePostalCodeBlur = () => {
         if (site.codePostal && site.codePostal.length === 5 && !site.ville) {
-            // Simule une recherche du nom de la ville basée sur le code postal
-            // Dans un cas réel, vous pourriez utiliser une API comme api-adresse.data.gouv.fr
             setTimeout(() => {
                 if (site.codePostal.startsWith('75')) {
                     setSite(s => ({...s, ville: 'Paris', departement: 'Paris', region: 'Île-de-France'}));

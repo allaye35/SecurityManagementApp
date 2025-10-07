@@ -22,7 +22,6 @@ const CarteProForm = ({ title, data, setData, onSubmit, error, isSubmitting }) =
         dateFin: true
     });
 
-    // Chargement de la liste des agents au montage du composant
     useEffect(() => {
         setLoading(true);
         AgentService.getAllAgents()
@@ -36,7 +35,6 @@ const CarteProForm = ({ title, data, setData, onSubmit, error, isSubmitting }) =
             });
     }, []);
 
-    // Fonction pour valider le formulaire avant soumission
     const validateForm = () => {
         const newValidation = {
             agentId: Boolean(data.agentId),
@@ -49,7 +47,6 @@ const CarteProForm = ({ title, data, setData, onSubmit, error, isSubmitting }) =
         return Object.values(newValidation).every(v => v === true);
     };
 
-    // Gestion de la soumission avec validation
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
@@ -57,12 +54,11 @@ const CarteProForm = ({ title, data, setData, onSubmit, error, isSubmitting }) =
         }
     };
 
-    // Création d'une option de tooltip
     const renderTooltip = (text) => (
         <Tooltip id="button-tooltip">
             {text}
         </Tooltip>
-    );    // Les options pour le type de carte
+    );
     const typeCarteOptions = [
         { value: "CQP_APS", label: "CQP APS", description: "Agent de prévention et de sécurité" },
         { value: "GARDE_DU_CORPS", label: "Garde du corps", description: "Protection rapprochée de personnes" },
@@ -227,9 +223,7 @@ const CarteProForm = ({ title, data, setData, onSubmit, error, isSubmitting }) =
                                                 const newStartDate = e.target.value;
                                                 setData({ ...data, dateDebut: newStartDate });
                                                 
-                                                // Si la date de fin existe et est avant la nouvelle date de début
                                                 if (data.dateFin && new Date(data.dateFin) < new Date(newStartDate)) {
-                                                    // Ajouter 5 ans à la date de début comme suggestion
                                                     const suggestedEndDate = new Date(newStartDate);
                                                     suggestedEndDate.setFullYear(suggestedEndDate.getFullYear() + 5);
                                                     const formattedEndDate = suggestedEndDate.toISOString().substring(0, 10);

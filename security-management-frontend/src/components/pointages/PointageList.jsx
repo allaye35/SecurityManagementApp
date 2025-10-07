@@ -22,7 +22,6 @@ export default function PointageList() {
     const [notification, setNotification] = useState({ message: "", variant: "success" });
     const navigate = useNavigate();
 
-    // Chargement des données
     const loadData = () => {
         setLoading(true);
         PointageService.getAll()
@@ -33,7 +32,6 @@ export default function PointageList() {
             .catch(() => {
                 setError("Erreur de chargement des pointages");
                 setLoading(false);
-                // Afficher une notification d'erreur
                 showTemporaryNotification('Erreur lors du chargement des données', 'danger');
             });
     };
@@ -42,14 +40,12 @@ export default function PointageList() {
         loadData();
     }, []);
 
-    // Fonction pour afficher une notification temporaire
     const showTemporaryNotification = (message, variant = 'success') => {
         setNotification({ message, variant });
         setShowNotification(true);
         setTimeout(() => setShowNotification(false), 5000);
     };
 
-    // Fonction de suppression
     const handleDelete = (id) => {
         if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce pointage ?")) return;
         
@@ -61,14 +57,12 @@ export default function PointageList() {
             .catch(() => showTemporaryNotification("Échec de la suppression", "danger"));
     };
 
-    // Filtrage des pointages
     const filteredItems = items.filter(p => {
         const searchString = `${p.id} ${new Date(p.datePointage).toLocaleString()} ${p.mission?.id || ""}`
             .toLowerCase();
         return searchTerm === '' || searchString.includes(searchTerm.toLowerCase());
     });
 
-    // Rendu du tooltip
     const renderTooltip = (text) => (
         <Tooltip id="button-tooltip">
             {text}
@@ -77,7 +71,7 @@ export default function PointageList() {
 
     return (
         <Container fluid className="py-4" style={{ maxWidth: '1900px', background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', minHeight: '100vh' }}>
-            {/* Notification temporaire */}
+            {}
             {showNotification && (
                 <Alert 
                     variant={notification.variant} 
@@ -188,7 +182,7 @@ export default function PointageList() {
                             </Alert>
                         )}
                         
-                        {/* Barre de recherche et filtres */}
+                        {}
                         <Row className="mb-5 align-items-center">
                             <Col md={7}>
                                 <div className="shadow-sm" style={{ borderRadius: '12px', overflow: 'hidden' }}>
@@ -241,7 +235,7 @@ export default function PointageList() {
                             </Col>
                         </Row>
 
-                        {/* Contenu principal */}
+                        {}
                         {loading ? (
                             <div className="text-center py-5">
                                 <div className="mb-4">
@@ -476,7 +470,7 @@ export default function PointageList() {
                 </Card.Body>
             </Card>
 
-            {/* CSS pour les animations et styles spécifiques */}
+            {}
             <style>{`
                 @keyframes fadeIn {
                     from { opacity: 0; transform: translateY(-10px); }
@@ -551,13 +545,11 @@ export default function PointageList() {
                 .input-group-text {
                     background: white;
                 }
-                
-                /* Animations pour les badges */
+
                 .badge {
                     animation: fadeIn 0.3s ease-out;
                 }
-                
-                /* Effet glassmorphism pour les cartes */
+
                 .shadow-sm {
                     backdrop-filter: blur(10px);
                 }
@@ -586,8 +578,7 @@ export default function PointageList() {
                         transform: none;
                     }
                 }
-                
-                /* Scrollbar personnalisée */
+
                 .table-responsive::-webkit-scrollbar {
                     height: 8px;
                 }

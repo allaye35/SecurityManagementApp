@@ -31,6 +31,5 @@ public class DevisCreateDto {
 
     private String conditionsGenerales;
 
-    /* Missions existantes à rattacher (optionnel) */
     private List<Long> missionIds;
 }

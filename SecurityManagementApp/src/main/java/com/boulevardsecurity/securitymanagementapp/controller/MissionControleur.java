@@ -25,7 +25,6 @@ public class MissionControleur {
 
     private final IMissionService serviceMission;
 
-    /* ────────────── Helpers ────────────── */
     private ResponseEntity<ApiErreur> erreur(HttpStatus statut, String msg, HttpServletRequest req) {
         return ResponseEntity
                 .status(statut)
@@ -36,8 +35,6 @@ public class MissionControleur {
                         msg,
                         req.getRequestURI()));
     }
-
-    /* ────────────── Lecture ────────────── */
 
     @GetMapping
     public List<MissionDto> listerToutes() {
@@ -52,25 +49,19 @@ public class MissionControleur {
             return erreur(HttpStatus.NOT_FOUND, ex.getMessage(), req);
         }
     }
-    
-    /* ────────────── Simulation ────────────── */
-    
-    // Modifions l'endpoint pour éviter les conflits potentiels
+
     @PostMapping("/simuler-calcul")
     public ResponseEntity<?> simulerCalculMontants(
             @Valid @RequestBody MissionCreateDto missionDto,
             HttpServletRequest req) {
         
         try {
-            // Calculer les montants sans créer la mission
             MissionDto resultat = serviceMission.simulerCalcul(missionDto);
             return ResponseEntity.ok(resultat);
         } catch (IllegalArgumentException ex) {
             return erreur(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
         }
     }
-
-    /* ────────────── Création ────────────── */
 
   @PostMapping
 public ResponseEntity<?> creerMission(@Valid @RequestBody MissionCreateDto missionDto,
@@ -79,14 +70,12 @@ public ResponseEntity<?> creerMission(@Valid @RequestBody MissionCreateDto missi
     try {
         MissionDto cree = serviceMission.creerMission(missionDto, adresseSite);
         return ResponseEntity.status(HttpStatus.CREATED).body(cree);
-    } catch (NoSuchElementException ex) {               // 👈 ajout
+    } catch (NoSuchElementException ex) {
         return erreur(HttpStatus.NOT_FOUND, ex.getMessage(), req);
     } catch (IllegalArgumentException ex) {
         return erreur(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
     }
 }
-
-    /* ────────────── Mise à jour ────────────── */
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> majMission(
@@ -104,8 +93,6 @@ public ResponseEntity<?> creerMission(@Valid @RequestBody MissionCreateDto missi
         }
     }
 
-    /* ────────────── Suppression ────────────── */
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> supprimerMission(@PathVariable Long id, HttpServletRequest req) {
         try {
@@ -115,8 +102,6 @@ public ResponseEntity<?> creerMission(@Valid @RequestBody MissionCreateDto missi
             return erreur(HttpStatus.NOT_FOUND, ex.getMessage(), req);
         }
     }
-
-    /* ───── Affectations & relations ───── */
 
     @PutMapping("/{id}/agents")
     public ResponseEntity<?> affecterAgents(@PathVariable Long id,
@@ -184,8 +169,6 @@ public ResponseEntity<?> creerMission(@Valid @RequestBody MissionCreateDto missi
         }
     }
 
-    /* ────────────── Recherches ────────────── */
-
     @GetMapping("/apres")
     public List<MissionDto> missionsCommencantApres(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -243,9 +226,6 @@ public ResponseEntity<?> creerMission(@Valid @RequestBody MissionCreateDto missi
         }
     }
 
-    /**
-     * Supprime la géolocalisation associée à la mission
-     */
     @DeleteMapping("/{id}/geoloc")
     public ResponseEntity<?> dissocierGeoloc(
             @PathVariable Long id,
@@ -259,12 +239,9 @@ public ResponseEntity<?> creerMission(@Valid @RequestBody MissionCreateDto missi
         }
     }
 
-   /* 👇 NOUVEAU : toutes les missions non rattachées à un devis */
     @GetMapping("/sans-devis")
     public List<MissionDto> missionsSansDevis() {
         return serviceMission.missionsSansDevis();
     }
-
-    
 
 }

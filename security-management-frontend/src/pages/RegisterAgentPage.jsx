@@ -42,7 +42,6 @@ export default function RegisterAgentPage() {
         "Compte créé. Nous vous avons envoyé un email avec un LIEN de vérification " +
         "et un CODE à 6 chiffres. Cliquez sur le lien OU saisissez le code."
       );
-      // ⛔️ Plus de redirection automatique : on laisse l’utilisateur choisir.
     } catch (ex) {
       const apiMsg =
         ex?.response?.data?.message ||

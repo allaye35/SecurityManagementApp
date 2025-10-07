@@ -1,7 +1,7 @@
 // src/services/FicheDePaieService.js
-import api from "./api"; // ou import axios from "axios";
+import api from "./api";
 
-const PATH = "/fiches-paie"; // Corrigé pour éviter la duplication de /api/
+const PATH = "/fiches-paie";
 
 const FicheDePaieService = {
     getAll: ()             => api.get(PATH),

@@ -17,7 +17,6 @@ const CarteProDetail = () => {
         CarteProService.getById(id)
             .then(res => {
                 setCarte(res.data);
-                // Si la carte a un agent associé, récupérer ses informations
                 if (res.data.agentId) {
                     return AgentService.getAgentById(res.data.agentId);
                 }
@@ -34,7 +33,6 @@ const CarteProDetail = () => {
             });
     }, [id]);
 
-    // Fonction pour déterminer le statut de la carte
     const getCardStatus = (dateFin) => {
         if (!dateFin) return { status: "indefini", label: "Pas de date d'expiration" };
         
@@ -45,18 +43,16 @@ const CarteProDetail = () => {
             return { status: "expired", label: "Expirée" };
         }
         
-        // Calcul de la différence en jours
         const diffTime = expirationDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
-        if (diffDays <= 90) { // 3 mois
+        if (diffDays <= 90) {
             return { status: "expiring-soon", label: "Expire bientôt" };
         }
         
         return { status: "valid", label: "Valide" };
     };
 
-    // Fonction pour calculer le temps restant avant expiration
     const getRemainingTime = (dateFin) => {
         if (!dateFin) return "Non applicable";
         
@@ -67,7 +63,6 @@ const CarteProDetail = () => {
             return "Expirée";
         }
         
-        // Calcul de la différence en jours
         const diffTime = expirationDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
@@ -88,7 +83,6 @@ const CarteProDetail = () => {
         }
     };
 
-    // Fonction pour formater les dates
     const formatDate = (dateString) => {
         if (!dateString) return "Non spécifiée";
         
@@ -100,12 +94,10 @@ const CarteProDetail = () => {
         });
     };
 
-    // Fonction pour imprimer la carte professionnelle
     const handlePrint = () => {
         window.print();
     };
 
-    // Fonction pour obtenir la description du type de carte
     const getTypeDescription = (type) => {
         switch(type) {
             case 'AGENT_DE_SECURITE':
@@ -235,7 +227,7 @@ const CarteProDetail = () => {
                     </div>
                 </div>
 
-                {/* Ajout d'une carte pour les actions avancées */}
+                {}
                 <div className="detail-card actions-card">
                     <div className="card-header">
                         <h3>Actions</h3>

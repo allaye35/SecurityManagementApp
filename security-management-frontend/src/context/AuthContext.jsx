@@ -7,35 +7,28 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => tokenService.getUser());
 
-  // Vérification stricte de l'authentification
   const isAuthenticated = !!(tokenService.getAccess() && user);
 
-  // Vérification périodique de la validité du token
   useEffect(() => {
     const checkAuth = () => {
       const token = tokenService.getAccess();
       const storedUser = tokenService.getUser();
       
-      // Si pas de token ou pas d'utilisateur, déconnecter
       if (!token || !storedUser) {
         tokenService.clear();
         setUser(null);
       }
     };
 
-    // Vérifier au montage du composant
     checkAuth();
 
-    // Vérifier périodiquement (toutes les 5 minutes)
     const interval = setInterval(checkAuth, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
   }, []);
 
-  // ⬇️ Appel direct au backend avec votre AuthService existant
   const login = async (email, password) => {
     const data = await AuthService.login(email, password);
-    // data = { accessToken, refreshToken, userId, role, userType, email, nom, prenom }
     const u = {
       id: data.userId,
       role: data.role,

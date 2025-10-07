@@ -25,7 +25,6 @@ export default function RapportList() {
     const [rapportToDelete, setRapportToDelete] = useState(null);
     const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
 
-    // 🔄 recharge la liste des rapports
     const refreshRapports = () => {
         setLoading(true);
         RapportService.getAllRapports()
@@ -41,31 +40,26 @@ export default function RapportList() {
             });
     };
 
-    // 1) on récupère d'abord tous les rapports…
     useEffect(() => {
         refreshRapports();
     }, []);
 
-    // 2) …et en même temps on charge toutes les missions
     useEffect(() => {
         MissionService.getAllMissions()
             .then(res => setMissions(res.data))
             .catch(err => console.error("Erreur lors du chargement des missions:", err));
     }, []);
 
-    // Afficher une notification
     const showNotification = (message, type = 'success') => {
         setNotification({ show: true, message, type });
         setTimeout(() => setNotification({ ...notification, show: false }), 3000);
     };
 
-    // Confirmation avant suppression
     const handleDeleteClick = (rapport) => {
         setRapportToDelete(rapport);
         setShowDeleteModal(true);
     };
 
-    // Suppression confirmée
     const handleDelete = () => {
         if (!rapportToDelete) return;
         
@@ -84,7 +78,6 @@ export default function RapportList() {
             });
     };
 
-    // Fonction pour trier les rapports
     const handleSort = (field) => {
         if (sortField === field) {
             setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -94,21 +87,17 @@ export default function RapportList() {
         }
     };
 
-    // Fonction pour filtrer les rapports
     const filteredRapports = rapports.filter(rapport => {
-        // Filtrage par terme de recherche
         const searchMatch = searchTerm === '' || 
             rapport.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             rapport.agentNom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             rapport.id.toString().includes(searchTerm);
         
-        // Filtrage par statut
         const statusMatch = filterStatus === '' || rapport.status === filterStatus;
         
         return searchMatch && statusMatch;
     });
 
-    // Fonction pour trier les rapports filtrés
     const sortedRapports = [...filteredRapports].sort((a, b) => {
         let comparison = 0;
         
@@ -125,7 +114,6 @@ export default function RapportList() {
         return sortDirection === 'asc' ? comparison : -comparison;
     });
 
-    // Télécharger en CSV
     const exportToCSV = () => {
         const headers = ['ID', 'Date', 'Agent', 'Mission', 'Status', 'Description'];
         
@@ -139,7 +127,7 @@ export default function RapportList() {
                 r.agentNom,
                 missionTitle,
                 r.status,
-                r.description?.replace(/,/g, ';') // Éviter les problèmes avec les virgules
+                r.description?.replace(/,/g, ';')
             ];
         });
         
@@ -157,7 +145,6 @@ export default function RapportList() {
         document.body.removeChild(link);
     };
 
-    // Fonction pour obtenir la couleur du badge selon le statut
     const getStatusBadgeVariant = (status) => {
         switch (status) {
             case 'TERMINE': return 'success';
@@ -167,7 +154,6 @@ export default function RapportList() {
         }
     };
 
-    // Affichage du nom de statut
     const getStatusDisplayName = (status) => {
         switch (status) {
             case 'TERMINE': return 'Terminé';
@@ -179,7 +165,7 @@ export default function RapportList() {
 
     return (
         <Container fluid className="py-4">
-            {/* Notification */}
+            {}
             {notification.show && (
                 <Alert 
                     variant={notification.type} 
@@ -190,7 +176,7 @@ export default function RapportList() {
                 </Alert>
             )}
 
-            {/* En-tête */}
+            {}
             <Row className="align-items-center mb-4">
                 <Col>
                     <h2 className="mb-0">
@@ -302,7 +288,6 @@ export default function RapportList() {
                                 </thead>
                                 <tbody>
                                     {sortedRapports.length > 0 ? sortedRapports.map((r) => {
-                                        // retrouve l'objet mission correspondant
                                         const mission = missions.find(m => m.id === r.missionId);
                                         return (
                                             <tr key={r.id}>
@@ -408,7 +393,7 @@ export default function RapportList() {
                 </Card.Body>
             </Card>
 
-            {/* Modal de confirmation de suppression */}
+            {}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmer la suppression</Modal.Title>

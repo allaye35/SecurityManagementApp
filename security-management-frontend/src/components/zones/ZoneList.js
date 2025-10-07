@@ -17,7 +17,6 @@ const ZoneList = () => {    const location = useLocation();
     const [loading, setLoading] = useState(true);
     const [agentLoadingError, setAgentLoadingError] = useState(false);
     const [sortConfig, setSortConfig] = useState({ key: 'nom', direction: 'ascending' });
-    // États pour les fonctionnalités améliorées
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [typeFilter, setTypeFilter] = useState('TOUS');
@@ -26,25 +25,21 @@ const ZoneList = () => {    const location = useLocation();
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);    const [showFilterMobile, setShowFilterMobile] = useState(false);
     
-    // États pour la sélection et suppression multiple
     const [selectedZones, setSelectedZones] = useState([]);
     const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
     
-    // États pour la suppression progressive
     const [pendingDeleteZone, setPendingDeleteZone] = useState(null);
     const [deleteProgress, setDeleteProgress] = useState(0);
     const [deleteTimer, setDeleteTimer] = useState(null);
     const [deleteToastVisible, setDeleteToastVisible] = useState(false);
-    const deleteDelay = 5000; // 5 secondes d'attente avant suppression effective
+    const deleteDelay = 5000;
     const deleteTimeoutRef = useRef(null);
 
     useEffect(() => {
-        // Vérifier s'il y a un message dans location.state (après redirection)
         if (location.state?.message) {
             setToastMessage(location.state.message);
             setShowToast(true);
             
-            // Nettoyer le state pour éviter d'afficher le message à nouveau après un refresh
             window.history.replaceState({}, document.title);
         }
     }, [location]);    useEffect(() => {
@@ -54,13 +49,11 @@ const ZoneList = () => {    const location = useLocation();
     const loadZones = useCallback(() => {
         setLoading(true);
         
-        // Récupérer les zones
         ZoneService.getAll()
             .then(res => {
                 const zonesData = res.data;
                 setZones(zonesData);
                 
-                // Tenter de récupérer les agents pour chaque zone
                 if (zonesData.length > 0) {
                     fetchAgentsForAllZones(zonesData);
                 } else {
@@ -76,15 +69,12 @@ const ZoneList = () => {    const location = useLocation();
             });
     }, []);
 
-    // Function to refresh data
     const handleRefresh = () => {
         setIsRefreshing(true);
         setRefreshTrigger(prev => prev + 1);
     };
 
-    // Function to fetch agents for all zones
     const fetchAgentsForAllZones = (zonesData) => {
-        // Pour chaque zone, récupérer les agents associés
         const agentsPromises = zonesData.map(zone => {
             return ZoneService.getAgentsForZone(zone.id)
                 .then(agentsRes => ({
@@ -101,10 +91,8 @@ const ZoneList = () => {    const location = useLocation();
                 });
         });
         
-        // Attendre que toutes les promesses soient résolues
         Promise.all(agentsPromises)
             .then(results => {
-                // Transformer les résultats en un objet pour un accès facile par ID de zone
                 const agentsMap = {};
                 results.forEach(result => {
                     agentsMap[result.zoneId] = result.agents;
@@ -120,7 +108,7 @@ const ZoneList = () => {    const location = useLocation();
                 setLoading(false);
                 setIsRefreshing(false);
             });
-    };    // Handler pour lancer la suppression d'une zone avec confirmation et délai d'annulation    // Nettoyage des ressources au démontage
+    };
     useEffect(() => {
         return () => {
             if (deleteTimer) {
@@ -128,13 +116,11 @@ const ZoneList = () => {    const location = useLocation();
             }
         };
     }, [deleteTimer]);
-      // Fonction pour démarrer le processus de suppression progressive
     const initiateProgressiveDelete = (zone) => {
         setPendingDeleteZone(zone);
         setDeleteProgress(0);
         setDeleteToastVisible(true);
         
-        // Créer un intervalle pour mettre à jour la progression
         const startTime = Date.now();
         const intervalId = setInterval(() => {
             const elapsed = Date.now() - startTime;
@@ -152,7 +138,6 @@ const ZoneList = () => {    const location = useLocation();
         setDeleteTimer(intervalId);
     };
     
-    // Fonction pour annuler la suppression en cours
     const cancelDelete = () => {
         if (deleteTimer) {
             clearInterval(deleteTimer);
@@ -164,18 +149,14 @@ const ZoneList = () => {    const location = useLocation();
         setToastMessage("Suppression annulée");
         setShowToast(true);
     };
-      // Fonction pour finaliser la suppression après le délai
     const finalizeDelete = (id) => {
-        // Nettoyer le timer si existant
         if (deleteTimer) {
             clearInterval(deleteTimer);
             setDeleteTimer(null);
         }
         
-        // Fermer le toast de suppression progressive
         setDeleteToastVisible(false);
         
-        // Appel API pour supprimer définitivement la zone
         ZoneService.remove(id)
             .then(() => {
                 setZones(zones.filter(zone => zone.id !== id));
@@ -190,7 +171,6 @@ const ZoneList = () => {    const location = useLocation();
             });
     };
     
-    // Fonction pour gérer la sélection d'une zone
     const handleZoneSelection = (zoneId) => {
         setSelectedZones(prevSelected => {
             if (prevSelected.includes(zoneId)) {
@@ -201,7 +181,6 @@ const ZoneList = () => {    const location = useLocation();
         });
     };
     
-    // Fonction pour gérer la sélection/désélection de toutes les zones
     const handleSelectAllZones = (checked) => {
         if (checked) {
             const allZoneIds = paginatedZones.map(zone => zone.id);
@@ -211,7 +190,6 @@ const ZoneList = () => {    const location = useLocation();
         }
     };
     
-    // Fonction pour supprimer plusieurs zones à la fois
     const bulkDeleteZones = () => {
         setLoading(true);
         
@@ -236,7 +214,6 @@ const ZoneList = () => {    const location = useLocation();
             });
     };
 
-    // Fonction pour trier les zones
     const requestSort = (key) => {
         let direction = 'ascending';
         if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -245,13 +222,12 @@ const ZoneList = () => {    const location = useLocation();
         setSortConfig({ key, direction });
     };
 
-    // Fonction pour obtenir l'icône de tri appropriée
     const getSortDirectionIcon = (columnName) => {
         if (sortConfig.key !== columnName) return <FaSort className="ms-1 text-muted" size={12} />;
         return sortConfig.direction === 'ascending' ? 
             <FaSortUp className="ms-1 text-primary" /> : 
             <FaSortDown className="ms-1 text-primary" />;
-    };    // Nettoyage des ressources lors du démontage du composant
+    };
     useEffect(() => {
         return () => {
             if (deleteTimer) {
@@ -263,14 +239,12 @@ const ZoneList = () => {    const location = useLocation();
         };
     }, [deleteTimer]);
 
-    // Fonction pour effacer les filtres
     const clearFilters = () => {
         setFilter("");
         setTypeFilter("TOUS");
         setCurrentPage(1);
     };
 
-    // Fonction pour obtenir les zones filtrées et triées
     const getFilteredZones = useCallback(() => {
         return zones.filter(zone => {
             const textMatch = 
@@ -284,7 +258,6 @@ const ZoneList = () => {    const location = useLocation();
         });
     }, [zones, filter, typeFilter]);
 
-    // Fonction pour obtenir les zones triées après filtrage - avec mémo
     const sortedZones = useMemo(() => {
         const filteredZones = getFilteredZones();
         
@@ -304,14 +277,12 @@ const ZoneList = () => {    const location = useLocation();
         });
     }, [getFilteredZones, sortConfig]);
 
-    // Fonction pour obtenir les zones à afficher pour la pagination
     const paginatedZones = useMemo(() => {
         const indexOfLastItem = currentPage * itemsPerPage;
         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
         return sortedZones.slice(indexOfFirstItem, indexOfLastItem);
     }, [sortedZones, currentPage, itemsPerPage]);
 
-    // Fonction pour afficher les agents associés à une zone
     const displayAgents = (zoneId) => {
         if (agentLoadingError) return <span className="text-danger">API indisponible</span>;
         
@@ -319,7 +290,6 @@ const ZoneList = () => {    const location = useLocation();
         
         if (agents.length === 0) return <span className="text-muted">Non assigné</span>;
         
-        // Afficher les deux premiers agents et un badge "+X" pour les autres
         const displayCount = window.innerWidth < 768 ? 1 : 2;
         const shownAgents = agents.slice(0, displayCount);
         const remainingCount = agents.length - displayCount;
@@ -370,7 +340,6 @@ const ZoneList = () => {    const location = useLocation();
         );
     };
 
-    // Fonction pour obtenir la couleur du badge selon le type de zone
     const getZoneTypeBadge = (type) => {
         switch(type) {
             case "VILLE": return "success";
@@ -381,7 +350,6 @@ const ZoneList = () => {    const location = useLocation();
         }
     };
 
-    // Fonction pour obtenir l'icône selon le type de zone
     const getZoneTypeIcon = (type) => {
         switch(type) {
             case "VILLE": return <FaCity className="me-1" />;
@@ -392,23 +360,18 @@ const ZoneList = () => {    const location = useLocation();
         }
     };
 
-    // Gestion de la pagination
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
         
-        // Faire défiler vers le haut de la liste
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Pagination
     const totalPages = Math.ceil(sortedZones.length / itemsPerPage);
     
-    // Créer les éléments de pagination de manière réactive en fonction de la taille d'écran
     const renderPaginationItems = () => {
         const isMobile = window.innerWidth < 576;
         const items = [];
         
-        // Bouton précédent
         items.push(
             <Pagination.Prev 
                 key="prev" 
@@ -417,7 +380,6 @@ const ZoneList = () => {    const location = useLocation();
             />
         );
         
-        // Premier élément toujours visible
         items.push(
             <Pagination.Item 
                 key={1} 
@@ -428,14 +390,11 @@ const ZoneList = () => {    const location = useLocation();
             </Pagination.Item>
         );
         
-        // Pour les mobiles, montrer moins d'éléments
         if (isMobile) {
-            // Si la page courante est > 2, montrer ellipsis
             if (currentPage > 2) {
                 items.push(<Pagination.Ellipsis key="ellipsis1" />);
             }
             
-            // Page courante (si différente de 1 et totalPages)
             if (currentPage !== 1 && currentPage !== totalPages) {
                 items.push(
                     <Pagination.Item 
@@ -447,17 +406,14 @@ const ZoneList = () => {    const location = useLocation();
                 );
             }
             
-            // Si la page courante est < totalPages-1, montrer ellipsis
             if (currentPage < totalPages - 1) {
                 items.push(<Pagination.Ellipsis key="ellipsis2" />);
             }
         } else {
-            // Version desktop avec plus d'éléments
             if (currentPage > 3) {
                 items.push(<Pagination.Ellipsis key="ellipsis1" />);
             }
             
-            // Pages autour de la page courante
             for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
                 items.push(
                     <Pagination.Item 
@@ -475,7 +431,6 @@ const ZoneList = () => {    const location = useLocation();
             }
         }
         
-        // Dernier élément toujours visible si > 1
         if (totalPages > 1) {
             items.push(
                 <Pagination.Item 
@@ -488,7 +443,6 @@ const ZoneList = () => {    const location = useLocation();
             );
         }
         
-        // Bouton suivant
         items.push(
             <Pagination.Next 
                 key="next" 
@@ -500,7 +454,6 @@ const ZoneList = () => {    const location = useLocation();
         return items;
     };
 
-    // Affichage du chargement
     if (loading && !isRefreshing) {
         return (
             <Container className="text-center my-5">
@@ -512,7 +465,6 @@ const ZoneList = () => {    const location = useLocation();
         );
     }
 
-    // Affichage de l'erreur
     if (error) {
         return (
             <Container className="my-5">
@@ -534,13 +486,13 @@ const ZoneList = () => {    const location = useLocation();
 
     return (
         <Container fluid className="zone-list-container py-4 px-4">
-            {/* Toast pour les notifications */}
+            {}
             <ToastContainer 
                 className="p-3" 
                 position="top-end"
                 style={{ zIndex: 1060 }}
             >
-                {/* Toast pour les messages de succès */}
+                {}
                 <Toast 
                     show={showToast} 
                     onClose={() => setShowToast(false)}
@@ -555,10 +507,10 @@ const ZoneList = () => {    const location = useLocation();
                     </Toast.Header>
                     <Toast.Body>{toastMessage}</Toast.Body>
                 </Toast>
-                  {/* Toast pour la suppression progressive avec barre de progression */}
+                  {}
                 <Toast 
                     show={deleteToastVisible} 
-                    onClose={cancelDelete} /* Annule la suppression si l'utilisateur ferme le toast */
+                    onClose={cancelDelete} 
                     className="delete-progress-toast"
                 >
                     <Toast.Header closeButton>
@@ -631,7 +583,7 @@ const ZoneList = () => {    const location = useLocation();
                                             value={filter}
                                             onChange={e => {
                                                 setFilter(e.target.value);
-                                                setCurrentPage(1); // Reset pagination on search
+                                                setCurrentPage(1);
                                             }}
                                             aria-label="Rechercher des zones"
                                         />
@@ -676,7 +628,7 @@ const ZoneList = () => {    const location = useLocation();
                 </Card.Header>
 
                 <Card.Body>
-                    {/* Bouton pour afficher/masquer les filtres sur mobile */}
+                    {}
                     <div className="d-md-none mb-3">
                         <Button 
                             variant="outline-secondary" 
@@ -688,7 +640,7 @@ const ZoneList = () => {    const location = useLocation();
                         </Button>
                     </div>
 
-                    {/* Filtres par type de zone - visible sur desktop ou quand activé sur mobile */}
+                    {}
                     <div className={`filter-buttons mb-4 ${showFilterMobile ? 'd-block' : 'd-none d-md-flex'}`}>
                         <Button 
                             variant={typeFilter === 'TOUS' ? 'primary' : 'outline-primary'}
@@ -747,7 +699,7 @@ const ZoneList = () => {    const location = useLocation();
                         </Button>
                     </div>
 
-                    {/* Indicateur de filtres actifs */}
+                    {}
                     {(filter || typeFilter !== 'TOUS') && (
                         <div className="d-flex align-items-center mb-3 flex-wrap filter-indicators">
                             <span className="me-2 text-muted">Filtres actifs:</span>
@@ -839,7 +791,7 @@ const ZoneList = () => {    const location = useLocation();
                         </div>
                     ) : (
                         <>
-                            {/* Astuce pour les utilisateurs */}
+                            {}
                             <div className="d-flex align-items-center mb-3 bg-light p-2 rounded">
                                 <FaRegLightbulb className="text-warning me-2" />
                                 <small className="text-muted">
@@ -971,7 +923,7 @@ const ZoneList = () => {    const location = useLocation();
                                 </Table>
                             </div>
                             
-                            {/* Affichage de la pagination si nécessaire */}
+                            {}
                             {totalPages > 1 && (
                                 <div className="d-flex justify-content-center mt-4">
                                     <Pagination>{renderPaginationItems()}</Pagination>
@@ -999,7 +951,7 @@ const ZoneList = () => {    const location = useLocation();
                                 value={itemsPerPage}
                                 onChange={(e) => {
                                     setItemsPerPage(Number(e.target.value));
-                                    setCurrentPage(1); // Retour à la première page
+                                    setCurrentPage(1);
                                 }}
                                 aria-label="Nombre de zones par page"
                             >
@@ -1012,7 +964,7 @@ const ZoneList = () => {    const location = useLocation();
                     )}
                 </Card.Footer>            </Card>            
             
-            {/* Modal de confirmation pour la suppression en lot */}
+            {}
             <Modal show={showBulkDeleteModal} onHide={() => setShowBulkDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>

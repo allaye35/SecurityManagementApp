@@ -1,6 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.security.jwt;
 
-
 import com.boulevardsecurity.securitymanagementapp.security.user.AppUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

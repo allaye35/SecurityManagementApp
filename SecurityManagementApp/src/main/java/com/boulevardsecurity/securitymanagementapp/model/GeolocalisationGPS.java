@@ -24,7 +24,7 @@ public class GeolocalisationGPS {
 
     private float gps_precision;
 
-    @Embedded // Intègre directement latitude et longitude dans la table
+    @Embedded
     private GeoPoint position;
 
     @OneToMany(mappedBy = "geolocalisationGPS", cascade = CascadeType.ALL, orphanRemoval = true)

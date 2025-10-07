@@ -1,6 +1,5 @@
 package com.boulevardsecurity.securitymanagementapp.security.user;
 
-
 import com.boulevardsecurity.securitymanagementapp.Enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +17,7 @@ public class AppUserDetails implements UserDetails {
     private String email;
     private String password;
     private Role role;
-    private String userType; // "AGENT" ou "CLIENT"
+    private String userType;
 
     @Override public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.name()));

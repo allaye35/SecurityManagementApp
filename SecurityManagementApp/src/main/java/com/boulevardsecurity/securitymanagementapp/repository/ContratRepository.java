@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
+// Repository JPA
 public interface ContratRepository extends JpaRepository<Contrat, Long> {
     Optional<Contrat> findByReferenceContrat(String referenceContrat);
     Optional<Contrat> findByDevisId(Long devisId);

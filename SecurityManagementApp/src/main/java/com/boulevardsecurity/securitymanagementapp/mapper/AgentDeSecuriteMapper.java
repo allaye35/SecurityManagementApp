@@ -21,7 +21,6 @@ public class AgentDeSecuriteMapper {
     private final ContratDeTravailRepository contratRepo;
     private final GestionnaireNotificationsRepository notifRepo;
 
-    /* ENTITÉ -> DTO */
     public AgentDeSecuriteDto toDto(AgentDeSecurite a) {
         return AgentDeSecuriteDto.builder()
                 .id(a.getId())
@@ -45,7 +44,6 @@ public class AgentDeSecuriteMapper {
                 .build();
     }
 
-    /* DTO création -> ENTITÉ (mot de passe encore en clair : hash côté service) */
     public AgentDeSecurite toEntity(AgentDeSecuriteCreationDto dto) {
         AgentDeSecurite a = AgentDeSecurite.builder()
                 .nom(dto.getNom())
@@ -97,13 +95,12 @@ public class AgentDeSecuriteMapper {
         return a;
     }
 
-    /* Mise à jour depuis le DTO création (PUT/PATCH) */
     public void updateEntityFromCreationDto(AgentDeSecuriteCreationDto dto, AgentDeSecurite entity) {
 
         if (dto.getNom() != null) entity.setNom(dto.getNom());
         if (dto.getPrenom() != null) entity.setPrenom(dto.getPrenom());
         if (dto.getEmail() != null) entity.setEmail(dto.getEmail());
-        if (dto.getPassword() != null) entity.setPassword(dto.getPassword()); // sera hashé dans le service
+        if (dto.getPassword() != null) entity.setPassword(dto.getPassword());
         if (dto.getTelephone() != null) entity.setTelephone(dto.getTelephone());
         if (dto.getAdresse() != null) entity.setAdresse(dto.getAdresse());
         if (dto.getDateNaissance() != null) entity.setDateNaissance(dto.getDateNaissance());

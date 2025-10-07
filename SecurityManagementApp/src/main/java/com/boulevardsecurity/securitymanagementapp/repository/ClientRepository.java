@@ -8,18 +8,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+// Repository JPA
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Optional<Client> findByEmail(String email);
     Optional<Client> findByNom(String nom);
 
-    /* ➜ à ajouter pour le contrôleur Register */
     boolean existsByEmail(String email);
-    /** Comptes dont l’email est vérifié mais en attente d’approbation admin */
+    
     List<Client> findByEmailVerifiedIsTrueAndAdminApprovedIsFalse();
     List<Client> findByEmailVerifiedTrueAndAdminApprovedFalse();
-
-
-
 
 }
 

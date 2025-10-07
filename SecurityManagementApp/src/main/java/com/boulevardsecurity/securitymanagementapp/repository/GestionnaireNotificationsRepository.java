@@ -7,10 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+// Repository JPA
 public interface GestionnaireNotificationsRepository extends JpaRepository<GestionnaireNotifications, Long> {
-    // existant : notifications par agent
     List<GestionnaireNotifications> findByAgentDeSecuriteId(Long agentId);
 
-    // nouveau : notifications par client
     List<GestionnaireNotifications> findByClientId(Long clientId);
 }

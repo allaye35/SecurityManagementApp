@@ -33,7 +33,7 @@ public class ClientServiceImpl implements ClientService {
         ent.setEmail(EmailUtil.normalize(ent.getEmail()));
         ent.setPassword(passwordEncoder.encode(ent.getPassword()));
         ent.setEmailVerified(false);
-        ent.setAdminApproved(false); // attente validation admin
+        ent.setAdminApproved(false);
         ent.setPasswordChangedAt(Instant.now());
         Client saved = repo.save(ent);
         return mapper.toDto(saved);
@@ -74,7 +74,6 @@ public class ClientServiceImpl implements ClientService {
     public ClientDto updateClientRole(Long id, String newRole) {
         Client existing = repo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Client introuvable : " + id));
-        // Mise à jour directe du rôle pour éviter les problèmes de lazy loading
         existing.setRole(Role.valueOf(newRole));
         Client saved = repo.save(existing);
         return mapper.toDto(saved);
@@ -86,7 +85,6 @@ public class ClientServiceImpl implements ClientService {
         repo.deleteById(id);
     }
 
-    // ---- approbation admin ----
     @Override @Transactional(readOnly = true)
     public List<ClientDto> getPendingApprovalClients() {
         return repo.findByEmailVerifiedIsTrueAndAdminApprovedIsFalse()

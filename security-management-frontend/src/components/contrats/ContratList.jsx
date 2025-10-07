@@ -14,14 +14,12 @@ import { faSearch, faFilter, faPlus, faEye, faPencilAlt, faTrash, faFileSignatur
 import "../../styles/ContratList.css";
 
 export default function ContratList() {
-    // Importer notre feuille de style CSS
     useEffect(() => {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = '/src/styles/ContratList.css';
         document.head.appendChild(link);
         
-        // Style global pour garantir que les tooltips s'affichent au premier plan
         const style = document.createElement('style');
         style.innerHTML = `
             .tooltip {
@@ -34,7 +32,6 @@ export default function ContratList() {
         `;
         document.head.appendChild(style);
         
-        // Nettoyer les styles lors du démontage du composant
         return () => {
             document.head.removeChild(style);
             if (link.parentNode) {
@@ -43,7 +40,6 @@ export default function ContratList() {
         };
     }, []);
     
-    // États principaux
     const [contrats, setContrats] = useState([]);
     const [devisMap, setDevisMap] = useState({});
     const [missionsMap, setMissionsMap] = useState({});
@@ -53,7 +49,6 @@ export default function ContratList() {
     const [selectedContrat, setSelectedContrat] = useState(null);
     const [showMissionsModal, setShowMissionsModal] = useState(false);
     
-    // États pour filtrage et recherche
     const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState({
         dureeMin: "",
@@ -65,30 +60,26 @@ export default function ContratList() {
         sortDirection: "asc"
     });
     const [showFilters, setShowFilters] = useState(false);
-    const [viewMode, setViewMode] = useState("grid"); // 'grid' ou 'table'
+    const [viewMode, setViewMode] = useState("grid");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
     
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Chargement des données
         const fetchData = async () => {
             try {
                 setLoading(true);
                 
-                // Charger tous les contrats
                 const contratsResponse = await ContratService.getAll();
                 const list = contratsResponse.data;
                 setContrats(list);
                 setFilteredContrats(list);
                 
-                // Extraire tous les devisId et charger leurs détails
                 const devisIds = Array.from(
                     new Set(list.map(c => c.devisId).filter(Boolean))
                 );
                 
-                // Chargement parallèle des devis
                 const devisResults = await Promise.all(devisIds.map(id =>
                     DevisService.getById(id)
                         .then(r => ({ id, dto: r.data }))
@@ -99,7 +90,6 @@ export default function ContratList() {
                 devisResults.forEach(r => { if (r) devisMapData[r.id] = r.dto; });
                 setDevisMap(devisMapData);
                 
-                // Chargement parallèle des missions pour chaque contrat
                 const missionsResults = await Promise.all(list.map(c =>
                     MissionService.getByContratId(c.id)
                         .then(r => ({ contratId: c.id, missions: r.data }))
@@ -121,14 +111,12 @@ export default function ContratList() {
         fetchData();
     }, []);
     
-    // Application des filtres lorsqu'ils changent
     useEffect(() => {
         applyFilters();
     }, [searchTerm, filters, contrats]);
       const applyFilters = () => {
         let results = [...contrats];
         
-        // Filtrage par terme de recherche (référence ou autres infos)
         if (searchTerm.trim() !== "") {
             const term = searchTerm.toLowerCase();
             results = results.filter(contrat => 
@@ -139,21 +127,18 @@ export default function ContratList() {
             );
         }
         
-        // Filtrage par durée minimum
         if (filters.dureeMin) {
             results = results.filter(contrat => 
                 contrat.dureeMois && parseInt(contrat.dureeMois) >= parseInt(filters.dureeMin)
             );
         }
         
-        // Filtrage par durée maximum
         if (filters.dureeMax) {
             results = results.filter(contrat => 
                 contrat.dureeMois && parseInt(contrat.dureeMois) <= parseInt(filters.dureeMax)
             );
         }
         
-        // Filtrage par date minimum
         if (filters.dateMin) {
             const dateMin = new Date(filters.dateMin);
             results = results.filter(contrat => 
@@ -161,7 +146,6 @@ export default function ContratList() {
             );
         }
         
-        // Filtrage par date maximum
         if (filters.dateMax) {
             const dateMax = new Date(filters.dateMax);
             results = results.filter(contrat => 
@@ -169,7 +153,6 @@ export default function ContratList() {
             );
         }
         
-        // Filtrage par présence de missions
         if (filters.avecMissions === "avec") {
             results = results.filter(contrat => 
                 (missionsMap[contrat.id] && missionsMap[contrat.id].length > 0)
@@ -180,21 +163,17 @@ export default function ContratList() {
             );
         }
         
-        // Tri des résultats
         results = sortContrats(results);
         
-        // Réinitialiser la page courante quand les filtres changent
         setCurrentPage(1);
         
         setFilteredContrats(results);
     };
     
-    // Tri des contrats
     const sortContrats = (listToSort) => {
         return [...listToSort].sort((a, b) => {
             let compareValueA, compareValueB;
             
-            // Déterminer les valeurs à comparer selon le critère de tri
             switch (filters.sortBy) {
                 case 'id':
                     compareValueA = a.id;
@@ -221,7 +200,6 @@ export default function ContratList() {
                     compareValueB = b.id;
             }
             
-            // Appliquer la direction du tri
             let result = 0;
             if (typeof compareValueA === 'string') {
                 result = compareValueA.localeCompare(compareValueB);
@@ -253,7 +231,6 @@ export default function ContratList() {
         setFilteredContrats(contrats);
     };
     
-    // Gestion de la pagination
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -264,12 +241,10 @@ export default function ContratList() {
         currentPage * itemsPerPage
     );
     
-    // Changer le mode d'affichage
     const toggleViewMode = (mode) => {
         setViewMode(mode);
     };
     
-    // Gestion du tri
     const handleSortChange = (sortField) => {
         setFilters(prev => ({
             ...prev,
@@ -278,7 +253,6 @@ export default function ContratList() {
         }));
     };
     
-    // Extraire les statistiques sur les contrats
     const getContratStats = () => {
         const total = filteredContrats.length;
         const withMissions = filteredContrats.filter(c => 
@@ -374,7 +348,7 @@ export default function ContratList() {
                     </Row>
                 </Card.Header>
                 <Card.Body>
-                    {/* Section de statistiques */}
+                    {}
                     <div className="stats-container">
                         <Row>
                             {!loading && (
@@ -641,7 +615,7 @@ export default function ContratList() {
                         </div>
                     ) : (
                         <>
-                            {/* Mode d'affichage en grille */}
+                            {}
                             {viewMode === 'grid' ? (
                                 <Row>
                                     {currentContrats.map((c, index) => {
@@ -754,7 +728,7 @@ export default function ContratList() {
                                     })}
                                 </Row>
                             ) : (
-                                /* Mode d'affichage en tableau */
+                                
                                 <div className="table-responsive">
                                     <Table hover striped className="align-middle contrat-list-table shadow-sm">
                                         <thead>
@@ -930,7 +904,7 @@ export default function ContratList() {
                                 </div>
                             )}
                             
-                            {/* Pagination */}
+                            {}
                             {filteredContrats.length > 0 && (
                                 <div className="pagination-container mt-4">
                                     <Pagination>
@@ -944,7 +918,6 @@ export default function ContratList() {
                                         />
                                         
                                         {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                            // Logique pour montrer les pages autour de la page courante
                                             let pageToShow;
                                             if (totalPages <= 5) {
                                                 pageToShow = i + 1;
@@ -991,7 +964,7 @@ export default function ContratList() {
                     )}
                 </Card.Body>
             </Card>
-              {/* Modal pour afficher les missions d'un contrat */}
+              {}
             <Modal show={showMissionsModal} onHide={() => setShowMissionsModal(false)} size="lg" dialogClassName="modal-mission">
                 <Modal.Header closeButton className="bg-primary text-white">
                     <Modal.Title className="d-flex align-items-center">
@@ -1070,7 +1043,6 @@ export default function ContratList() {
                                         </thead>
                                         <tbody>
                                             {missionsMap[selectedContrat.id].map(mission => {
-                                                // Calcul du statut réel basé sur les dates (en cas de données incomplètes)
                                                 const today = new Date();
                                                 const dateDebut = mission.dateDebut ? new Date(mission.dateDebut) : null;
                                                 const dateFin = mission.dateFin ? new Date(mission.dateFin) : null;

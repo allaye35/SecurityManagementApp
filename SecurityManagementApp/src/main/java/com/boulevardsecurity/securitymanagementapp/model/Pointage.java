@@ -7,7 +7,6 @@ import lombok.*;
 
 import java.util.Date;
 
-
 @Entity
 @Table(name = "pointages")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -34,10 +33,9 @@ public class Pointage {
     private boolean estPresent;
     private boolean estRetard;
 
-    // ID de l'agent (pas de relation directe, on récupère via mission)
     private Long agentId;
 
-    @Embedded  // Position GPS envoyée par l'agent au moment du pointage
+    @Embedded
     private GeoPoint positionActuelle;
 
     @ManyToOne

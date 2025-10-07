@@ -21,12 +21,10 @@ public interface ClientService {
 
     ClientDto updateClient(Long id, ClientDto dto);
     
-    // Méthode spécifique pour changer le rôle (évite les problèmes de lazy loading)
     ClientDto updateClientRole(Long id, String newRole);
 
     void deleteClient(Long id);
-    // --- nouveaux pour l’approbation admin ---
-    List<ClientDto> getPendingApprovalClients(); // emailVerified = true && adminApproved = false
+    List<ClientDto> getPendingApprovalClients();
     ClientDto approveClient(Long id);
 
 }

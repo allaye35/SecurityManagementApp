@@ -19,13 +19,11 @@ public class ArticleContratTravailController {
 
     private final ArticleContratTravailService service;
 
-    /** Récupère tous les articles de contrat de travail */
     @GetMapping
     public ResponseEntity<List<ArticleContratTravailDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
-    /** Récupère un article par son ID */
     @GetMapping("/{id}")
     public ResponseEntity<ArticleContratTravailDto> getById(@PathVariable Long id) {
         return service.getById(id)
@@ -33,7 +31,6 @@ public class ArticleContratTravailController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /** Récupère les articles d’un contrat de travail donné */
     @GetMapping("/contrat-travail/{contratTravailId}")
     public ResponseEntity<List<ArticleContratTravailDto>> getByContratTravail(
             @PathVariable Long contratTravailId
@@ -41,7 +38,6 @@ public class ArticleContratTravailController {
         return ResponseEntity.ok(service.getByContratTravail(contratTravailId));
     }
 
-    /** Crée un nouvel article pour un contrat de travail */
     @PostMapping
     public ResponseEntity<ArticleContratTravailDto> create(
             @RequestBody ArticleContratTravailCreationDto dto
@@ -50,7 +46,6 @@ public class ArticleContratTravailController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    /** Met à jour un article existant */
     @PutMapping("/{id}")
     public ResponseEntity<ArticleContratTravailDto> update(
             @PathVariable Long id,
@@ -64,7 +59,6 @@ public class ArticleContratTravailController {
         }
     }
 
-    /** Supprime un article */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {

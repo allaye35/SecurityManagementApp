@@ -16,7 +16,6 @@ public class EntrepriseMapper {
     private final DevisRepository devisRepo;
     private final ContratDeTravailRepository contratTravailRepo;
 
-    /* -------- ENTITÉ → DTO -------- */
     public EntrepriseDto toDto(Entreprise e) {
         return EntrepriseDto.builder()
                 .id(e.getId())
@@ -42,7 +41,6 @@ public class EntrepriseMapper {
                 .build();
     }
 
-    /* -------- DTO création → ENTITÉ -------- */
     public Entreprise toEntity(EntrepriseCreateDto dto) {
         Entreprise ent = Entreprise.builder()
                 .nom(dto.getNom())
@@ -59,7 +57,6 @@ public class EntrepriseMapper {
                 .email(dto.getEmail())
                 .build();
 
-        /* Attach relations si fournies */
         if (dto.getDevisIds() != null) {
             ent.setDevisList(dto.getDevisIds().stream()
                     .map(id -> devisRepo.findById(id)
@@ -79,7 +76,6 @@ public class EntrepriseMapper {
         return ent;
     }
 
-    /* -------- Mise à jour partielle DTO → ENT -------- */
     public void updateEntityFromDto(EntrepriseDto dto, Entreprise ent) {
         if (dto.getNom() != null) ent.setNom(dto.getNom());
         if (dto.getSiretPrestataire() != null) ent.setSiretPrestataire(dto.getSiretPrestataire());

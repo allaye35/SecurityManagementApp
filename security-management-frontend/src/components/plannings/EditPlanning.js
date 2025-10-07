@@ -12,7 +12,6 @@ export default function EditPlanning() {
   const [missions , setMissions] = useState([]);
   const [err,setErr] = useState("");
 
-  /* chargement */
   useEffect(()=>{
     Promise.all([
       PlanningService.getPlanningById(id),
@@ -28,7 +27,6 @@ export default function EditPlanning() {
   if(err)        return <p style={{color:"red"}}>{err}</p>;
   if(!planning)  return <p>Chargement…</p>;
 
-  /* helpers */
   const toggleMission = mId =>{
     const inside = planning.missions.some(m=>m.id===mId);
     const newList = inside
@@ -38,7 +36,6 @@ export default function EditPlanning() {
     setPlanning({...planning, missions:newList});
   };
 
-  /* submit */
   const submit = e =>{
     e.preventDefault();
     PlanningService.updatePlanning(id, planning)

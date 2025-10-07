@@ -46,7 +46,6 @@ public class Mission {
     @Column(nullable = true)
     private LocalTime heureFin;
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "statut_mission")
     private StatutMission statutMission;
@@ -60,43 +59,29 @@ public class Mission {
     @Builder.Default
     private Set<AgentDeSecurite> agents = new HashSet<>();
 
-
-    // Relation avec Planning (Une mission appartient à un seul planning)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "planning_id", nullable = true)
     private Planning planning;
 
-    // Mission.java
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "site_id")
-//    @JsonIgnoreProperties(value = { "missions" }, allowSetters = true)
     private Site site;
-
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "geolocalisation_id")
     private GeolocalisationGPS geolocalisationGPS;
 
-    // Relation avec RapportIntervention (une mission peut avoir plusieurs rapports)
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    @JsonManagedReference      //
-//    @JsonIgnoreProperties("mission")
-//    @JsonIgnore
     @Builder.Default
     private List<RapportIntervention> rapports = new ArrayList<>();
-
 
     @Enumerated(EnumType.STRING)
     private TypeMission typeMission;
 
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
-    private List<Pointage> pointages = new ArrayList<>();  //
+    private List<Pointage> pointages = new ArrayList<>();
 
-
-    // ----------------------------------------------
-    // RELATION AVEC Contrat (pour la copie éventuelle)
-    // ----------------------------------------------
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "contrat_id")
     private Contrat contrat;
@@ -107,7 +92,6 @@ public class Mission {
     @Column(nullable = false)
     private Integer quantite;
 
-    // --- tarif et chiffrage calculé ---
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "tarif_mission_id")
     private TarifMission tarif;
@@ -116,7 +100,6 @@ public class Mission {
     private BigDecimal montantTVA;
     private BigDecimal montantTTC;
 
-    // --- lien vers le devis parent ---
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "devis_id")
     private Devis devis;
@@ -128,6 +111,5 @@ public class Mission {
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Builder.Default
     private List<ContratDeTravail> contratsDeTravail = new ArrayList<>();
-
 
 }

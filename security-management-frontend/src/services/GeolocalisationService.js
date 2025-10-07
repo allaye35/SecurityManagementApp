@@ -1,8 +1,6 @@
 import api from "./api";
 
-// Utilise la variable d'environnement correctement
 const API_URL = "/geolocalisations-gps";
-
 
 const getAllGeolocalisations = async () => {
   return await api.get(API_URL);
