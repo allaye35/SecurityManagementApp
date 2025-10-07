@@ -73,6 +73,13 @@
     background-color: #f0f0f0;
 }
 
+.dropdown-divider {
+    height: 0;
+    margin: 0.5rem 0;
+    overflow: hidden;
+    border-top: 1px solid #e9ecef;
+}
+
 .navbar-right {
     margin-left: auto;
     display: flex;

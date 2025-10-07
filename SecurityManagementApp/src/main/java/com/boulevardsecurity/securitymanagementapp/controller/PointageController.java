@@ -1,6 +1,7 @@
 // src/main/java/com/boulevardsecurity/securitymanagementapp/controller/PointageController.java
 package com.boulevardsecurity.securitymanagementapp.controller;
 
+import com.boulevardsecurity.securitymanagementapp.dto.AgentDeSecuriteDto;
 import com.boulevardsecurity.securitymanagementapp.dto.PointageCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.PointageDto;
 import com.boulevardsecurity.securitymanagementapp.service.PointageService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -64,6 +66,53 @@ public class PointageController {
         try {
             service.supprimerPointage(id);
             return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * Endpoint pour la prise de service
+     */
+    @PostMapping("/prise-service")
+    public ResponseEntity<?> priseDeService(@RequestBody PointageCreateDto dto) {
+        try {
+            PointageDto pointage = service.enregistrerPriseDeService(dto);
+            return ResponseEntity.ok(pointage);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("message", "Erreur serveur: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Endpoint pour la fin de service
+     */
+    @PostMapping("/fin-service")
+    public ResponseEntity<?> finDeService(@RequestBody PointageCreateDto dto) {
+        try {
+            PointageDto pointage = service.enregistrerFinDeService(dto);
+            return ResponseEntity.ok(pointage);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("message", "Erreur serveur: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Récupérer les agents actuellement en service pour une mission
+     */
+    @GetMapping("/mission/{idMission}/agents-en-service")
+    public ResponseEntity<List<AgentDeSecuriteDto>> getAgentsEnService(@PathVariable Long idMission) {
+        try {
+            List<AgentDeSecuriteDto> agents = service.getAgentsEnService(idMission);
+            return ResponseEntity.ok(agents);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }

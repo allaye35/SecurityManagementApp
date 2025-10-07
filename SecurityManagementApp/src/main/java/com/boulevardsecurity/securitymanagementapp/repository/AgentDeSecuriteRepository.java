@@ -2,6 +2,7 @@ package com.boulevardsecurity.securitymanagementapp.repository;
 
 
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
+import com.boulevardsecurity.securitymanagementapp.model.Client;
 import com.boulevardsecurity.securitymanagementapp.model.Planning;
 import com.boulevardsecurity.securitymanagementapp.model.ZoneDeTravail;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,10 @@ public interface AgentDeSecuriteRepository extends JpaRepository<AgentDeSecurite
     
     // Alternative avec ID de zone si nécessaire
     List<AgentDeSecurite> findByZonesDeTravail_Id(Long zoneId);
+    // AgentDeSecuriteRepository.java
+    List<AgentDeSecurite> findByEmailVerifiedTrueAndAdminApprovedFalse();
+
+
+
+
 }

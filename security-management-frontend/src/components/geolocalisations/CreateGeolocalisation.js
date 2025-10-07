@@ -12,12 +12,13 @@ import {
 } from "react-icons/fa";
 
 // Composants React-Leaflet + L pour corriger l'icône par défaut
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
 
 // Services & styles
 import GeolocalisationService from "../../services/GeolocalisationService";
 import MissionService from "../../services/MissionService";
+import SiteService from "../../services/SiteService";
 import "../../styles/GeolocalisationForm.css";
 import "leaflet/dist/leaflet.css";
 
@@ -28,6 +29,15 @@ L.Icon.Default.mergeOptions({
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
+
+// Composant pour mettre à jour le centre de la carte automatiquement
+function MapUpdater({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, 15);
+  }, [center, map]);
+  return null;
+}
 
 export default function CreateGeolocalisation() {
   const navigate = useNavigate();
@@ -42,6 +52,9 @@ export default function CreateGeolocalisation() {
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [siteAddress, setSiteAddress] = useState(""); // Adresse du site de la mission
+  const [geocoding, setGeocoding] = useState(false); // État du géocodage
+  const [coordsLocked, setCoordsLocked] = useState(false); // Coordonnées verrouillées après géocodage
 
   // 1) Chargement des missions pour le select
   useEffect(() => {
@@ -52,29 +65,84 @@ export default function CreateGeolocalisation() {
 
   // 2) Lorsque l'on choisit une mission, on géocode automatiquement son adresse de site
   useEffect(() => {
-    if (!form.missionId) return;
+    if (!form.missionId) {
+      setSiteAddress("");
+      setCoordsLocked(false);
+      return;
+    }
     (async () => {
       try {
-        setLoading(true);
+        setGeocoding(true);
+        setError(null);
+        
+        // Récupérer la mission
+        console.log("🔍 Récupération de la mission ID:", form.missionId);
         const { data: mission } = await MissionService.getMissionById(form.missionId);
-        const address = mission.site?.adresse;
-        if (!address) throw new Error();
+        console.log("📦 Mission récupérée:", mission);
+        
+        // Vérifier si la mission a un site_id (essayer toutes les propriétés possibles)
+        const siteId = mission.site_mission || mission.siteId || mission.site?.id || mission.site_id;
+        console.log("🏢 Site ID trouvé:", siteId);
+        
+        if (!siteId) {
+          console.error("❌ Aucun site_id trouvé dans la mission:", Object.keys(mission));
+          setError("Cette mission n'a pas de site associé.");
+          setSiteAddress("");
+          setCoordsLocked(false);
+          return;
+        }
 
+        // Récupérer les informations du site via SiteService
+        console.log("🔍 Récupération du site ID:", siteId);
+        const { data: site } = await SiteService.getSiteById(siteId);
+        console.log("🏢 Site récupéré:", site);
+        
+        // Essayer différentes propriétés pour l'adresse
+        const address = site.adresse || site.address || site.rue || site.voie;
+        console.log("📍 Adresse trouvée:", address);
+        
+        if (!address) {
+          console.error("❌ Aucune adresse trouvée dans le site:", Object.keys(site));
+          setError(`Le site "${site.nom || site.name || 'inconnu'}" n'a pas d'adresse renseignée.`);
+          setSiteAddress("");
+          setCoordsLocked(false);
+          return;
+        }
+
+        setSiteAddress(address);
+
+        // Géocoder l'adresse via Nominatim
+        console.log("🌍 Géocodage de l'adresse:", address);
         const resp = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
         );
         const results = await resp.json();
-        if (!results.length) throw new Error();
+        console.log("📍 Résultats du géocodage:", results);
+        
+        if (!results.length) {
+          setError(`Impossible de géocoder l'adresse "${address}". Veuillez vérifier l'adresse ou saisir manuellement les coordonnées.`);
+          setCoordsLocked(false);
+          return;
+        }
+
+        const coords = {
+          latitude: parseFloat(results[0].lat),
+          longitude: parseFloat(results[0].lon)
+        };
+        console.log("✅ Coordonnées calculées:", coords);
 
         setForm(f => ({
           ...f,
-          latitude: parseFloat(results[0].lat),
-          longitude: parseFloat(results[0].lon),
+          ...coords
         }));
-      } catch {
-        setError("Impossible de géocoder l'adresse du site.");
+        setCoordsLocked(true);
+      } catch (err) {
+        console.error("❌ Erreur lors du géocodage:", err);
+        console.error("Détails de l'erreur:", err.response || err.message);
+        setError(`Erreur lors du géocodage: ${err.message || 'Erreur inconnue'}`);
+        setCoordsLocked(false);
       } finally {
-        setLoading(false);
+        setGeocoding(false);
       }
     })();
   }, [form.missionId]);
@@ -87,6 +155,39 @@ export default function CreateGeolocalisation() {
         ? { ...f, [name]: value }
         : { ...f, [name]: parseFloat(value) || value }
     );
+  };
+
+  // Fonction pour obtenir la position actuelle de l'utilisateur
+  const handleGetCurrentPosition = () => {
+    if (!navigator.geolocation) {
+      setError("La géolocalisation n'est pas supportée par votre navigateur.");
+      return;
+    }
+
+    setGeocoding(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setForm(f => ({
+          ...f,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        }));
+        setCoordsLocked(true);
+        setSiteAddress("Position actuelle");
+        setGeocoding(false);
+      },
+      () => {
+        setError("Impossible d'obtenir votre position actuelle.");
+        setGeocoding(false);
+      }
+    );
+  };
+
+  // Fonction pour déverrouiller les coordonnées (saisie manuelle)
+  const handleUnlockCoords = () => {
+    setCoordsLocked(false);
+    setForm(f => ({ ...f, missionId: "" }));
+    setSiteAddress("");
   };
 
   // Submit création + association
@@ -171,6 +272,7 @@ export default function CreateGeolocalisation() {
                     value={form.missionId} 
                     onChange={handleChange}
                     className="shadow-sm"
+                    disabled={geocoding}
                   >
                     <option value="">— Aucune —</option>
                     {missions.map(m => (
@@ -183,7 +285,20 @@ export default function CreateGeolocalisation() {
                     La sélection d'une mission géocodera automatiquement son site.
                   </Form.Text>
                 </Form.Group>
-                
+
+                {geocoding && (
+                  <Alert variant="info" className="d-flex align-items-center mb-3">
+                    <Spinner size="sm" animation="border" className="me-2" />
+                    Géocodage de l'adresse en cours...
+                  </Alert>
+                )}
+
+                {siteAddress && (
+                  <Alert variant="success" className="mb-3">
+                    <strong>Adresse du site :</strong> {siteAddress}
+                  </Alert>
+                )}
+
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
@@ -198,6 +313,8 @@ export default function CreateGeolocalisation() {
                         step="0.000001"
                         required
                         className="shadow-sm"
+                        readOnly={coordsLocked}
+                        disabled={coordsLocked}
                       />
                     </Form.Group>
                   </Col>
@@ -214,10 +331,39 @@ export default function CreateGeolocalisation() {
                         step="0.000001"
                         required
                         className="shadow-sm"
+                        readOnly={coordsLocked}
+                        disabled={coordsLocked}
                       />
                     </Form.Group>
                   </Col>
                 </Row>
+
+                {coordsLocked && (
+                  <div className="mb-3">
+                    <Button 
+                      variant="outline-warning" 
+                      size="sm"
+                      onClick={handleUnlockCoords}
+                      className="d-flex align-items-center"
+                    >
+                      <FaTimes className="me-1" /> Modifier manuellement les coordonnées
+                    </Button>
+                  </div>
+                )}
+
+                {!form.missionId && !coordsLocked && (
+                  <div className="mb-3">
+                    <Button 
+                      variant="outline-info" 
+                      size="sm"
+                      onClick={handleGetCurrentPosition}
+                      disabled={geocoding}
+                      className="d-flex align-items-center"
+                    >
+                      <FaCrosshairs className="me-1" /> Utiliser ma position actuelle
+                    </Button>
+                  </div>
+                )}
                 
                 <div className="mt-4 mb-3 d-flex justify-content-between align-items-center">
                   <Badge bg="info" className="py-2 px-3 d-flex align-items-center">
@@ -238,11 +384,12 @@ export default function CreateGeolocalisation() {
                   >
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     <Marker position={[form.latitude, form.longitude]} />
+                    <MapUpdater center={[form.latitude, form.longitude]} />
                   </MapContainer>
                 </div>
                 <div className="bg-light p-3 rounded">
                   <p className="mb-0 small text-muted">
-                    <strong>Note :</strong> La position sur la carte est mise à jour selon les coordonnées saisies.
+                    <strong>Note :</strong> La position sur la carte est mise à jour automatiquement selon les coordonnées.
                   </p>
                 </div>
               </Col>

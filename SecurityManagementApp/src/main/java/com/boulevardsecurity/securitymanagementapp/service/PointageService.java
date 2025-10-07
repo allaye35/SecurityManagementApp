@@ -1,6 +1,7 @@
 // src/main/java/com/boulevardsecurity/securitymanagementapp/service/PointageService.java
 package com.boulevardsecurity.securitymanagementapp.service;
 
+import com.boulevardsecurity.securitymanagementapp.dto.AgentDeSecuriteDto;
 import com.boulevardsecurity.securitymanagementapp.dto.PointageCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.PointageDto;
 
@@ -20,4 +21,10 @@ public interface PointageService {
     PointageDto modifierPointage(Long id, PointageCreateDto dto);
 
     void supprimerPointage(Long id);
+
+    PointageDto enregistrerPriseDeService(PointageCreateDto dto);
+
+    PointageDto enregistrerFinDeService(PointageCreateDto dto);
+
+    List<AgentDeSecuriteDto> getAgentsEnService(Long idMission);
 }

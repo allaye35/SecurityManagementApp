@@ -174,7 +174,8 @@ export default function ClientList() {
       await ClientService.delete(id);
         // Rafraîchir la liste après suppression
       ClientService.getAll()
-        .then(allClients => {
+        .then(response => {
+          const allClients = response.data;
                     // Re-appliquer les filtres et tri
           let filteredClients = applyFiltersAndSort(allClients);
           

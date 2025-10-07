@@ -2,25 +2,17 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Container, Button } from "react-bootstrap";
-import { FaUserShield, FaBriefcase, FaFileInvoiceDollar, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { FaUserShield, FaBriefcase, FaFileInvoiceDollar, FaSignOutAlt, FaUser, FaCog } from "react-icons/fa";
 import AuthService from "../../services/auth/AuthService";
+import { useAuth } from "../../context/AuthContext";
 
 
 export default function NavBarBootstrap() {
     const navigate = useNavigate();
-    // Récupérer et parser l'utilisateur
-    const userRaw = localStorage.getItem("user");
-    let user = null;
-    if (userRaw) {
-        try {
-            user = JSON.parse(userRaw);
-        } catch (e) {
-            user = null;
-        }
-    }
+    const { user, isAuthenticated, hasRole, logout } = useAuth();
 
-    const handleLogout = () => {
-        AuthService.logout();
+    const handleLogout = async () => {
+        await logout();
         navigate("/login", { replace: true });
     };
 
@@ -134,6 +126,32 @@ export default function NavBarBootstrap() {
                             <NavDropdown.Item as={Link} to="/articles">Articles</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/articles/create">Créer Article</NavDropdown.Item>
                         </NavDropdown>
+
+                        {/* Menu Administration - Visible uniquement pour les ADMIN */}
+                        {isAuthenticated && hasRole("ADMIN") && (
+                            <NavDropdown 
+                                title={<span><FaCog className="me-1" /> Administration</span>} 
+                                id="nav-dropdown-admin"
+                                className="me-2"
+                            >
+                                <NavDropdown.Header>Gestion des Comptes</NavDropdown.Header>
+                                <NavDropdown.Item as={Link} to="/admin/pending-accounts">
+                                    🔍 Validation Comptes
+                                </NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/admin/users">
+                                    👥 Gestion Utilisateurs
+                                </NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                
+                                <NavDropdown.Header>Configuration Système</NavDropdown.Header>
+                                <NavDropdown.Item as={Link} to="/admin/system">
+                                    ⚙️ Configuration Système
+                                </NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/admin/logs">
+                                    📋 Logs Système
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                        )}
                     </Nav>
                     
                     {/* Profile & Auth */}

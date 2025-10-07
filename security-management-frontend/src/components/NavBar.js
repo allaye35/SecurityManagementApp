@@ -12,6 +12,7 @@ export default function NavBar() {
     rh: useRef(null),
     operations: useRef(null),
     commercial: useRef(null),
+    administration: useRef(null),
   };
 
   // Fermer les dropdowns au clic extérieur
@@ -46,6 +47,31 @@ export default function NavBar() {
       <div className="navbar-left">
         <Link to="/">Accueil</Link>
       </div>
+
+      {/* Administration : ADMIN uniquement - Section ajoutée pour l'administration système */}
+      {isAuthenticated && hasRole("ADMIN") && (
+        <div className="navbar-left" ref={refs.administration}>
+          <MenuBtn id="administration" label="🔧 Administration" />
+          {openMenu === "administration" && (
+            <ul className="dropdown-menu">
+              <li><Link to="/admin/pending-accounts">🔍 Validation Comptes</Link></li>
+              <li><Link to="/admin/users">👥 Gestion Utilisateurs</Link></li>
+              <li><hr className="dropdown-divider" /></li>
+              <li><Link to="/admin/system">⚙️ Configuration Système</Link></li>
+              <li><Link to="/admin/logs">📋 Logs Système</Link></li>
+            </ul>
+          )}
+        </div>
+      )}
+
+      {/* DEBUG TEMPORAIRE - pour voir pourquoi Administration n'apparaît pas */}
+      {isAuthenticated && (
+        <div className="navbar-left">
+          <span style={{color: 'white', fontSize: '10px', background: 'rgba(255,0,0,0.3)', padding: '2px 4px'}}>
+            DEBUG: {user?.role} | Admin: {hasRole("ADMIN") ? "✅" : "❌"}
+          </span>
+        </div>
+      )}
 
       {/* RH : ADMIN uniquement */}
       {isAuthenticated && hasRole("ADMIN") && (

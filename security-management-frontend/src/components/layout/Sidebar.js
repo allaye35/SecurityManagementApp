@@ -22,11 +22,16 @@ import {
   FaMoneyBillWave,
   FaFileSignature,
   FaPercentage,
-  FaBell
+  FaBell,
+  FaCog,
+  FaUsers,
+  FaCheckCircle
 } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = ({ show, handleClose, windowWidth }) => {
   const [activeKey, setActiveKey] = useState('');
+  const { user, isAuthenticated, hasRole } = useAuth();
 
   const menuItems = [
     {
@@ -97,6 +102,21 @@ const Sidebar = ({ show, handleClose, windowWidth }) => {
       ]
     }
   ];
+
+  // Ajouter le menu Administration seulement pour les ADMIN
+  if (isAuthenticated && hasRole("ADMIN")) {
+    menuItems.push({
+      title: 'Administration',
+      icon: <FaCog className="me-2" />,
+      eventKey: '3',
+      items: [
+        { title: 'Validation Comptes', path: '/admin/pending-accounts', icon: <FaCheckCircle size={14} className="me-1" /> },
+        { title: 'Gestion Utilisateurs', path: '/admin/users', icon: <FaUsers size={14} className="me-1" /> },
+        { title: 'Configuration Système', path: '/admin/system', icon: <FaCog size={14} className="me-1" /> },
+        { title: 'Logs Système', path: '/admin/logs', icon: <FaFileAlt size={14} className="me-1" /> }
+      ]
+    });
+  }
 
   return (
     <Offcanvas 

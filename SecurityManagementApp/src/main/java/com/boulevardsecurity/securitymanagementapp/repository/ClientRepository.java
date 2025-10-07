@@ -16,8 +16,10 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     boolean existsByEmail(String email);
     /** Comptes dont l’email est vérifié mais en attente d’approbation admin */
     List<Client> findByEmailVerifiedIsTrueAndAdminApprovedIsFalse();
-    
+    List<Client> findByEmailVerifiedTrueAndAdminApprovedFalse();
 
-    
+
+
+
 }
 

@@ -24,10 +24,15 @@ const deleteGeolocalisation = async (id) => {
   return await api.delete(`${API_URL}/${id}`);
 };
 
+const addMission = async (geolocalisationId, missionId) => {
+  return await api.post(`${API_URL}/${geolocalisationId}/missions/${missionId}`);
+};
+
 export default {
   getAllGeolocalisations,
   getGeolocalisationById,
   createGeolocalisation,
   updateGeolocalisation,
   deleteGeolocalisation,
+  addMission,
 };

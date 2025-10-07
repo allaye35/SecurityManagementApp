@@ -162,6 +162,7 @@ import TarifMissionDetail from "./components/tarifs/TarifMissionDetail";
 
 /* ───── Admin ───── */
 import AdminPendingAccounts from "./pages/AdminPendingAccounts";
+import AdminUserManagement from "./pages/AdminUserManagement";
 
 import "leaflet/dist/leaflet.css";
 
@@ -198,6 +199,7 @@ export default function App() {
             {/* Zone Admin uniquement */}
             <Route element={<ProtectedRoute roles={['ADMIN']} />}>
               <Route path="/admin/pending-accounts" element={<AdminPendingAccounts />} />
+              <Route path="/admin/users" element={<AdminUserManagement />} />
             </Route>
 
             {/* Agents */}

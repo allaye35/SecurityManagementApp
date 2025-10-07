@@ -28,14 +28,20 @@ public class Pointage {
     @Temporal(TemporalType.TIMESTAMP)
     private Date datePointage;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date finService;
+
     private boolean estPresent;
     private boolean estRetard;
 
-    @Embedded  // Position GPS envoyée par l’agent au moment du pointage
+    // ID de l'agent (pas de relation directe, on récupère via mission)
+    private Long agentId;
+
+    @Embedded  // Position GPS envoyée par l'agent au moment du pointage
     private GeoPoint positionActuelle;
 
     @ManyToOne
     @JoinColumn(name = "mission_id")
-    private Mission mission;  //  Plus de lien direct avec AgentDeSecurite
+    private Mission mission;
 }
 
