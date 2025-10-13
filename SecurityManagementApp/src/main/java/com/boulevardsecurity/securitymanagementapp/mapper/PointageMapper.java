@@ -72,18 +72,23 @@
         }
 
         public void updateEntity(PointageCreateDto dto, Pointage ent) {
+            // Mise à jour de la date et heure
             if (dto.getDatePointage() != null) {
                 ent.setDatePointage(dto.getDatePointage());
             }
+            
+            // Mise à jour des statuts présence et retard
             ent.setEstPresent(dto.isEstPresent());
             ent.setEstRetard(dto.isEstRetard());
 
+            // Mise à jour de la position GPS
             if (ent.getPositionActuelle() == null) {
                 ent.setPositionActuelle(new GeoPoint());
             }
             ent.getPositionActuelle().setLatitude(dto.getLatitude());
             ent.getPositionActuelle().setLongitude(dto.getLongitude());
 
+            // Mise à jour de la mission
             if (dto.getMissionId() != null
                     && (ent.getMission() == null || !dto.getMissionId().equals(ent.getMission().getId()))) {
                 var mission = missionRepo.findById(dto.getMissionId())
@@ -92,8 +97,12 @@
                 ent.setMission(mission);
             }
             
-            // Mettre à jour l'agentId si fourni
+            // Mise à jour de l'agentId - IMPORTANT pour la modification
             if (dto.getAgentId() != null) {
+                // Vérifier que l'agent existe
+                agentRepo.findById(dto.getAgentId())
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Agent introuvable, id=" + dto.getAgentId()));
                 ent.setAgentId(dto.getAgentId());
             }
         }

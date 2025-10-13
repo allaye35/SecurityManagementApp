@@ -104,10 +104,36 @@ public class PointageServiceImpl implements PointageService {
 
     @Override
     public PointageDto modifierPointage(Long id, PointageCreateDto dto) {
+        System.out.println("DEBUG MODIFICATION - DTO reçu: " + dto);
+        System.out.println("DEBUG - Pointage ID: " + id);
+        System.out.println("DEBUG - AgentID: " + dto.getAgentId());
+        System.out.println("DEBUG - MissionID: " + dto.getMissionId());
+        System.out.println("DEBUG - Latitude: " + dto.getLatitude() + ", Longitude: " + dto.getLongitude());
+        System.out.println("DEBUG - Date: " + dto.getDatePointage());
+        
         Pointage existant = pointageRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Pointage introuvable id=" + id));
+        
+        System.out.println("DEBUG - Pointage avant modification:");
+        System.out.println("DEBUG - AgentID actuel: " + existant.getAgentId());
+        System.out.println("DEBUG - MissionID actuel: " + (existant.getMission() != null ? existant.getMission().getId() : "null"));
+        System.out.println("DEBUG - Position actuelle: " + existant.getPositionActuelle());
+        
+        // Utiliser le mapper pour mettre à jour l'entité
         mapper.updateEntity(dto, existant);
+        
+        System.out.println("DEBUG - Pointage après mapping:");
+        System.out.println("DEBUG - AgentID: " + existant.getAgentId());
+        System.out.println("DEBUG - MissionID: " + (existant.getMission() != null ? existant.getMission().getId() : "null"));
+        System.out.println("DEBUG - Position: " + existant.getPositionActuelle());
+        
         Pointage sauvegarde = pointageRepository.save(existant);
+        
+        System.out.println("DEBUG - Pointage sauvegardé:");
+        System.out.println("DEBUG - ID: " + sauvegarde.getId());
+        System.out.println("DEBUG - AgentID: " + sauvegarde.getAgentId());
+        System.out.println("DEBUG - Position: " + sauvegarde.getPositionActuelle());
+        
         return mapper.toDto(sauvegarde);
     }
 

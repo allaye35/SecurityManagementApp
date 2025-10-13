@@ -167,20 +167,40 @@ export default function PointageForm() {
 
     useEffect(() => {
         if (isEdit) {
+            console.log("MODE ÉDITION - Chargement du pointage ID:", id);
             PointageService.getById(id)
-                .then(({ data }) => setDto({
-                    datePointage: data.datePointage.slice(0, 16),
-                    estPresent: data.estPresent,
-                    estRetard: data.estRetard,
-                    // Le backend renvoie latitude/longitude à la racine, pas dans positionActuelle
-                    positionActuelle: { 
-                        latitude: data.latitude ?? "", 
-                        longitude: data.longitude ?? "" 
-                    },
-                    missionId: data.missionId ?? "",
-                    agentId: data.agentId ?? ""
-                }))
-                .catch(() => setError("Impossible de charger ce pointage"));
+                .then(({ data }) => {
+                    console.log("Données du pointage reçues:", data);
+                    console.log("AgentID:", data.agentId);
+                    console.log("MissionID:", data.missionId);
+                    console.log("Latitude:", data.latitude);
+                    console.log("Longitude:", data.longitude);
+                    console.log("Date:", data.datePointage);
+                    
+                    setDto({
+                        datePointage: data.datePointage ? data.datePointage.slice(0, 16) : new Date().toISOString().slice(0, 16),
+                        estPresent: data.estPresent ?? true,
+                        estRetard: data.estRetard ?? false,
+                        // Le backend renvoie latitude/longitude à la racine
+                        positionActuelle: { 
+                            latitude: data.latitude ?? "", 
+                            longitude: data.longitude ?? "" 
+                        },
+                        missionId: data.missionId ?? "",
+                        agentId: data.agentId ?? ""
+                    });
+                    
+                    console.log("DTO mis à jour:", {
+                        missionId: data.missionId,
+                        agentId: data.agentId,
+                        latitude: data.latitude,
+                        longitude: data.longitude
+                    });
+                })
+                .catch((err) => {
+                    console.error("Erreur lors du chargement du pointage:", err);
+                    setError("Impossible de charger ce pointage");
+                });
         }
     }, [id, isEdit]);
 
@@ -349,8 +369,8 @@ export default function PointageForm() {
             )}
             
             <form onSubmit={handleSubmit}>
-                {}
-                {!isServiceMode && (
+                {/* Date & heure - Affichée en mode édition ou création manuelle */}
+                {(isEdit || !isServiceMode) && (
                     <label>
                         Date & heure *
                         <input
@@ -429,7 +449,8 @@ export default function PointageForm() {
                         </div>
                     )}
                     
-                    {!isServiceMode && (
+                    {/* Champs manuels en mode édition ou création manuelle */}
+                    {(isEdit || !isServiceMode) && (
                         <div className="gps-manual">
                             <label>
                                 Latitude
@@ -455,8 +476,8 @@ export default function PointageForm() {
                     )}
                 </div>
 
-                {}
-                {!isServiceMode && (
+                {/* Checkboxes présence et retard - Affichées en mode édition ou création manuelle */}
+                {(isEdit || !isServiceMode) && (
                     <>
                         <label className="checkbox-label">
                             <input
