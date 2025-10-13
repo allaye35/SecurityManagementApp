@@ -8,6 +8,7 @@ import com.boulevardsecurity.securitymanagementapp.service.AgentDeSecuriteServic
 import com.boulevardsecurity.securitymanagementapp.service.ZoneDeTravailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ZoneDeTravailController {
     private final AgentDeSecuriteService agentService;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<ZoneDeTravailDto> create(@RequestBody ZoneDeTravailCreateDto dto) {
         try {
             ZoneDeTravailDto created = service.createZone(dto);
@@ -32,11 +34,13 @@ public class ZoneDeTravailController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<ZoneDeTravailDto>> getAll() {
         return ResponseEntity.ok(service.getAllZones());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<ZoneDeTravailDto> getById(@PathVariable Long id) {
         return service.getZoneById(id)
                 .map(ResponseEntity::ok)
@@ -44,16 +48,19 @@ public class ZoneDeTravailController {
     }
 
     @GetMapping("/recherche")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<ZoneDeTravailDto>> searchByName(@RequestParam String nom) {
         return ResponseEntity.ok(service.searchZonesByName(nom));
     }
 
     @GetMapping("/type/{typeZone}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<ZoneDeTravailDto>> searchByType(@PathVariable TypeZone typeZone) {
         return ResponseEntity.ok(service.searchZonesByType(typeZone));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<ZoneDeTravailDto> update(
             @PathVariable Long id,
             @RequestBody ZoneDeTravailCreateDto dto
@@ -67,6 +74,7 @@ public class ZoneDeTravailController {
     }
 
     @GetMapping("/{id}/agents")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<AgentDeSecuriteDto>> getAgentsByZoneId(@PathVariable Long id) {
         try {
             List<AgentDeSecuriteDto> agents = agentService.getAgentsByZoneId(id);
@@ -77,6 +85,7 @@ public class ZoneDeTravailController {
     }
 
     @PostMapping("/{zoneId}/agents/{agentId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<AgentDeSecuriteDto> assignAgentToZone(
             @PathVariable Long zoneId,
             @PathVariable Long agentId
@@ -90,6 +99,7 @@ public class ZoneDeTravailController {
     }
 
     @DeleteMapping("/{zoneId}/agents/{agentId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<Void> removeAgentFromZone(
             @PathVariable Long zoneId,
             @PathVariable Long agentId
@@ -103,6 +113,7 @@ public class ZoneDeTravailController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             service.deleteZone(id);

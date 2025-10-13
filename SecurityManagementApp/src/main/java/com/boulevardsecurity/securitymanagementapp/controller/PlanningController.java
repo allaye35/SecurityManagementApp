@@ -6,6 +6,8 @@ import com.boulevardsecurity.securitymanagementapp.dto.PlanningDto;
 import com.boulevardsecurity.securitymanagementapp.service.PlanningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +21,13 @@ public class PlanningController {
     private final PlanningService service;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<PlanningDto>> getAll() {
         return ResponseEntity.ok(service.getAllPlannings());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('AGENT_SECURITE') or (hasAuthority('CLIENT') and @authz.canClientReadPlanning(authentication, #id))")
     public ResponseEntity<PlanningDto> getById(@PathVariable Long id) {
         return service.getPlanningById(id)
                 .map(ResponseEntity::ok)
@@ -31,12 +35,14 @@ public class PlanningController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<PlanningDto> create(@RequestBody PlanningCreateDto dto) {
         PlanningDto created = service.createPlanning(dto);
         return ResponseEntity.status(201).body(created);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<PlanningDto> update(
             @PathVariable Long id,
             @RequestBody PlanningCreateDto dto
@@ -50,6 +56,7 @@ public class PlanningController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             service.deletePlanning(id);
@@ -60,6 +67,7 @@ public class PlanningController {
     }
 
     @PostMapping("/{planningId}/missions/{missionId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<PlanningDto> addMission(
             @PathVariable Long planningId,
             @PathVariable Long missionId
@@ -73,6 +81,7 @@ public class PlanningController {
     }
 
     @DeleteMapping("/{planningId}/missions/{missionId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<PlanningDto> removeMission(
             @PathVariable Long planningId,
             @PathVariable Long missionId

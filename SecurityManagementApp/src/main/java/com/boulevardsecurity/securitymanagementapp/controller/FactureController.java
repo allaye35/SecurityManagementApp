@@ -11,6 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,17 +27,20 @@ public class FactureController {
     private final FactureServiceImpl serviceImpl;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<FactureDto> create(@RequestBody FactureCreateDto dto) {
         FactureDto created = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE', 'CLIENT')")
     public ResponseEntity<List<FactureDto>> getAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('AGENT_SECURITE') or (hasAuthority('CLIENT') and @authz.canClientReadFacture(authentication, #id))")
     public ResponseEntity<FactureDto> getById(@PathVariable Long id) {
         return service.findById(id)
                 .map(ResponseEntity::ok)
@@ -43,6 +48,7 @@ public class FactureController {
     }
 
     @GetMapping("/reference/{ref}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE', 'CLIENT')")
     public ResponseEntity<FactureDto> getByReference(@PathVariable String ref) {
         return service.findByReference(ref)
                 .map(ResponseEntity::ok)
@@ -50,6 +56,7 @@ public class FactureController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<FactureDto> update(
             @PathVariable Long id,
             @RequestBody FactureCreateDto dto
@@ -63,6 +70,7 @@ public class FactureController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             service.delete(id);
@@ -73,6 +81,7 @@ public class FactureController {
     }
 
     @PostMapping("/periode")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<?> createForPeriod(@RequestBody PeriodeFacturationDto periodeDto) {
         try {
             Facture facture = serviceImpl.creerPourClientEtPeriode(
@@ -90,6 +99,7 @@ public class FactureController {
     }
 
     @PostMapping("/from-devis/{devisId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<?> createFromDevis(@PathVariable Long devisId) {
         try {
             Facture facture = serviceImpl.creerDepuisDevis(devisId);
@@ -103,6 +113,7 @@ public class FactureController {
     }
 
     @GetMapping("/{id}/pdf")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('AGENT_SECURITE') or (hasAuthority('CLIENT') and @authz.canClientReadFacture(authentication, #id))")
     public ResponseEntity<byte[]> generatePdf(@PathVariable Long id) {
         byte[] pdfContent = service.generatePdf(id);
         

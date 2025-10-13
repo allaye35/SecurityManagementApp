@@ -5,6 +5,7 @@ import com.boulevardsecurity.securitymanagementapp.dto.CarteProfessionnelleDto;
 import com.boulevardsecurity.securitymanagementapp.service.CarteProfessionnelleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,13 @@ public class CarteProfessionnelleController {
     private final CarteProfessionnelleService service;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<CarteProfessionnelleDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<CarteProfessionnelleDto> getById(@PathVariable Long id) {
         return service.getById(id)
                 .map(ResponseEntity::ok)
@@ -30,11 +33,13 @@ public class CarteProfessionnelleController {
     }
 
     @GetMapping("/agent/{agentId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<CarteProfessionnelleDto>> getByAgent(@PathVariable Long agentId) {
         return ResponseEntity.ok(service.getByAgent(agentId));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<CarteProfessionnelleDto> create(
             @RequestBody CarteProfessionnelleCreationDto dto
     ) {
@@ -43,6 +48,7 @@ public class CarteProfessionnelleController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<CarteProfessionnelleDto> update(
             @PathVariable Long id,
             @RequestBody CarteProfessionnelleDto dto
@@ -56,6 +62,7 @@ public class CarteProfessionnelleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             service.delete(id);

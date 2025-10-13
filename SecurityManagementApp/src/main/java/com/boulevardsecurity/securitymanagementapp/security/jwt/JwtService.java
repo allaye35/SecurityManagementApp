@@ -56,4 +56,41 @@ public class JwtService {
     public String getSubject(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
+
+    /**
+     * Extracts user ID from JWT token
+     */
+    public Long getUserId(String token) {
+        Claims claims = getClaims(token);
+        Object uid = claims.get("uid");
+        if (uid instanceof Integer) {
+            return ((Integer) uid).longValue();
+        }
+        return (Long) uid;
+    }
+
+    /**
+     * Extracts role from JWT token
+     */
+    public String getRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
+
+    /**
+     * Extracts user type from JWT token
+     */
+    public String getUserType(String token) {
+        return getClaims(token).get("typ", String.class);
+    }
+
+    /**
+     * Get all claims from token
+     */
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }

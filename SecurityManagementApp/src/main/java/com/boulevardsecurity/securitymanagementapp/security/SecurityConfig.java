@@ -15,9 +15,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -32,12 +37,28 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // ==================== PUBLIC ENDPOINTS ====================
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/api/auth/verify-email").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/verify-email/code").permitAll()
@@ -45,12 +66,140 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/password-reset/**").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/api/auth/password-reset/**").permitAll()
-
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
 
-                        .requestMatchers("/api/**").hasAuthority("ADMIN")
+                        // ==================== SITES ====================
+                        .requestMatchers(HttpMethod.GET, "/api/sites/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE", "CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/sites/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/sites/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/sites/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/sites/**").hasAuthority("ADMIN")
 
-                        .anyRequest().permitAll()
+                        // ==================== MISSIONS ====================
+                        .requestMatchers(HttpMethod.GET, "/api/missions/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE", "CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/missions/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/missions/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/missions/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/missions/**").hasAuthority("ADMIN")
+
+                        // ==================== PLANNINGS ====================
+                        .requestMatchers(HttpMethod.GET, "/api/plannings/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE", "CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/plannings/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/plannings/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/plannings/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/plannings/**").hasAuthority("ADMIN")
+
+                        // ==================== POINTAGES ====================
+                        .requestMatchers(HttpMethod.GET, "/api/pointages/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE", "CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/pointages/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/pointages/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/pointages/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/pointages/**").hasAuthority("ADMIN")
+
+                        // ==================== RAPPORTS ====================
+                        .requestMatchers(HttpMethod.GET, "/api/rapports/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE", "CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/rapports/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/rapports/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/rapports/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/rapports/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+
+                        // ==================== DEVIS ====================
+                        .requestMatchers(HttpMethod.GET, "/api/devis/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE", "CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/devis/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/devis/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/devis/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/devis/**").hasAuthority("ADMIN")
+
+                        // ==================== FACTURES ====================
+                        .requestMatchers(HttpMethod.GET, "/api/factures/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE", "CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/factures/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/factures/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/factures/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/factures/**").hasAuthority("ADMIN")
+
+                        // ==================== CONTRATS (PRESTATION) ====================
+                        .requestMatchers(HttpMethod.GET, "/api/contrats/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE", "CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/contrats/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/contrats/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/contrats/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/contrats/**").hasAuthority("ADMIN")
+
+                        // ==================== CONTRATS DE TRAVAIL ====================
+                        .requestMatchers(HttpMethod.GET, "/api/contrats-travail/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.POST, "/api/contrats-travail/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/contrats-travail/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/contrats-travail/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/contrats-travail/**").hasAuthority("ADMIN")
+
+                        // ==================== DISPONIBILITÉS ====================
+                        .requestMatchers(HttpMethod.GET, "/api/disponibilites/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.POST, "/api/disponibilites/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/disponibilites/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/disponibilites/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/disponibilites/**").hasAuthority("ADMIN")
+
+                        // ==================== ZONES DE TRAVAIL ====================
+                        .requestMatchers(HttpMethod.GET, "/api/zones/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.POST, "/api/zones/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/zones/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/zones/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/zones/**").hasAuthority("ADMIN")
+
+                        // ==================== AGENTS ====================
+                        .requestMatchers(HttpMethod.GET, "/api/agents/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.POST, "/api/agents/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/agents/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/agents/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/agents/**").hasAuthority("ADMIN")
+
+                        // ==================== CLIENTS ====================
+                        .requestMatchers(HttpMethod.GET, "/api/clients/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE", "CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/clients/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/clients/**").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.PATCH, "/api/clients/**").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.DELETE, "/api/clients/**").hasAuthority("ADMIN")
+
+                        // ==================== ENTREPRISES ====================
+                        .requestMatchers(HttpMethod.GET, "/api/entreprises/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/entreprises/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/entreprises/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/entreprises/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/entreprises/**").hasAuthority("ADMIN")
+
+                        // ==================== DIPLOMES ====================
+                        .requestMatchers(HttpMethod.GET, "/api/diplomes/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.POST, "/api/diplomes/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/diplomes/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/diplomes/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/diplomes/**").hasAuthority("ADMIN")
+
+                        // ==================== CARTES PROFESSIONNELLES ====================
+                        .requestMatchers(HttpMethod.GET, "/api/cartes-pro/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.POST, "/api/cartes-pro/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PUT, "/api/cartes-pro/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/cartes-pro/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/cartes-pro/**").hasAuthority("ADMIN")
+
+                        // ==================== FICHES DE PAIE ====================
+                        .requestMatchers(HttpMethod.GET, "/api/fiches-paie/**").hasAnyAuthority("ADMIN", "AGENT_SECURITE")
+                        .requestMatchers(HttpMethod.POST, "/api/fiches-paie/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/fiches-paie/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/fiches-paie/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/fiches-paie/**").hasAuthority("ADMIN")
+
+                        // ==================== NOTIFICATIONS ====================
+                        .requestMatchers(HttpMethod.GET, "/api/notifications/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/notifications/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/notifications/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/notifications/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/notifications/**").hasAuthority("ADMIN")
+
+                        // ==================== ADMIN ENDPOINTS ====================
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+
+                        // ==================== FALLBACK ====================
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -6,6 +6,7 @@ import com.boulevardsecurity.securitymanagementapp.dto.RapportInterventionDto;
 import com.boulevardsecurity.securitymanagementapp.service.RapportInterventionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +20,13 @@ public class RapportInterventionController {
     private final RapportInterventionService service;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE', 'CLIENT')")
     public ResponseEntity<List<RapportInterventionDto>> getAll() {
         return ResponseEntity.ok(service.getAllRapports());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('AGENT_SECURITE') and @authz.canAgentReadRapport(authentication, #id)) or (hasAuthority('CLIENT') and @authz.canClientReadRapport(authentication, #id))")
     public ResponseEntity<RapportInterventionDto> getById(@PathVariable Long id) {
         return service.getRapportById(id)
                 .map(ResponseEntity::ok)
@@ -31,6 +34,7 @@ public class RapportInterventionController {
     }
 
     @GetMapping("/mission/{missionId}")
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('AGENT_SECURITE') and @authz.canAgentWriteMission(authentication, #missionId)) or (hasAuthority('CLIENT') and @authz.canClientReadMission(authentication, #missionId))")
     public ResponseEntity<List<RapportInterventionDto>> getByMission(
             @PathVariable Long missionId
     ) {
@@ -38,6 +42,7 @@ public class RapportInterventionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<RapportInterventionDto> create(
             @RequestBody RapportInterventionCreateDto dto
     ) {
@@ -46,6 +51,7 @@ public class RapportInterventionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('AGENT_SECURITE') and @authz.canAgentWriteRapport(authentication, #id))")
     public ResponseEntity<RapportInterventionDto> update(
             @PathVariable Long id,
             @RequestBody RapportInterventionCreateDto dto
@@ -59,6 +65,7 @@ public class RapportInterventionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('AGENT_SECURITE') and @authz.canAgentDeleteRapport(authentication, #id))")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             service.deleteRapport(id);

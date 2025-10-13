@@ -5,6 +5,7 @@ import com.boulevardsecurity.securitymanagementapp.dto.DisponibiliteDto;
 import com.boulevardsecurity.securitymanagementapp.service.DisponibiliteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,13 @@ public class DisponibiliteController {
     private final DisponibiliteService service;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<DisponibiliteDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<DisponibiliteDto> getById(@PathVariable Long id) {
         return service.getById(id)
                 .map(ResponseEntity::ok)
@@ -30,11 +33,13 @@ public class DisponibiliteController {
     }
 
     @GetMapping("/agent/{agentId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<DisponibiliteDto>> getByAgent(@PathVariable Long agentId) {
         return ResponseEntity.ok(service.getByAgent(agentId));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<DisponibiliteDto> create(
             @RequestBody DisponibiliteCreationDto dto
     ) {
@@ -43,6 +48,7 @@ public class DisponibiliteController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<DisponibiliteDto> update(
             @PathVariable Long id,
             @RequestBody DisponibiliteCreationDto dto
@@ -56,6 +62,7 @@ public class DisponibiliteController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             service.delete(id);

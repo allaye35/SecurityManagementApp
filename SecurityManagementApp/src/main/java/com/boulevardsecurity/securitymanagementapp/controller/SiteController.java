@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +24,7 @@ public class SiteController {
     private final SiteService siteService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<SiteDto>> getAll() {
         logger.info("GET /api/sites - Récupération de tous les sites");
         List<SiteDto> sites = siteService.getAllSites();
@@ -30,6 +33,7 @@ public class SiteController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('AGENT_SECURITE') or (hasAuthority('CLIENT') and @authz.canClientReadSite(authentication, #id))")
     public ResponseEntity<SiteDto> getById(@PathVariable Long id) {
         logger.info("GET /api/sites/{} - Récupération du site", id);
         return siteService.getSiteById(id)
@@ -44,6 +48,7 @@ public class SiteController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<SiteDto> create(@RequestBody SiteCreateDto dto) {
         logger.info("POST /api/sites - Création d'un nouveau site: {}", dto.getNom());
         try {
@@ -57,6 +62,7 @@ public class SiteController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<SiteDto> update(
             @PathVariable Long id,
             @RequestBody SiteCreateDto dto
@@ -73,6 +79,7 @@ public class SiteController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         logger.info("DELETE /api/sites/{} - Suppression du site", id);
         try {

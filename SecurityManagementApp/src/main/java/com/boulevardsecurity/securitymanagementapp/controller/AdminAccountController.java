@@ -26,16 +26,19 @@ public class AdminAccountController {
     private final ClientRepository clientRepo;
 
     @GetMapping("/pending/agents")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<AgentDeSecurite> pendingAgents() {
         return agentRepo.findByEmailVerifiedTrueAndAdminApprovedFalse();
     }
 
     @GetMapping("/pending/clients")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<Client> pendingClients() {
         return clientRepo.findByEmailVerifiedTrueAndAdminApprovedFalse();
     }
 
     @PostMapping("/agents/{id}/approve")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> approveAgent(@PathVariable Long id, Authentication auth) {
         var a = agentRepo.findById(id).orElse(null);
         if (a == null) return ResponseEntity.notFound().build();
@@ -49,6 +52,7 @@ public class AdminAccountController {
     }
 
     @PostMapping("/clients/{id}/approve")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> approveClient(@PathVariable Long id, Authentication auth) {
         var c = clientRepo.findById(id).orElse(null);
         if (c == null) return ResponseEntity.notFound().build();
@@ -62,6 +66,7 @@ public class AdminAccountController {
     }
 
     @PostMapping("/agents/{id}/reject")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> rejectAgent(
             @PathVariable Long id,
             @RequestBody(required = false) Map<String, String> body,
@@ -79,6 +84,7 @@ public class AdminAccountController {
     }
 
     @PostMapping("/clients/{id}/reject")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> rejectClient(
             @PathVariable Long id,
             @RequestBody(required = false) Map<String, String> body,

@@ -5,6 +5,7 @@ import com.boulevardsecurity.securitymanagementapp.dto.DiplomeSsiapDto;
 import com.boulevardsecurity.securitymanagementapp.service.DiplomeSsiapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,13 @@ public class DiplomeSsiapController {
     private final DiplomeSsiapService service;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<DiplomeSsiapDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<DiplomeSsiapDto> getById(@PathVariable Long id) {
         return service.getById(id)
                 .map(ResponseEntity::ok)
@@ -30,17 +33,20 @@ public class DiplomeSsiapController {
     }
 
     @GetMapping("/agent/{agentId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<DiplomeSsiapDto>> getByAgent(@PathVariable Long agentId) {
         return ResponseEntity.ok(service.getByAgent(agentId));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<DiplomeSsiapDto> create(@RequestBody DiplomeSsiapCreationDto dto) {
         DiplomeSsiapDto created = service.create(dto);
         return ResponseEntity.status(201).body(created);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<DiplomeSsiapDto> update(
             @PathVariable Long id,
             @RequestBody DiplomeSsiapCreationDto dto
@@ -54,6 +60,7 @@ public class DiplomeSsiapController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             service.delete(id);

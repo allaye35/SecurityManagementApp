@@ -7,6 +7,7 @@ import com.boulevardsecurity.securitymanagementapp.dto.PointageDto;
 import com.boulevardsecurity.securitymanagementapp.service.PointageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,11 +23,13 @@ public class PointageController {
     private final PointageService service;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<List<PointageDto>> recupererTous() {
         return ResponseEntity.ok(service.recupererTousLesPointages());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('AGENT_SECURITE') and @authz.canAgentWritePointage(authentication, #id)) or (hasAuthority('CLIENT') and @authz.canClientReadPointage(authentication, #id))")
     public ResponseEntity<PointageDto> recupererParId(@PathVariable Long id) {
         return service.recupererPointageParId(id)
                 .map(ResponseEntity::ok)
@@ -34,11 +37,13 @@ public class PointageController {
     }
 
     @GetMapping("/mission/{idMission}")
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('AGENT_SECURITE') and @authz.canAgentWriteMission(authentication, #idMission)) or (hasAuthority('CLIENT') and @authz.canClientReadMission(authentication, #idMission))")
     public ResponseEntity<List<PointageDto>> recupererParMission(@PathVariable Long idMission) {
         return ResponseEntity.ok(service.recupererPointagesParMission(idMission));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE')")
     public ResponseEntity<PointageDto> creer(@RequestBody PointageCreateDto dto) {
         try {
             PointageDto cree = service.creerPointage(dto);
@@ -49,6 +54,7 @@ public class PointageController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PointageDto> modifier(
             @PathVariable Long id,
             @RequestBody PointageCreateDto dto
@@ -62,6 +68,7 @@ public class PointageController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> supprimer(@PathVariable Long id) {
         try {
             service.supprimerPointage(id);
@@ -72,6 +79,7 @@ public class PointageController {
     }
 
     @PostMapping("/prise-service")
+    @PreAuthorize("hasAuthority('AGENT_SECURITE')")
     public ResponseEntity<?> priseDeService(@RequestBody PointageCreateDto dto) {
         try {
             PointageDto pointage = service.enregistrerPriseDeService(dto);
@@ -86,6 +94,7 @@ public class PointageController {
     }
 
     @PostMapping("/fin-service")
+    @PreAuthorize("hasAuthority('AGENT_SECURITE')")
     public ResponseEntity<?> finDeService(@RequestBody PointageCreateDto dto) {
         try {
             PointageDto pointage = service.enregistrerFinDeService(dto);
@@ -100,6 +109,7 @@ public class PointageController {
     }
 
     @GetMapping("/mission/{idMission}/agents-en-service")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'AGENT_SECURITE', 'CLIENT')")
     public ResponseEntity<List<AgentDeSecuriteDto>> getAgentsEnService(@PathVariable Long idMission) {
         try {
             List<AgentDeSecuriteDto> agents = service.getAgentsEnService(idMission);
