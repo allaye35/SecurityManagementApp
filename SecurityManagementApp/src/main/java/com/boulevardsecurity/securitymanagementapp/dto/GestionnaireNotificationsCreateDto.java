@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/dto/GestionnaireNotificationsCreateDto.java
-package com.boulevardsecurity.securitymanagementapp.dto;
+﻿package com.boulevardsecurity.securitymanagementapp.dto;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.TypeNotification;
 import jakarta.validation.constraints.NotBlank;

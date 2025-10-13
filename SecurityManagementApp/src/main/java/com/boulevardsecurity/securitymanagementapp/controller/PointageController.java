@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/controller/PointageController.java
-package com.boulevardsecurity.securitymanagementapp.controller;
+﻿package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.dto.AgentDeSecuriteDto;
 import com.boulevardsecurity.securitymanagementapp.dto.PointageCreateDto;
@@ -16,7 +15,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/pointages")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http:
 @RequiredArgsConstructor
 public class PointageController {
 

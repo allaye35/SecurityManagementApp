@@ -1,6 +1,4 @@
-/* PlanningList.css - Design amélioré pour la liste des plannings */
-
-.planning-list-container {
+﻿.planning-list-container {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   min-height: 100vh;
   padding: 20px 0;
@@ -68,7 +66,6 @@
   transform: scale(1.05);
 }
 
-/* Filtres améliorés */
 .filters-card {
   border: none;
   border-radius: 12px;
@@ -116,7 +113,6 @@
   transform: translateY(-2px);
 }
 
-/* Table améliorée */
 .planning-table {
   border-radius: 12px;
   overflow: hidden;
@@ -142,7 +138,6 @@
   transform: scale(1.01);
 }
 
-/* Missions et agents améliorés */
 .mission-container {
   max-height: 300px;
   overflow-y: auto;
@@ -231,7 +226,6 @@
   100% { opacity: 1; }
 }
 
-/* Sélecteur de mission amélioré */
 .mission-selector {
   display: flex;
   gap: 8px;
@@ -281,7 +275,6 @@
   transform: scale(1.1);
 }
 
-/* Actions améliorées */
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -316,7 +309,6 @@
   color: white;
 }
 
-/* Loading et états vides */
 .loading-container {
   text-align: center;
   padding: 60px 20px;
@@ -351,7 +343,6 @@
   margin-bottom: 20px;
 }
 
-/* Modal amélioré */
 .custom-modal .modal-content {
   border: none;
   border-radius: 15px;
@@ -370,7 +361,6 @@
   padding: 20px 30px;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .planning-header {
     padding: 15px 20px;
@@ -410,7 +400,6 @@
   }
 }
 
-/* Animations d'apparition */
 .fade-in {
   animation: fadeIn 0.5s ease-in;
 }
@@ -429,7 +418,6 @@
   to { transform: translateX(0); opacity: 1; }
 }
 
-/* Effets de survol pour les cartes */
 .planning-row-card {
   transition: all 0.3s ease;
   border-radius: 8px;
@@ -441,7 +429,6 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Styles pour MissionCard */
 .mission-card {
   border: none;
   border-radius: 12px;
@@ -476,7 +463,6 @@
   border-radius: 12px;
 }
 
-/* Vue en grille pour les missions */
 .missions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -484,7 +470,6 @@
   margin-top: 15px;
 }
 
-/* Amélioration responsive pour les missions */
 @media (max-width: 768px) {
   .missions-grid {
     grid-template-columns: 1fr;
@@ -495,7 +480,6 @@
   }
 }
 
-/* Vue cartes pour les plannings */
 .planning-card-view {
   border: none;
   border-radius: 15px;
@@ -528,7 +512,6 @@
   margin-bottom: 8px;
 }
 
-/* Boutons de changement de vue */
 .view-toggle-buttons {
   display: flex;
   gap: 5px;
@@ -543,7 +526,6 @@
   transform: scale(1.05);
 }
 
-/* Responsive pour la vue cartes */
 @media (max-width: 992px) {
   .planning-card-view {
     margin-bottom: 20px;

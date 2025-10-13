@@ -1,4 +1,4 @@
-.zone-form-container {
+﻿.zone-form-container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
@@ -67,7 +67,6 @@
     text-align: center;
 }
 
-/* Style pour la section des agents */
 .agents-section {
     margin-top: 20px;
     border: 1px solid #ddd;

@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.repository;
+﻿package com.boulevardsecurity.securitymanagementapp.repository;
 
 import com.boulevardsecurity.securitymanagementapp.model.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-// Repository JPA
+
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Optional<Client> findByEmail(String email);
     Optional<Client> findByNom(String nom);
@@ -19,4 +19,3 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     List<Client> findByEmailVerifiedTrueAndAdminApprovedFalse();
 
 }
-

@@ -1,6 +1,4 @@
-// src/components/geolocalisations/CreateGeolocalisation.jsx
-
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { 
   Container, Row, Col, Card, Form, Button, Spinner, 
@@ -102,7 +100,7 @@ export default function CreateGeolocalisation() {
 
         console.log("🌍 Géocodage de l'adresse:", address);
         const resp = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+          `https:
         );
         const results = await resp.json();
         console.log("📍 Résultats du géocodage:", results);
@@ -366,7 +364,7 @@ export default function CreateGeolocalisation() {
                     zoom={15}
                     style={{ height: "100%", width: "100%" }}
                   >
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <TileLayer url="https:
                     <Marker position={[form.latitude, form.longitude]} />
                     <MapUpdater center={[form.latitude, form.longitude]} />
                   </MapContainer>

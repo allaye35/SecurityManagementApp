@@ -1,5 +1,4 @@
-// src/components/agents/AgentDetail.js
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Container, Row, Col, Card, Alert, Badge, ListGroup, Button, Spinner, Nav } from "react-bootstrap";
 import { 

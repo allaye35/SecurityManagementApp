@@ -1,6 +1,4 @@
-/* PointageDetail.css - Styles pour la page de détail de pointage */
-
-.pointage-detail-container {
+﻿.pointage-detail-container {
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem;
@@ -206,7 +204,6 @@
   box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
 }
 
-/* Impression */
 @media print {
   .detail-actions,
   .btn-back {
@@ -219,7 +216,6 @@
   }
 }
 
-/* Responsive Mobile */
 @media (max-width: 768px) {
   .pointage-detail-container {
     padding: 1rem;
@@ -252,7 +248,6 @@
   }
 }
 
-/* Tablette */
 @media (max-width: 1024px) and (min-width: 769px) {
   .pointage-detail-container {
     margin: 1.5rem;

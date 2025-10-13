@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/GeolocalisationGpsService.java
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.dto.GeolocalisationGpsCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.GeolocalisationGpsDto;

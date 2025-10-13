@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.security;
+﻿package com.boulevardsecurity.securitymanagementapp.security;
 
 import com.boulevardsecurity.securitymanagementapp.model.*;
 import com.boulevardsecurity.securitymanagementapp.repository.*;
@@ -10,10 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/**
- * Service d'autorisation pour vérifier les permissions d'ownership
- * Utilisé avec @PreAuthorize dans les controllers
- */
 @Service("authz")
 @RequiredArgsConstructor
 @Slf4j
@@ -30,13 +26,7 @@ public class AuthorizationService {
     private final ClientRepository clientRepository;
     private final AgentDeSecuriteRepository agentRepository;
 
-    // ==================== CLIENT OWNERSHIP CHECKS ====================
-
-    /**
-     * Vérifie si un client peut lire une mission
-     * Règle: mission.contrat.devis.client.id == clientId
-     */
-    public boolean canClientReadMission(Authentication auth, Long missionId) {
+public boolean canClientReadMission(Authentication auth, Long missionId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -50,11 +40,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un client peut lire un rapport
-     * Règle: rapport.mission.contrat.devis.client.id == clientId
-     */
-    public boolean canClientReadRapport(Authentication auth, Long rapportId) {
+public boolean canClientReadRapport(Authentication auth, Long rapportId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -69,11 +55,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un client peut lire un devis
-     * Règle: devis.client.id == clientId
-     */
-    public boolean canClientReadDevis(Authentication auth, Long devisId) {
+public boolean canClientReadDevis(Authentication auth, Long devisId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -82,11 +64,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un client peut lire une facture
-     * Règle: facture.client.id == clientId
-     */
-    public boolean canClientReadFacture(Authentication auth, Long factureId) {
+public boolean canClientReadFacture(Authentication auth, Long factureId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -95,11 +73,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un client peut lire un site
-     * Règle: Au moins une mission du site appartient au client
-     */
-    public boolean canClientReadSite(Authentication auth, Long siteId) {
+public boolean canClientReadSite(Authentication auth, Long siteId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -115,11 +89,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un client peut lire un contrat
-     * Règle: contrat.devis.client.id == clientId
-     */
-    public boolean canClientReadContrat(Authentication auth, Long contratId) {
+public boolean canClientReadContrat(Authentication auth, Long contratId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -132,11 +102,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un client peut lire un planning
-     * Règle: Au moins une mission du planning appartient au client
-     */
-    public boolean canClientReadPlanning(Authentication auth, Long planningId) {
+public boolean canClientReadPlanning(Authentication auth, Long planningId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -152,11 +118,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un client peut lire un pointage
-     * Règle: pointage.mission.contrat.devis.client.id == clientId
-     */
-    public boolean canClientReadPointage(Authentication auth, Long pointageId) {
+public boolean canClientReadPointage(Authentication auth, Long pointageId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -171,13 +133,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    // ==================== AGENT OWNERSHIP CHECKS ====================
-
-    /**
-     * Vérifie si un agent peut modifier une mission
-     * Règle: mission.agents contient l'agent
-     */
-    public boolean canAgentWriteMission(Authentication auth, Long missionId) {
+public boolean canAgentWriteMission(Authentication auth, Long missionId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -188,11 +144,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un agent peut lire un rapport
-     * Règle: rapport.mission.agents contient l'agent
-     */
-    public boolean canAgentReadRapport(Authentication auth, Long rapportId) {
+public boolean canAgentReadRapport(Authentication auth, Long rapportId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -205,11 +157,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un agent peut modifier un rapport
-     * Règle: rapport.mission.agents contient l'agent
-     */
-    public boolean canAgentWriteRapport(Authentication auth, Long rapportId) {
+public boolean canAgentWriteRapport(Authentication auth, Long rapportId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -222,11 +170,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un agent peut supprimer un rapport
-     * Règle: rapport.mission.agents contient l'agent
-     */
-    public boolean canAgentDeleteRapport(Authentication auth, Long rapportId) {
+public boolean canAgentDeleteRapport(Authentication auth, Long rapportId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -239,21 +183,17 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un agent peut modifier un pointage
-     * Règle: pointage.mission.agents contient l'agent OU pointage.agentId == agentId
-     */
-    public boolean canAgentWritePointage(Authentication auth, Long pointageId) {
+public boolean canAgentWritePointage(Authentication auth, Long pointageId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
         return pointageRepository.findById(pointageId)
                 .map(pointage -> {
-                    // Vérifier si c'est le propre pointage de l'agent
+                    
                     if (pointage.getAgentId() != null && pointage.getAgentId().equals(userId)) {
                         return true;
                     }
-                    // Vérifier si l'agent est assigné à la mission
+                    
                     Mission mission = pointage.getMission();
                     return mission != null && mission.getAgents().stream()
                             .anyMatch(agent -> agent.getId().equals(userId));
@@ -261,11 +201,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un agent peut lire un planning
-     * Règle: Au moins une mission du planning contient l'agent
-     */
-    public boolean canAgentReadPlanning(Authentication auth, Long planningId) {
+public boolean canAgentReadPlanning(Authentication auth, Long planningId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -278,11 +214,7 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    /**
-     * Vérifie si un agent peut créer un pointage pour une mission
-     * Règle: L'agent doit être assigné à la mission
-     */
-    public boolean canAgentCreatePointageForMission(Authentication auth, Long missionId) {
+public boolean canAgentCreatePointageForMission(Authentication auth, Long missionId) {
         Long userId = extractUserId(auth);
         if (userId == null) return false;
 
@@ -293,45 +225,31 @@ public class AuthorizationService {
                 .orElse(false);
     }
 
-    // ==================== SELF ACCESS CHECKS ====================
-
-    /**
-     * Vérifie si l'utilisateur accède à ses propres données
-     */
-    public boolean isSelf(Authentication auth, Long targetUserId) {
+public boolean isSelf(Authentication auth, Long targetUserId) {
         Long userId = extractUserId(auth);
         return userId != null && userId.equals(targetUserId);
     }
 
-    // ==================== HELPER METHODS ====================
-
-    /**
-     * Extrait l'ID utilisateur depuis l'authentification
-     */
-    private Long extractUserId(Authentication auth) {
+private Long extractUserId(Authentication auth) {
         if (auth == null || auth.getPrincipal() == null) {
             return null;
         }
 
         Object principal = auth.getPrincipal();
-        
-        // Si c'est déjà un AppUserDetails
-        if (principal instanceof AppUserDetails) {
+
+if (principal instanceof AppUserDetails) {
             return ((AppUserDetails) principal).getId();
         }
-        
-        // Si c'est une string (email), on cherche dans la DB
-        if (principal instanceof String) {
+
+if (principal instanceof String) {
             String email = (String) principal;
-            
-            // Chercher d'abord dans les clients
-            Optional<Client> client = clientRepository.findByEmail(email);
+
+Optional<Client> client = clientRepository.findByEmail(email);
             if (client.isPresent()) {
                 return client.get().getId();
             }
-            
-            // Puis dans les agents
-            Optional<AgentDeSecurite> agent = agentRepository.findByEmail(email);
+
+Optional<AgentDeSecurite> agent = agentRepository.findByEmail(email);
             if (agent.isPresent()) {
                 return agent.get().getId();
             }

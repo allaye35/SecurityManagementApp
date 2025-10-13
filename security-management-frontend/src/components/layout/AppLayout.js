@@ -1,5 +1,4 @@
-// src/components/layout/AppLayout.js
-import React from 'react';
+﻿import React from 'react';
 import { Outlet } from 'react-router-dom';
 import NavBarBootstrap from './NavBarBootstrap';
 

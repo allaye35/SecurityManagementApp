@@ -1,5 +1,4 @@
-// src/components/articles/ArticleDetail.jsx
-import React, { useEffect, useState, useRef } from "react";
+﻿import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import ArticleService from "../../services/ArticleService";
 import ContratService from "../../services/ContratService";

@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/feries/ServiceJoursFeries.java
-package com.boulevardsecurity.securitymanagementapp.service.feries;
+﻿package com.boulevardsecurity.securitymanagementapp.service.feries;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-// Service métier
+
 public class ServiceJoursFeries {
 
     private final JoursFeriesApiClient apiClient;

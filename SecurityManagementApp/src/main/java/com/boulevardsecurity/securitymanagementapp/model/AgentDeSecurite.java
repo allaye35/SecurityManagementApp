@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/model/AgentDeSecurite.java
-package com.boulevardsecurity.securitymanagementapp.model;
+﻿package com.boulevardsecurity.securitymanagementapp.model;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.Role;
 import com.boulevardsecurity.securitymanagementapp.Enums.StatutAgent;

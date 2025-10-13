@@ -1,8 +1,7 @@
-/* Styles de la page d'accueil */
-.home-container {
+﻿.home-container {
     text-align: center;
     padding: 50px;
-    background-color: #1a1a2e; /* Bleu foncé élégant */
+    background-color: #1a1a2e; 
     color: white;
     min-height: 100vh;
     display: flex;
@@ -16,7 +15,7 @@
   }
   
   .logo {
-    width: 150px; /* Taille du logo */
+    width: 150px; 
     margin-bottom: 20px;
   }
   
@@ -31,9 +30,8 @@
     margin: auto;
     opacity: 0.8;
   }
-  
-  /* Boutons */
-  .home-buttons {
+
+.home-buttons {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -59,12 +57,10 @@
     background-color: #0056b3;
     transform: scale(1.05);
   }
-  
-  /* Icônes */
-  .icon {
+
+.icon {
     font-size: 22px;
   }
-
 
 .home-nav {
   display: flex;

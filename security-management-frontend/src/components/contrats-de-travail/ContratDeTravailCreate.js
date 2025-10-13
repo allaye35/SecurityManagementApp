@@ -1,5 +1,4 @@
-// src/components/contrats-de-travail/ContratDeTravailCreate.jsx
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Spinner, Alert } from "react-bootstrap";
 import ContratDeTravailService, { MetaService } from "../../services/ContratDeTravailService";

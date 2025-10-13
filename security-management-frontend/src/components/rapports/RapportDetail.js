@@ -1,5 +1,4 @@
-// src/components/rapports/RapportDetail.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import RapportService from "../../services/RapportService";
 import MissionService from "../../services/MissionService";

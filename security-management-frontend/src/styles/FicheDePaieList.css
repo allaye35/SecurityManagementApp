@@ -1,5 +1,4 @@
-/* src/styles/FicheDePaieList.css */
-.fp-list {
+﻿.fp-list {
     padding: 1rem;
 }
 .tbl-fp {
@@ -13,6 +12,3 @@
 .btn-add {
     margin-bottom: 1rem;
 }
-
-
-

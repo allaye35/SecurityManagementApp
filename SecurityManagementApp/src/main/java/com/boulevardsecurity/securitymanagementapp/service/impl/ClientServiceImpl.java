@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/impl/ClientServiceImpl.java
-package com.boulevardsecurity.securitymanagementapp.service.impl;
+﻿package com.boulevardsecurity.securitymanagementapp.service.impl;
 
 import com.boulevardsecurity.securitymanagementapp.dto.ClientCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.ClientDto;

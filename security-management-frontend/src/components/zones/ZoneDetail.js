@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import ZoneService from "../../services/ZoneService";
 import "../../styles/ZoneDetail.css";
@@ -206,7 +206,7 @@ const ZoneDetail = () => {
                             <div className="text-center mt-4">
                                 {zone.codePostal && zone.ville && (
                                     <a 
-                                        href={`https://www.google.com/maps/search/?api=1&query=${zone.ville},${zone.codePostal}`} 
+                                        href={`https:
                                         target="_blank" 
                                         rel="noopener noreferrer"
                                         className="btn btn-outline-primary"

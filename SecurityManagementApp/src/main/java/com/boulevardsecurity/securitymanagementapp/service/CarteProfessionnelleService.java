@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/CarteProfessionnelleService.java
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.dto.CarteProfessionnelleCreationDto;
 import com.boulevardsecurity.securitymanagementapp.dto.CarteProfessionnelleDto;

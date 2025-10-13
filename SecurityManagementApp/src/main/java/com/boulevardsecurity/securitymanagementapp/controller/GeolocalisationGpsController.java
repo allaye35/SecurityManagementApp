@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.controller;
+﻿package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.dto.GeolocalisationGpsCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.GeolocalisationGpsDto;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/geolocalisations-gps")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http:
 @RequiredArgsConstructor
 public class GeolocalisationGpsController {
 

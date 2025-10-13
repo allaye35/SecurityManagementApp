@@ -1,5 +1,4 @@
-// src/components/layout/NavBarBootstrap.js
-import React from "react";
+﻿import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Container, Button } from "react-bootstrap";
 import { FaUserShield, FaBriefcase, FaFileInvoiceDollar, FaSignOutAlt, FaUser, FaCog } from "react-icons/fa";

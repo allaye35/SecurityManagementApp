@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/EmailVerificationService.java
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 public interface EmailVerificationService {
 

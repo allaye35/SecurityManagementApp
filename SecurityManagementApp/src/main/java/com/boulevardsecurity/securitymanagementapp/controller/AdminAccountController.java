@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/controller/AdminAccountController.java
-package com.boulevardsecurity.securitymanagementapp.controller;
+﻿package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
 import com.boulevardsecurity.securitymanagementapp.model.Client;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/accounts")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http:
 @RequiredArgsConstructor
 public class AdminAccountController {
 

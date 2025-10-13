@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.config;
+﻿package com.boulevardsecurity.securitymanagementapp.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 
 @Slf4j
 @Component
-@Order(2) // S'exécute après la création de l'admin (Order(1))
+@Order(2) 
 public class DataInitializer implements CommandLineRunner {
 
     private final DataSource dataSource;

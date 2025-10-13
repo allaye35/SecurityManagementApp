@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.dto;
+﻿package com.boulevardsecurity.securitymanagementapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -21,11 +21,9 @@ public class PointageDto {
 
     private Long missionId;
     private Long agentId;
-    
-    // Informations de l'agent pour affichage
-    private String agentNom;
+
+private String agentNom;
     private String agentPrenom;
-    
-    // Informations de la mission pour affichage
-    private String missionTitre;
+
+private String missionTitre;
 }

@@ -1,7 +1,4 @@
-/* src/styles/DisponibiliteDetail.css */
-
-/* Variables */
-:root {
+﻿:root {
   --primary-color: #007bff;
   --secondary-color: #6c757d;
   --success-color: #28a745;
@@ -15,14 +12,12 @@
   --transition: all 0.3s ease;
 }
 
-/* General Styles */
 .disponibilite-detail-container {
   max-width: 1200px;
   margin: 20px auto;
   padding: 0 15px;
 }
 
-/* Card Enhancement */
 .card {
   border: none;
   border-radius: var(--border-radius);
@@ -39,7 +34,6 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* Animation Effects */
 .badge {
   transition: var(--transition);
 }
@@ -57,7 +51,6 @@
   transform: translateY(0);
 }
 
-/* Timeline Styles */
 .timeline {
   position: relative;
   padding: 20px 0;
@@ -125,7 +118,6 @@
   right: auto;
 }
 
-/* Agent Profile Enhanced */
 .agent-avatar {
   width: 100px;
   height: 100px;
@@ -144,7 +136,6 @@
   transform: scale(1.05);
 }
 
-/* Status Indicators */
 .status-indicator {
   display: inline-flex;
   align-items: center;
@@ -177,7 +168,6 @@
   }
 }
 
-/* Conflict Card */
 .conflict-item {
   padding: 15px;
   border-radius: var(--border-radius);
@@ -191,7 +181,6 @@
   background-color: rgba(220, 53, 69, 0.1);
 }
 
-/* Duration Badge */
 .duration-badge {
   display: inline-block;
   padding: 5px 10px;
@@ -202,7 +191,6 @@
   transition: var(--transition);
 }
 
-/* Timeline Calendar */
 .timeline-calendar {
   background: white;
   padding: 20px;
@@ -226,7 +214,6 @@
   background-color: rgba(220, 53, 69, 0.1);
 }
 
-/* Action buttons */
 .action-button {
   width: 40px;
   height: 40px;
@@ -244,7 +231,6 @@
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Print styles */
 @media print {
   .no-print {
     display: none !important;
@@ -269,7 +255,6 @@
   }
 }
 
-/* Responsive design */
 @media (max-width: 991px) {
   .timeline::before {
     left: 40px;

@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.controller;
+﻿package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.dto.FactureCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.FactureDto;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/factures")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http:
 @RequiredArgsConstructor
 public class FactureController {
 

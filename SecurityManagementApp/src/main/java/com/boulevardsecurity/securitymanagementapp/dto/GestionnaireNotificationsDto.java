@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/dto/GestionnaireNotificationsDto.java
-package com.boulevardsecurity.securitymanagementapp.dto;
+﻿package com.boulevardsecurity.securitymanagementapp.dto;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.TypeNotification;
 import lombok.*;

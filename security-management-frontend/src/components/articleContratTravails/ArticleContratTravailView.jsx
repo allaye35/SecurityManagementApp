@@ -1,5 +1,4 @@
-// src/components/articleContratTravails/ArticleContratTravailView.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import ArticleContratTravailService from "../../services/ArticleContratTravailService";
 import ContratDeTravailService from "../../services/ContratDeTravailService";

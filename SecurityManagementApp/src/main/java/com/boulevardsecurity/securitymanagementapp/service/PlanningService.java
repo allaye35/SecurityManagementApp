@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/PlanningService.java
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.dto.PlanningCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.PlanningDto;

@@ -1,5 +1,4 @@
-// src/components/layout/MainLayout.js
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import NavBar from './NavBar';

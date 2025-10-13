@@ -1,5 +1,4 @@
-
-package com.boulevardsecurity.securitymanagementapp.controller;
+﻿package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.dto.*;
 import com.boulevardsecurity.securitymanagementapp.service.ContratService;
@@ -14,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contrats")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http:
 @RequiredArgsConstructor
 public class ContratController {
 
@@ -72,4 +71,3 @@ public class ContratController {
         return ResponseEntity.noContent().build();
     }
 }
-

@@ -1,5 +1,4 @@
-// src/services/EntrepriseService.js
-import api from "./api";
+﻿import api from "./api";
 
 const EntrepriseService = {
     getAllEntreprises:   ()           => api.get("/entreprises"),

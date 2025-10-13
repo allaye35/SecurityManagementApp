@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/ArticleContratTravailService.java
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.dto.ArticleContratTravailCreationDto;
 import com.boulevardsecurity.securitymanagementapp.dto.ArticleContratTravailDto;

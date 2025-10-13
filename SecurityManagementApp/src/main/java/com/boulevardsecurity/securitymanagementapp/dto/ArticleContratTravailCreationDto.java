@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/dto/ArticleContratTravailCreationDto.java
-package com.boulevardsecurity.securitymanagementapp.dto;
+﻿package com.boulevardsecurity.securitymanagementapp.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

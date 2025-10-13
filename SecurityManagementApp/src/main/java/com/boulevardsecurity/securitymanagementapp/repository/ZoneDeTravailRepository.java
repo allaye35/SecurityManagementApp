@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.repository;
+﻿package com.boulevardsecurity.securitymanagementapp.repository;
 import com.boulevardsecurity.securitymanagementapp.model.ZoneDeTravail;
 import com.boulevardsecurity.securitymanagementapp.Enums.TypeZone;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-// Repository JPA
+
 public interface ZoneDeTravailRepository extends JpaRepository<ZoneDeTravail, Long> {
 
     List<ZoneDeTravail> findByNomContainingIgnoreCase(String nom);

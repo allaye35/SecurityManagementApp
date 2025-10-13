@@ -1,6 +1,4 @@
-/* Conteneur principal *//* 👉 Conteneur principal, plus aéré */
-
-.detail-container {.detail-container {
+﻿.detail-container {.detail-container {
 
     max-width: 1200px;    max-width: 1000px;
 
@@ -16,15 +14,13 @@
 
 }
 
-/* Header */
-
-.detail-header {/* 👉 Carte Leaflet en plein largeur & 80vh de hauteur */
+.detail-header {
 
     background: white;.map-preview {
 
     padding: 2rem;    width: 100%;
 
-    border-radius: 15px;    height: 80vh;               /* passe de 500px à 80% de la hauteur d'écran */
+    border-radius: 15px;    height: 80vh;               
 
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);    margin-bottom: 2rem;
 
@@ -38,7 +34,7 @@
 
     flex-wrap: wrap;
 
-    gap: 1.5rem;/* 👉 Info‐group en grille 2 colonnes, plus d’espace */
+    gap: 1.5rem;
 
 }.info-group {
 
@@ -74,7 +70,7 @@
 
     box-shadow: 0 2px 6px rgba(13, 71, 161, 0.2);
 
-    display: inline-block;/* 👉 Missions, un peu plus large & contrasté */
+    display: inline-block;
 
 }.missions-detail {
 
@@ -134,7 +130,7 @@
 
 .btn-delete {
 
-    background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);/* 👉 Boutons d’action plus visibles */
+    background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
 
     color: white;.btn-action {
 
@@ -152,13 +148,13 @@
 
     padding: 0.7rem 1.6rem;
 
-/* Section carte */    font-size: 1rem;
+    font-size: 1rem;
 
 .map-section {}
 
     background: white;
 
-    padding: 2rem;/* Loader & erreur centrés */
+    padding: 2rem;
 
     border-radius: 15px;.loader, .error {
 
@@ -188,7 +184,6 @@
     border: 3px solid #e3f2fd;
 }
 
-/* Section informations GPS */
 .info-section {
     background: white;
     padding: 2rem;
@@ -260,7 +255,6 @@
     margin: 0;
 }
 
-/* Section missions */
 .missions-section {
     background: white;
     padding: 2rem;
@@ -401,7 +395,6 @@
     font-style: italic;
 }
 
-/* Footer actions */
 .footer-actions {
     text-align: center;
     margin-top: 2rem;
@@ -425,7 +418,6 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-/* Loader */
 .loader {
     text-align: center;
     padding: 4rem;
@@ -451,7 +443,6 @@
     font-weight: 600;
 }
 
-/* Error box */
 .error-box {
     background: white;
     padding: 3rem;
@@ -471,7 +462,6 @@
     margin-bottom: 2rem;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .detail-header {
         flex-direction: column;

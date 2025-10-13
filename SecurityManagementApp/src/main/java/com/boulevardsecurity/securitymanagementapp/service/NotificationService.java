@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,7 @@ public class NotificationService {
     }
 
     public void sendSMS(String phoneNumber, String message) {
-        String apiUrl = "https://textbelt.com/text";
+        String apiUrl = "https:
 
         WebClient webClient = WebClient.builder().baseUrl(apiUrl).build();
 

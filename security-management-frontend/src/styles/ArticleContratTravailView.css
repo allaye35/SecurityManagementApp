@@ -1,6 +1,4 @@
-/* Styles pour la vue détaillée d'un article de contrat de travail */
-
-.article-view-container {
+﻿.article-view-container {
     max-width: 1000px;
     margin: 0 auto;
 }
@@ -12,7 +10,6 @@
     transition: all 0.3s ease;
 }
 
-/* Style pour les boutons circulaires */
 .btn-circle {
     width: 42px;
     height: 42px;
@@ -29,7 +26,6 @@
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
-/* Style pour le titre de l'article */
 .article-title {
     font-size: 2rem;
     font-weight: 700;
@@ -52,7 +48,6 @@
     border-radius: 2px;
 }
 
-/* Style pour la carte d'information */
 .info-card {
     border-left: 4px solid #3498db;
     transition: all 0.3s ease;
@@ -64,7 +59,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Style pour le contenu de l'article */
 .article-content-container {
     background-color: #f9fafb;
     border-radius: 10px;
@@ -89,7 +83,6 @@
     white-space: pre-wrap;
 }
 
-/* Style pour les badges */
 .badge-custom {
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
@@ -109,7 +102,6 @@
     background-color: #2ecc71;
 }
 
-/* Style pour les boutons d'action */
 .action-btn {
     border-radius: 6px;
     padding: 0.5rem 1.2rem;
@@ -155,7 +147,6 @@
     color: #2c3e50;
 }
 
-/* Style pour le modal de confirmation */
 .delete-confirmation-modal {
     position: fixed;
     top: 0;
@@ -236,7 +227,6 @@
     gap: 0.75rem;
 }
 
-/* Animation d'entrée pour les éléments */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -264,7 +254,6 @@
     animation-delay: 0.3s;
 }
 
-/* Style pour le footer du contrat */
 .contract-footer {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
@@ -283,7 +272,6 @@
     margin-right: 0.5rem;
 }
 
-/* Style pour les sections */
 .section-title {
     font-size: 1.2rem;
     font-weight: 600;
@@ -298,7 +286,6 @@
     color: #3498db;
 }
 
-/* Effet de survol pour les cartes */
 .hover-effect {
     transition: all 0.3s ease;
 }
@@ -315,13 +302,11 @@
     font-size: 1.1rem;
 }
 
-/* Style pour les badges */
 .badge {
     font-weight: 500;
     font-size: 0.9rem;
 }
 
-/* Style pour la modal de suppression */
 .delete-confirmation-modal {
     position: fixed;
     top: 0;
@@ -400,14 +385,12 @@
     color: #000;
 }
 
-/* Animation pour les boutons */
 .btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .d-flex.justify-content-between {
         flex-direction: column;

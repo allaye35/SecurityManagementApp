@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/DisponibiliteService.java
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.dto.DisponibiliteCreationDto;
 import com.boulevardsecurity.securitymanagementapp.dto.DisponibiliteDto;
@@ -15,4 +14,3 @@ public interface DisponibiliteService {
     DisponibiliteDto update(Long id, DisponibiliteCreationDto updateDto);
     void delete(Long id);
 }
-

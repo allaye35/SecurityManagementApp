@@ -1,4 +1,4 @@
-.devis-form {
+﻿.devis-form {
     padding: 20px;
     max-width: 800px;
     margin: 0 auto;
@@ -82,7 +82,6 @@
     min-height: 100px;
 }
 
-/* Spécifique pour le select multiple (jours de la semaine) */
 .jours-select {
     min-height: 120px;
 }
@@ -94,13 +93,11 @@
     margin-top: 5px;
 }
 
-/* Style spécifique pour les inputs de temps */
 .devis-form input[type="time"] {
     width: 100%;
     min-width: 120px;
 }
 
-/* Style pour la section de majorations */
 .field-group.majorations {
     display: block;
     margin-top: 15px;
@@ -282,7 +279,6 @@
     font-weight: 500;
 }
 
-/* Styles spécifiques pour React Select */
 .devis-form .react-select__control {
     border: 1px solid #ddd;
     box-shadow: none;
@@ -324,12 +320,10 @@
     color: #aaa;
 }
 
-/* Supprimer le style de hauteur minimale pour les sélects React */
 .jours-select {
     min-height: auto;
 }
 
-/* Styles pour la planification détaillée des jours */
 .day-planning-container {
     margin-bottom: 20px;
     padding: 15px;
@@ -446,7 +440,6 @@
     cursor: pointer;
 }
 
-/* Styles pour les majorations */
 .majorations-container {
     display: flex;
     gap: 30px;
@@ -486,7 +479,6 @@
     background-color: #e9ecef;
 }
 
-/* Styles généraux améliorés pour les formulaires */
 .form-section h4 {
     font-size: 1.1em;
     margin: 10px 0;
@@ -498,7 +490,6 @@
     cursor: not-allowed;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
     .days-grid {
         grid-template-columns: repeat(2, 1fr);

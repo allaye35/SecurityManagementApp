@@ -1,5 +1,4 @@
-// src/components/plannings/PlanningStats.js
-import React from 'react';
+﻿import React from 'react';
 import { Card, Row, Col, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 

@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/impl/EmailVerificationServiceImpl.java
-package com.boulevardsecurity.securitymanagementapp.service.impl;
+﻿package com.boulevardsecurity.securitymanagementapp.service.impl;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.VerificationSubject;
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
@@ -29,7 +28,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final EmailVerificationTokenRepository tokenRepo;
     private final NotificationService notificationService;
 
-    @Value("${app.public-url:http://localhost:3000}")
+    @Value("${app.public-url:http:
     private String appPublicUrl;
 
     @Value("${app.email.verification.expiration-hours:24}")

@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.repository;
+﻿package com.boulevardsecurity.securitymanagementapp.repository;
 
 import com.boulevardsecurity.securitymanagementapp.model.GestionnaireNotifications;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-// Repository JPA
+
 public interface GestionnaireNotificationsRepository extends JpaRepository<GestionnaireNotifications, Long> {
     List<GestionnaireNotifications> findByAgentDeSecuriteId(Long agentId);
 

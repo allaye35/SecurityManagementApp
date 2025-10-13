@@ -1,5 +1,4 @@
-// src/pages/LoginPage.jsx
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.jpg";

@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/dto/ContratDeTravailDto.java
-package com.boulevardsecurity.securitymanagementapp.dto;
+﻿package com.boulevardsecurity.securitymanagementapp.dto;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.PeriodiciteSalaire;
 import com.boulevardsecurity.securitymanagementapp.Enums.TypeContrat;

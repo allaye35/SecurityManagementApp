@@ -1,5 +1,4 @@
-// src/pages/pointages/PointageDetail.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import PointageService from "../../services/PointageService";
 import "../../styles/PointageDetail.css";
@@ -31,8 +30,7 @@ export default function PointageDetail() {
   if (error) return <p className="error">{error}</p>;
   if (!pt) return <p>Chargement…</p>;
 
-  // --- Extraction sûre de la position, quel que soit le format reçu ---
-  const latFromRoot = pt?.latitude;
+const latFromRoot = pt?.latitude;
   const lngFromRoot = pt?.longitude;
   const latFromObj = pt?.positionActuelle?.latitude;
   const lngFromObj = pt?.positionActuelle?.longitude;
@@ -52,12 +50,10 @@ export default function PointageDetail() {
   const hasLatLng = Number.isFinite(lat) && Number.isFinite(lng);
   const position = hasLatLng ? `${lat}, ${lng}` : "Position non disponible";
 
-  // Utiliser les nouveaux champs du DTO
-  const missionId = pt?.missionId ?? pt?.mission?.id ?? "Non spécifiée";
+const missionId = pt?.missionId ?? pt?.mission?.id ?? "Non spécifiée";
   const missionTitre = pt?.missionTitre ?? pt?.mission?.titre ?? null;
 
-  // Utiliser les nouveaux champs agentNom et agentPrenom du DTO
-  const agentName =
+const agentName =
     pt?.agentNom && pt?.agentPrenom
       ? `${pt.agentPrenom} ${pt.agentNom}`
       : (pt?.agent?.prenom && pt?.agent?.nom
@@ -86,7 +82,7 @@ export default function PointageDetail() {
       </div>
 
       <div className="detail-content">
-        {/* Section Informations Temporelles */}
+        {}
         <div className="detail-section">
           <h3>🕐 Informations Temporelles</h3>
           <div className="detail-grid">
@@ -109,7 +105,7 @@ export default function PointageDetail() {
           </div>
         </div>
 
-        {/* Section Statut */}
+        {}
         <div className="detail-section">
           <h3>📊 Statut du Pointage</h3>
           <div className="detail-grid">
@@ -128,7 +124,7 @@ export default function PointageDetail() {
           </div>
         </div>
 
-        {/* Section Localisation */}
+        {}
         <div className="detail-section">
           <h3>📍 Localisation</h3>
           <div className="detail-grid">
@@ -141,7 +137,7 @@ export default function PointageDetail() {
                       Lat: {lat?.toFixed(6)} | Long: {lng?.toFixed(6)}
                     </span>
                     <a 
-                      href={`https://www.google.com/maps?q=${lat},${lng}`}
+                      href={`https:
                       target="_blank"
                       rel="noopener noreferrer"
                       className="map-link"
@@ -157,7 +153,7 @@ export default function PointageDetail() {
           </div>
         </div>
 
-        {/* Section Mission et Agent */}
+        {}
         <div className="detail-section">
           <h3>👥 Mission et Agent</h3>
           <div className="detail-grid">
@@ -185,7 +181,7 @@ export default function PointageDetail() {
         </div>
       </div>
 
-      {/* Actions */}
+      {}
       <div className="detail-actions">
         <Link to={`/pointages/edit/${id}`} className="btn btn-primary">
           ✏️ Modifier le pointage

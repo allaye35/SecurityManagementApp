@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/mapper/PlanningMapper.java
-package com.boulevardsecurity.securitymanagementapp.mapper;
+﻿package com.boulevardsecurity.securitymanagementapp.mapper;
 
 import com.boulevardsecurity.securitymanagementapp.dto.PlanningDto;
 import com.boulevardsecurity.securitymanagementapp.dto.PlanningCreateDto;

@@ -1,5 +1,4 @@
-// src/components/clients/DeleteClient.js
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ClientService from "../../services/ClientService";
 

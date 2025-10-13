@@ -1,5 +1,4 @@
-// src/components/geolocalisations/GeolocalisationDetail.js
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import GeolocalisationService from "../../services/GeolocalisationService";
@@ -83,8 +82,8 @@ export default function GeolocalisationDetail() {
                     scrollWheelZoom={true}
                 >
                     <TileLayer 
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https:
+                        attribution='&copy; <a href="https:
                     />
                     <Marker position={[geo.position.latitude, geo.position.longitude]}>
                         <Popup>

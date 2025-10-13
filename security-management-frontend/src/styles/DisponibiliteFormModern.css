@@ -1,5 +1,4 @@
-/* Variables de couleur */
-:root {
+﻿:root {
   --primary-color: #007bff;
   --primary-dark: #0056b3;
   --primary-light: #e6f2ff;
@@ -21,7 +20,6 @@
   --btn-padding: 0.625rem 1.25rem;
 }
 
-/* Style du conteneur principal */
 .disponibilite-page {
   margin: 2rem auto;
   animation: fadeIn 0.5s;
@@ -29,7 +27,6 @@
   padding: 0 1rem;
 }
 
-/* Animations */
 .fade-in {
   animation: fadeIn 0.5s;
 }
@@ -45,7 +42,6 @@
   100% { transform: scale(1); }
 }
 
-/* Style de la carte principale du formulaire */
 .disponibilite-form-card {
   border: none !important;
   box-shadow: var(--box-shadow);
@@ -75,7 +71,6 @@
   padding: 1.75rem;
 }
 
-/* Style pour le select d'agent */
 .large-select .react-select__control {
   min-height: var(--input-height) !important;
   border-radius: var(--radius);
@@ -93,7 +88,6 @@
   box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
 }
 
-/* Style pour l'agent option dans le select */
 .agent-option {
   display: flex;
   align-items: center;
@@ -128,7 +122,6 @@
   margin: 0 auto 1rem;
 }
 
-/* Style pour les cartes de date */
 .date-section {
   margin: 1.5rem 0;
 }
@@ -145,13 +138,11 @@
   box-shadow: 0 0.25rem 0.75rem rgba(0, 123, 255, 0.15);
 }
 
-/* Labels des formulaires */
 .form-label-lg {
   font-size: 1.125rem;
   margin-bottom: 0.75rem;
 }
 
-/* Style pour la durée */
 .duration-badge {
   display: inline-flex;
   align-items: center;
@@ -169,7 +160,6 @@
   transition: var(--transition);
 }
 
-/* Style de prévisualisation */
 .preview-card {
   margin-top: 1.5rem;
 }
@@ -182,7 +172,6 @@
   text-align: center;
 }
 
-/* Style pour la visualisation des périodes */
 .period-details {
   position: relative;
   padding-left: 1rem;
@@ -225,13 +214,11 @@
   font-size: 0.875rem;
 }
 
-/* Style des boutons */
 .btn-lg {
   padding: 0.7rem 1.5rem;
   font-size: 1.1rem;
 }
 
-/* Inputs avec taille augmentée */
 .form-control-lg {
   height: var(--input-height);
   font-size: 1rem;
@@ -241,12 +228,10 @@
   padding: 0 1rem;
 }
 
-/* Toast de notification */
 .toast {
   min-width: 300px;
 }
 
-/* Responsive */
 @media (max-width: 991px) {
   .disponibilite-form-card .card-body {
     padding: 1.25rem;

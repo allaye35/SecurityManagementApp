@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PointageService from "../../services/PointageService";
 import { 
@@ -21,7 +21,7 @@ export default function PointageList() {
     const [showNotification, setShowNotification] = useState(false);
     const [notification, setNotification] = useState({ message: "", variant: "success" });
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5); // 5 éléments par page par défaut pour avoir la pagination
+    const [itemsPerPage, setItemsPerPage] = useState(5); 
     const navigate = useNavigate();
 
     const loadData = () => {
@@ -30,7 +30,7 @@ export default function PointageList() {
         PointageService.getAll()
             .then(({ data }) => {
                 console.log("Pointages chargés:", data);
-                // Afficher la structure du premier pointage pour déboguer
+                
                 if (data && data.length > 0) {
                     console.log("Structure du premier pointage:", data[0]);
                     console.log("Mission du premier pointage:", data[0].mission);
@@ -73,7 +73,7 @@ export default function PointageList() {
     const filteredItems = (items || []).filter(p => {
         if (!p) return false;
         try {
-            // Utiliser les nouveaux champs du DTO
+            
             const agentName = p.agentNom && p.agentPrenom 
                 ? `${p.agentPrenom} ${p.agentNom}`.trim() 
                 : (p.agent ? `${p.agent.prenom || ''} ${p.agent.nom || ''}`.trim() : '');
@@ -90,14 +90,12 @@ export default function PointageList() {
         }
     });
 
-    // Logique de pagination
-    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 
-    // Réinitialiser la page quand le filtre change
-    useEffect(() => {
+useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm]);
 
@@ -111,8 +109,7 @@ export default function PointageList() {
         setCurrentPage(1);
     };
 
-    // Générer les numéros de page pour la pagination
-    const generatePaginationItems = () => {
+const generatePaginationItems = () => {
         const items = [];
         const maxPagesToShow = 5;
         
@@ -579,7 +576,7 @@ export default function PointageList() {
                             </div>
                         )}
 
-                        {/* Pagination - Toujours visible */}
+                        {}
                         {!loading && (
                             <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 pt-4 border-top">
                                 <div className="mb-3 mb-md-0">
@@ -794,8 +791,7 @@ export default function PointageList() {
                     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
                 }
 
-                /* Styles de pagination */
-                .pagination {
+.pagination {
                     gap: 8px;
                 }
 

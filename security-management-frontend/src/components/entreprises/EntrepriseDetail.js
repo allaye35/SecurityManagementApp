@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Container, Card, Row, Col, Table, Badge, Spinner, Button, Breadcrumb } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -220,7 +220,7 @@ export default function EntrepriseDetail() {
                                                     variant="outline-primary" 
                                                     size="sm"
                                                     className="rounded-pill px-3"
-                                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                                                    href={`https:
                                                         `${entreprise.numeroRue} ${entreprise.rue}, ${entreprise.codePostal} ${entreprise.ville}, ${entreprise.pays}`
                                                     )}`}
                                                     target="_blank"

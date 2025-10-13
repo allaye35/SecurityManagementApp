@@ -1,11 +1,9 @@
-/* Empêche le débordement du texte dans les colonnes sensibles (ex: titre) */
-.cell-truncate {
-    max-width: 160px; /* Ajustez selon la largeur souhaitée */
+﻿.cell-truncate {
+    max-width: 160px; 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-/* src/components/missions/MissionList.css */
 
 .mission-list {
     padding: 1rem;
@@ -26,7 +24,7 @@
     max-width: 120px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    /* overflow: hidden; supprimé pour permettre au dropdown de dépasser */
+    
 }
 
 .tbl-missions th {
@@ -92,10 +90,9 @@
 .text-truncate {
     white-space: nowrap;
     text-overflow: ellipsis;
-    /* overflow: hidden; supprimé pour permettre au dropdown de dépasser */
+    
 }
 
-/* Pour rendre la table responsive sur les petits écrans */
 @media (max-width: 992px) {
     .table-responsive {
         overflow-x: auto;
@@ -103,19 +100,16 @@
     }
 }
 
-/* Style pour les badges de statut */
 .badge {
     font-size: 0.85rem;
     padding: 0.35em 0.6em;
 }
 
-/* Animation pour le chargement */
 .spinner-border {
     width: 3rem;
     height: 3rem;
 }
 
-/* Style pour les dropdown menus */
 .dropdown-menu {
         min-width: 230px;
         z-index: 1050 !important;
@@ -153,23 +147,19 @@
     color: #0d6efd;
 }
 
-/* Séparateur plus doux pour le menu */
 .dropdown-divider {
     margin: 0.2rem 0;
     border-top: 1px solid #e3e3e3;
 }
 
-/* Effet de survol pour les lignes du tableau */
 .tbl-missions tbody tr:hover {
     background-color: rgba(0, 123, 255, 0.05) !important;
 }
-/* Le conteneur du tableau ne doit pas couper le menu */
+
 .table-responsive {
-  overflow-y: visible !important; /* on garde le scroll horizontal par Bootstrap */
+  overflow-y: visible !important; 
 }
 
-/* Empêche la création d’un contexte de positionnement qui perturbe Popper */
 .actions-dropdown { position: static; }
 
-/* S’assure que le menu passe au-dessus de tout (navbar, headers…) */
 .dropdown-menu { z-index: 2000; }

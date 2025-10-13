@@ -1,5 +1,4 @@
-// src/components/entreprises/EntrepriseList.js
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Table, Button, Container, Row, Col, Card, Badge, Form, InputGroup, OverlayTrigger, Tooltip, Popover } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

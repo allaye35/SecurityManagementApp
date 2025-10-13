@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/controller/ContratDeTravailController.java
-package com.boulevardsecurity.securitymanagementapp.controller;
+﻿package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.dto.ContratDeTravailCreationDto;
 import com.boulevardsecurity.securitymanagementapp.dto.ContratDeTravailDto;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http:
 @RequestMapping("/api/contrats-de-travail")
 @RequiredArgsConstructor
 public class ContratDeTravailController {

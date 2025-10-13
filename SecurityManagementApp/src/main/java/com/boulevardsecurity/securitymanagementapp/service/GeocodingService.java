@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.model.GeoPoint;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class GeocodingService {
 
-    private static final String NOMINATIM_URL = "https://nominatim.openstreetmap.org/search?format=json&q=";
+    private static final String NOMINATIM_URL = "https:
 
     public GeoPoint getCoordinatesFromAddress(String address) {
         try {

@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/model/Client.java
-package com.boulevardsecurity.securitymanagementapp.model;
+﻿package com.boulevardsecurity.securitymanagementapp.model;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.ModeContactPrefere;
 import com.boulevardsecurity.securitymanagementapp.Enums.Role;

@@ -1,6 +1,4 @@
-/* Styles pour la vue détaillée d'un article */
-
-.article-detail-container {
+﻿.article-detail-container {
     background-color: #f8f9fa;
     min-height: 90vh;
     border-radius: 8px;
@@ -23,7 +21,6 @@
     to { opacity: 1; transform: translateX(0); }
 }
 
-/* Styles du fil d'Ariane */
 .article-breadcrumb {
     background-color: transparent;
     padding: 0.5rem 0;
@@ -35,7 +32,6 @@
     content: ">";
 }
 
-/* Styles de l'en-tête de l'article */
 .article-header-actions {
     animation: fadeIn 0.6s ease;
 }
@@ -79,7 +75,6 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Styles pour la carte de contenu */
 .article-content-card {
     background-color: white;
     border-radius: 8px;
@@ -133,7 +128,6 @@
     margin-bottom: 1rem;
 }
 
-/* Styles pour la section contrat associé */
 .article-related-contract {
     background-color: white;
     border-radius: 8px;
@@ -205,7 +199,6 @@
     font-size: 1rem;
 }
 
-/* Style pour le contrat associé */
 .article-related-contract {
     background-color: white;
     border-radius: 8px;
@@ -286,7 +279,6 @@
     color: #721c24;
 }
 
-/* Boutons d'action */
 .article-actions {
     display: flex;
     gap: 1rem;
@@ -350,7 +342,6 @@
     transform: translateY(-2px);
 }
 
-/* État vide ou erreur */
 .article-empty-state, 
 .article-error-state {
     display: flex;
@@ -382,7 +373,6 @@
     color: #dc3545;
 }
 
-/* État vide ou erreur */
 .article-empty-state {
     text-align: center;
     animation: fadeIn 0.5s ease;
@@ -393,7 +383,6 @@
     margin-bottom: 1rem;
 }
 
-/* État de chargement */
 .loading-container {
     display: flex;
     justify-content: center;
@@ -406,7 +395,6 @@
     height: 3rem;
 }
 
-/* État de chargement */
 .loading-container {
     display: flex;
     flex-direction: column;
@@ -420,7 +408,6 @@
     height: 3rem;
 }
 
-/* Méta-données de l'article */
 .article-metadata-card {
     animation: slideInRight 0.7s ease;
 }
@@ -451,14 +438,12 @@
     color: #212529;
 }
 
-/* Footer de l'article */
 .article-footer {
     border-top: 1px solid #e9ecef;
     padding-top: 1.5rem;
     margin-top: 2rem;
 }
 
-/* Version imprimable - cachez les éléments non essentiels */
 @media print {
     .article-quick-actions, 
     .article-footer, 
@@ -487,7 +472,6 @@
     }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .article-detail-container {
         padding: 1.5rem 1rem;

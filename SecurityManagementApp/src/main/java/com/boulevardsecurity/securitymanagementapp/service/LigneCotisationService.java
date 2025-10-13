@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/LigneCotisationService.java
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.dto.LigneCotisationCreationDto;
 import com.boulevardsecurity.securitymanagementapp.dto.LigneCotisationDto;

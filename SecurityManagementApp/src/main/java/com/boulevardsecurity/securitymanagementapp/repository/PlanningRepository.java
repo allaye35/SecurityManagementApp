@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.repository;
+﻿package com.boulevardsecurity.securitymanagementapp.repository;
 
 import com.boulevardsecurity.securitymanagementapp.model.Planning;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-// Repository JPA
+
 public interface PlanningRepository extends JpaRepository<Planning, Long> {
 
     List<Planning> findByDateCreationBetween(LocalDateTime dateDebut, LocalDateTime dateFin);

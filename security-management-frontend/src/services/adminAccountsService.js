@@ -1,5 +1,4 @@
-// src/services/adminAccountsService.js
-import api from "./api";
+﻿import api from "./api";
 
 const adminAccountsService = {
   getPendingAgents:  () => api.get("/admin/accounts/pending/agents").then(r=>r.data),

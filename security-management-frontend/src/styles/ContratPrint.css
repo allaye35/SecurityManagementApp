@@ -1,5 +1,4 @@
-/* Styles pour les articles du contrat */
-.article-card {
+﻿.article-card {
   margin-bottom: 1.5rem;
 }
 
@@ -13,7 +12,6 @@
   line-height: 1.6;
 }
 
-/* Styles pour l'impression */
 .print-container {
   max-width: 100%;
 }
@@ -28,7 +26,6 @@
   margin-bottom: 1.5rem;
 }
 
-/* Styles pour les blocs de signature */
 .signatures {
   margin-top: 3rem;
 }
@@ -57,7 +54,6 @@
   text-align: center;
 }
 
-/* Styles pour les blocs d'info */
 .info-box {
   margin-bottom: 1rem;
 }
@@ -79,7 +75,6 @@
   width: 48%;
 }
 
-/* Styles spécifiques pour l'impression */
 @media print {
   .contrat-detail-container {
     padding: 0;

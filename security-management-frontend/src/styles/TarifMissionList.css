@@ -1,10 +1,8 @@
-/* Container général */
-.tarif-list {
+﻿.tarif-list {
     padding: 1rem;
     background: #fff;
 }
 
-/* Titre et bouton “Ajouter” */
 .tarif-list h2 {
     margin-bottom: 0.5rem;
 }
@@ -21,7 +19,6 @@
     background-color: #1565c0;
 }
 
-/* Tableau */
 .tbl-tarifs {
     width: 100%;
     border-collapse: collapse;
@@ -43,7 +40,6 @@
     color: #666;
 }
 
-/* Actions (icônes) */
 .actions button {
     background: none;
     border: none;
@@ -55,7 +51,6 @@
     color: #1e88e5;
 }
 
-/* Styles pour les statistiques */
 .tarif-list .card .card-header h5 {
     margin-bottom: 0;
     font-weight: 600;
@@ -66,7 +61,6 @@
     font-weight: bold;
 }
 
-/* Styles pour la ligne du tableau au survol */
 .tarif-row {
     transition: all 0.2s ease;
 }
@@ -77,7 +71,6 @@
     transform: translateY(-1px);
 }
 
-/* Styles pour les boutons d'action */
 .action-btn {
     width: 2.2rem;
     height: 2.2rem;
@@ -93,7 +86,6 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Styles pour les auto-suggestions */
 .autocomplete-suggestions {
     position: absolute;
     z-index: 1050;
@@ -111,7 +103,6 @@
     background-color: #f8f9fa;
 }
 
-/* Mode sombre */
 .bg-dark .table {
     color: #f8f9fa;
 }
@@ -124,12 +115,10 @@
     color: #adb5bd !important;
 }
 
-/* Animation de transition */
 .card, .btn, .badge, .alert {
     transition: all 0.3s ease-in-out;
 }
 
-/* Responsive design amélioré */
 @media (max-width: 768px) {
     .tarif-list .card h2 {
         font-size: 1.5rem;

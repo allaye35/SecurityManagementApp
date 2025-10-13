@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+﻿import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ContratService from "../../services/ContratService";
 import DevisService from "../../services/DevisService";
@@ -191,8 +191,7 @@ export default function ContratDetail() {
         return date.toLocaleDateString();
     };
 
-    // Calculer les dates importantes et l'état du contrat
-    const calculateContratStatus = () => {
+const calculateContratStatus = () => {
         if (!contrat || !contrat.dateSignature) {
             return { status: "inconnu", label: "Inconnu", color: "secondary" };
         }

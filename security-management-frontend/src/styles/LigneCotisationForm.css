@@ -1,6 +1,4 @@
-/* styles/LigneCotisationForm.css */
-
-.ligne-form {
+﻿.ligne-form {
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
@@ -76,7 +74,6 @@
   background-color: #388e3c;
 }
 
-/* Style pour les détails */
 .ligne-form p {
   margin: 10px 0;
   padding: 8px;

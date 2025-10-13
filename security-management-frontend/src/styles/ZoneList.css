@@ -1,4 +1,4 @@
-.zone-list-container {
+﻿.zone-list-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
@@ -67,7 +67,6 @@
     margin-bottom: 1rem;
 }
 
-/* Animation lors du chargement des éléments */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -78,7 +77,6 @@
     to { transform: scale(1); opacity: 1; }
 }
 
-/* Animation pour les cartes */
 .card {
     animation: scaleIn 0.3s ease-out forwards;
     transition: all 0.3s ease;
@@ -102,7 +100,6 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-/* Style pour les en-têtes de colonnes triables */
 .sortable-header {
     cursor: pointer;
     user-select: none;
@@ -126,7 +123,6 @@
     font-weight: bold;
 }
 
-/* Style pour la cellule des agents */
 .agents-cell {
     max-width: 200px;
     overflow: hidden;
@@ -136,10 +132,9 @@
     gap: 4px;
 }
 
-/* Animation pour les badges */
 .badge {
     transition: all 0.2s ease;
-    font-weight: 500; /* Pour une meilleure lisibilité */
+    font-weight: 500; 
     line-height: 1.2; 
     display: inline-flex;
     align-items: center;
@@ -151,7 +146,6 @@
     z-index: 2;
 }
 
-/* Styles pour les cards */
 .card {
     transition: all 0.3s ease;
     border: none;
@@ -162,7 +156,6 @@
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
-/* Style pour les boutons d'action */
 .btn-action {
     width: 36px;
     height: 36px;
@@ -179,7 +172,6 @@
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Pagination styles */
 .pagination {
     margin-top: 1.5rem;
     flex-wrap: wrap;
@@ -200,7 +192,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px !important; /* Coins arrondis pour tous les boutons de pagination */
+    border-radius: 4px !important; 
 }
 
 .page-link:hover {
@@ -209,7 +201,6 @@
     z-index: 1;
 }
 
-/* Styles pour la barre de recherche */
 .search-container {
     position: relative;
     flex-grow: 1;
@@ -228,7 +219,6 @@
     color: #007bff;
 }
 
-/* Style pour les filtres par type */
 .filter-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -252,7 +242,6 @@
     box-shadow: 0 3px 5px rgba(0,0,0,0.1);
 }
 
-/* Style pour les états vides */
 .empty-state {
     padding: 3rem;
     text-align: center;
@@ -269,7 +258,6 @@
     transform: scale(1.05);
 }
 
-/* Responsive design */
 @media (max-width: 992px) {
     .zone-list-container {
         padding: 0.5rem;
@@ -313,9 +301,8 @@
         font-size: 0.7rem;
         padding: 0.2rem 0.4rem;
     }
-    
-    /* Ajustement pour les petits écrans */
-    .zone-table th:nth-child(4), 
+
+.zone-table th:nth-child(4), 
     .zone-table td:nth-child(4) {
         display: none;
     }
@@ -329,32 +316,27 @@
     .filter-buttons {
         grid-template-columns: repeat(2, 1fr);
     }
-    
-    /* Cache certaines colonnes sur mobile */
-    .zone-table th:nth-child(5), 
+
+.zone-table th:nth-child(5), 
     .zone-table td:nth-child(5) {
         display: none;
     }
-    
-    /* Réduit l'espace entre les boutons d'action */
-    .zone-table .d-flex.gap-2 {
+
+.zone-table .d-flex.gap-2 {
         gap: 0.25rem !important;
     }
-    
-    /* Style pour les cellules sur mobile */
-    .zone-table td {
+
+.zone-table td {
         padding: 0.5rem 0.25rem;
         font-size: 0.85rem;
     }
 }
 
-/* Amélioration de l'accessibilité */
 .btn:focus, .form-control:focus, .page-link:focus {
     outline: none;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-/* Animation pour le bouton de rafraîchissement */
 .fa-spin {
     animation: spin 1s linear infinite;
 }
@@ -364,13 +346,11 @@
     to { transform: rotate(360deg); }
 }
 
-/* Amélioration pour les tables responsive */
 .table-responsive {
     border-radius: 8px;
-    overflow: hidden; /* Pour conserver le border-radius */
+    overflow: hidden; 
 }
 
-/* Amélioration des toasts */
 .toast {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     border: none;
@@ -383,7 +363,6 @@
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* Toast pour la suppression progressive */
 .delete-progress-toast {
     min-width: 350px;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
@@ -414,12 +393,10 @@
     transition: width 0.05s linear;
 }
 
-/* Animation pour le bouton de suppression */
 .btn-action.delete-animation {
     animation: delete-shake 0.5s;
 }
 
-/* Styles pour la suppression progressive */
 .delete-progress-toast {
     min-width: 350px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -448,7 +425,6 @@
     animation: pulseWarning 2s infinite;
 }
 
-/* Animation pour le toast de suppression */
 @keyframes slideInRight {
     from { transform: translateX(100%); }
     to { transform: translateX(0); }
@@ -458,7 +434,6 @@
     animation: slideInRight 0.3s ease forwards;
 }
 
-/* Styles pour les boutons dans le toast */
 .delete-progress-toast .btn-outline-secondary:hover {
     background-color: #6c757d;
     color: white;
@@ -468,14 +443,12 @@
     background-color: #bd2130;
 }
 
-/* Animation pour la barre de progression */
 @keyframes pulseWarning {
     0% { opacity: 0.6; }
     50% { opacity: 1; }
     100% { opacity: 0.6; }
 }
 
-/* Style pour l'info de suppression en cours */
 .delete-progress-toast p {
     margin-bottom: 0.5rem;
     font-size: 0.95rem;

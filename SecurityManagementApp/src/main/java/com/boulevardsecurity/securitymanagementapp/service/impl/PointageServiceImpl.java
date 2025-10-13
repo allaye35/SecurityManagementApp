@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/impl/PointageServiceImpl.java
-package com.boulevardsecurity.securitymanagementapp.service.impl;
+﻿package com.boulevardsecurity.securitymanagementapp.service.impl;
 
 import com.boulevardsecurity.securitymanagementapp.dto.AgentDeSecuriteDto;
 import com.boulevardsecurity.securitymanagementapp.dto.PointageCreateDto;
@@ -118,9 +117,8 @@ public class PointageServiceImpl implements PointageService {
         System.out.println("DEBUG - AgentID actuel: " + existant.getAgentId());
         System.out.println("DEBUG - MissionID actuel: " + (existant.getMission() != null ? existant.getMission().getId() : "null"));
         System.out.println("DEBUG - Position actuelle: " + existant.getPositionActuelle());
-        
-        // Utiliser le mapper pour mettre à jour l'entité
-        mapper.updateEntity(dto, existant);
+
+mapper.updateEntity(dto, existant);
         
         System.out.println("DEBUG - Pointage après mapping:");
         System.out.println("DEBUG - AgentID: " + existant.getAgentId());

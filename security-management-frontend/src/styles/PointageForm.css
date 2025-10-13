@@ -1,6 +1,4 @@
-/* Styles pour le formulaire de pointage */
-
-.pointage-form {
+﻿.pointage-form {
     width: 100%;
     max-width: 800px;
     margin: 2rem auto;
@@ -60,7 +58,6 @@
     margin: 0;
 }
 
-/* Messages */
 .pointage-form .error {
     color: #e74c3c;
     background-color: #ffebee;
@@ -100,7 +97,6 @@
     margin-left: 0.5rem;
 }
 
-/* Informations automatiques */
 .pointage-form .auto-info {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -142,7 +138,6 @@
     font-size: 0.9rem;
 }
 
-/* Section GPS */
 .gps-section {
     background-color: #f8f9fa;
     padding: 1.2rem;
@@ -201,7 +196,6 @@
     flex: 1;
 }
 
-/* Boutons d'action */
 .form-actions {
     display: flex;
     gap: 1rem;
@@ -271,7 +265,6 @@
     transform: translateY(-2px);
 }
 
-/* Animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -283,7 +276,6 @@
     }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .pointage-form {
         margin: 1rem;

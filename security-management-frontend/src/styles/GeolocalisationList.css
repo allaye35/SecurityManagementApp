@@ -1,5 +1,4 @@
-/* conteneur général */
-.geo-container {
+﻿.geo-container {
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -7,7 +6,6 @@
     min-height: 100vh;
 }
 
-/* header de la page */
 .geo-header {
     display: flex;
     justify-content: space-between;
@@ -41,7 +39,6 @@
     box-shadow: 0 6px 12px rgba(25, 118, 210, 0.5);
 }
 
-/* liste verticale avec espacement important */
 .geo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
@@ -54,7 +51,6 @@
     }
 }
 
-/* carte */
 .geo-card {
     background: linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%);
     border-radius: 16px;
@@ -88,7 +84,6 @@
     border-color: #bbdefb;
 }
 
-/* header de la carte */
 .geo-card-header {
     display: flex;
     justify-content: space-between;
@@ -117,7 +112,6 @@
     white-space: nowrap;
 }
 
-/* coordonnées grand format */
 .coords {
     font-size: 1.05rem;
     margin-bottom: 1rem;
@@ -135,7 +129,6 @@
     min-width: 90px;
 }
 
-/* section missions */
 .missions {
     margin-bottom: 1.5rem;
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
@@ -218,7 +211,6 @@
     font-size: 0.95rem;
 }
 
-/* actions */
 .geo-actions {
     margin-top: auto;
     display: flex;
@@ -256,7 +248,6 @@
     box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
 }
 
-/* spinner et messages */
 .spinner {
     margin: 4rem auto;
     border: 6px solid #f0f0f0;
@@ -291,7 +282,6 @@
     margin-bottom: 2rem;
 }
 
-/* Informations de pagination */
 .pagination-info {
     text-align: center;
     margin-bottom: 1.5rem;
@@ -307,7 +297,6 @@
     font-weight: 600;
 }
 
-/* Pagination */
 .pagination {
     display: flex;
     justify-content: center;

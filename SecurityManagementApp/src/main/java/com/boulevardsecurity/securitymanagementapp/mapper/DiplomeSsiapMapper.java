@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/mapper/DiplomeSsiapMapper.java
-package com.boulevardsecurity.securitymanagementapp.mapper;
+﻿package com.boulevardsecurity.securitymanagementapp.mapper;
 
 import com.boulevardsecurity.securitymanagementapp.dto.*;
 import com.boulevardsecurity.securitymanagementapp.model.DiplomeSSIAP;

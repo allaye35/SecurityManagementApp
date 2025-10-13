@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { 
   Container, Row, Col, Card, Form, Button, Spinner, 
@@ -247,7 +247,7 @@ const EditGeolocalisation = () => {
                           style={{ height: "100%", width: "100%" }}
                           scrollWheelZoom={true}
                         >
-                          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                          <TileLayer url="https:
                           <Marker position={[
                             geolocalisation.position.latitude || 48.8566, 
                             geolocalisation.position.longitude || 2.3522

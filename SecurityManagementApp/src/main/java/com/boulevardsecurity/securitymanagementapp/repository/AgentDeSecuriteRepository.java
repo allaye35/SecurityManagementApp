@@ -1,4 +1,4 @@
-package com.boulevardsecurity.securitymanagementapp.repository;
+﻿package com.boulevardsecurity.securitymanagementapp.repository;
 
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
 import com.boulevardsecurity.securitymanagementapp.model.Client;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-// Repository JPA
+
 public interface AgentDeSecuriteRepository extends JpaRepository<AgentDeSecurite, Long> {
 
     Optional<Planning> findFirstByMissions_Agents_IdOrderByMissions_DateDebutDesc(Long agentId);

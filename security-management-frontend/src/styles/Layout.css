@@ -1,6 +1,4 @@
-/* src/styles/Layout.css */
-/* Main Layout Styles */
-:root {
+﻿:root {
   --sidebar-width: 280px;
   --navbar-height: 60px;
   --primary-color: #0d47a1;
@@ -9,7 +7,6 @@
   --hover-color: rgba(13, 71, 161, 0.1);
 }
 
-/* Navbar Styles */
 .navbar-main {
   height: var(--navbar-height);
   z-index: 1030;
@@ -44,7 +41,6 @@
   background: transparent;
 }
 
-/* Sidebar Styles */
 .sidebar-menu {
   width: var(--sidebar-width) !important;
   margin-top: var(--navbar-height);
@@ -98,7 +94,6 @@
   font-weight: 500;
 }
 
-/* Main Content Area */
 .main-content {
   margin-top: var(--navbar-height);
   transition: all 0.3s ease-in-out;
@@ -112,14 +107,12 @@
   transition: margin-left 0.3s ease;
 }
 
-/* Toolbar Styles */
 .toolbar {
   background-color: var(--secondary-color);
   border-radius: 0.25rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* Notification Badge */
 .notification-badge {
   position: absolute;
   top: -5px;
@@ -131,7 +124,6 @@
   width: 300px;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 991.98px) {
   .content-with-sidebar {
     margin-left: 0;
@@ -152,12 +144,10 @@
   }
 }
 
-/* Fix Bootstrap Offcanvas backdrop z-index */
 .offcanvas-backdrop {
   z-index: 1025;
 }
 
-/* Custom scrollbar for sidebar and dropdowns */
 .sidebar-menu, .notification-scroll {
   scrollbar-width: thin;
   scrollbar-color: #adb5bd transparent;

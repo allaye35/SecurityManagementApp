@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PointageService from "../../services/PointageService";
 import MissionService from "../../services/MissionService";
@@ -17,8 +17,7 @@ export default function PointageForm() {
     const serviceMode = searchParams.get('mode');
     const isServiceMode = serviceMode === 'prise' || serviceMode === 'fin';
 
-    // Bloquer l'accès si mode n'est pas prise ou fin et qu'on n'est pas en édition
-    useEffect(() => {
+useEffect(() => {
         if (!isEdit && !isServiceMode) {
             navigate('/pointages');
         }
@@ -181,7 +180,7 @@ export default function PointageForm() {
                         datePointage: data.datePointage ? data.datePointage.slice(0, 16) : new Date().toISOString().slice(0, 16),
                         estPresent: data.estPresent ?? true,
                         estRetard: data.estRetard ?? false,
-                        // Le backend renvoie latitude/longitude à la racine
+                        
                         positionActuelle: { 
                             latitude: data.latitude ?? "", 
                             longitude: data.longitude ?? "" 
@@ -265,18 +264,16 @@ export default function PointageForm() {
         e.preventDefault();
         setError("");
         setSuccess("");
-        
-        // Validation des coordonnées GPS
-        const lat = dto.positionActuelle.latitude ? parseFloat(dto.positionActuelle.latitude) : 0.0;
+
+const lat = dto.positionActuelle.latitude ? parseFloat(dto.positionActuelle.latitude) : 0.0;
         const lng = dto.positionActuelle.longitude ? parseFloat(dto.positionActuelle.longitude) : 0.0;
         
         if (!dto.positionActuelle.latitude || !dto.positionActuelle.longitude || isNaN(lat) || isNaN(lng)) {
             setError("⚠️ Veuillez obtenir votre position GPS avant de valider le pointage");
             return;
         }
-        
-        // Le backend attend latitude/longitude à la racine, pas dans positionActuelle
-        const payload = {
+
+const payload = {
             datePointage: dto.datePointage ? new Date(dto.datePointage).toISOString() : new Date().toISOString(),
             estPresent: dto.estPresent,
             estRetard: dto.estRetard,
@@ -315,9 +312,8 @@ export default function PointageForm() {
                 setToastMessage(message);
                 setToastVariant(variant);
                 setShowToast(true);
-                
-                // Rediriger vers la liste des pointages après 1.5 secondes
-                console.log("Redirection programmée dans 1.5 secondes...");
+
+console.log("Redirection programmée dans 1.5 secondes...");
                 setTimeout(() => {
                     console.log("Redirection vers /pointages");
                     navigate("/pointages");
@@ -369,7 +365,7 @@ export default function PointageForm() {
             )}
             
             <form onSubmit={handleSubmit}>
-                {/* Date & heure - Affichée en mode édition ou création manuelle */}
+                {}
                 {(isEdit || !isServiceMode) && (
                     <label>
                         Date & heure *
@@ -449,7 +445,7 @@ export default function PointageForm() {
                         </div>
                     )}
                     
-                    {/* Champs manuels en mode édition ou création manuelle */}
+                    {}
                     {(isEdit || !isServiceMode) && (
                         <div className="gps-manual">
                             <label>
@@ -476,7 +472,7 @@ export default function PointageForm() {
                     )}
                 </div>
 
-                {/* Checkboxes présence et retard - Affichées en mode édition ou création manuelle */}
+                {}
                 {(isEdit || !isServiceMode) && (
                     <>
                         <label className="checkbox-label">
@@ -522,7 +518,7 @@ export default function PointageForm() {
                 </div>
             </form>
             
-            {/* Toast de confirmation */}
+            {}
             <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
                 <Toast 
                     show={showToast} 

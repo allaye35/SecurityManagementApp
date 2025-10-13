@@ -1,5 +1,4 @@
-// src/components/sites/SiteList.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Link, useNavigate }           from "react-router-dom";
 import SiteService                     from "../../services/SiteService";
 import { Button, Card, Container, Table, Badge, Form, InputGroup } from 'react-bootstrap';

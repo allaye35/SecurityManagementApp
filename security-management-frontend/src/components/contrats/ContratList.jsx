@@ -1,5 +1,4 @@
-// src/components/contrats/ContratList.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ContratService from "../../services/ContratService";
 import DevisService from "../../services/DevisService";

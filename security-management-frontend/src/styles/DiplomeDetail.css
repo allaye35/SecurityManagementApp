@@ -1,5 +1,4 @@
-/* Styles pour la page de détail des diplômes SSIAP */
-.diplome-detail-container {
+﻿.diplome-detail-container {
     max-width: 1000px;
     margin: 2rem auto;
     padding: 0 1rem;
@@ -248,7 +247,6 @@
     text-align: center;
 }
 
-/* Styles pour l'impression */
 @media print {
     .detail-actions, 
     .actions-card {

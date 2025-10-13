@@ -1,4 +1,4 @@
-.contrat-card {
+﻿.contrat-card {
   transition: all 0.3s ease;
   border-radius: 8px;
   overflow: hidden;
@@ -164,7 +164,6 @@
   }
 }
 
-/* Animation pour les cartes lors du chargement */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -189,7 +188,6 @@
 .contrat-grid-item:nth-child(7) { animation-delay: 0.4s; }
 .contrat-grid-item:nth-child(8) { animation-delay: 0.45s; }
 
-/* Mode sombre pour les boutons d'actions */
 .btn-action {
   width: 38px;
   height: 38px;
@@ -217,12 +215,10 @@
   background-color: rgba(0,0,0,0.03);
 }
 
-/* Styles pour les statistiques */
 .stats-container {
   margin-bottom: 30px;
 }
 
-/* Responsive pour écran mobile */
 @media (max-width: 768px) {
   .contrat-detail-item {
     flex-direction: column;

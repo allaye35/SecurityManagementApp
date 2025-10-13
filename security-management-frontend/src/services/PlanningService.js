@@ -1,5 +1,4 @@
-// src/services/PlanningService.js
-import api from "./api";
+﻿import api from "./api";
 
 const PATH = "/plannings";
 

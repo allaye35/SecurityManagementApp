@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { 
     Container, Row, Col, Card, Badge, Spinner, 
@@ -420,7 +420,7 @@ export default function ClientDetail() {
                                                             <iframe
                                                                 title="Carte du client"
                                                                 className="embed-responsive-item map-iframe"
-                                                                src={`https://maps.google.com/maps?q=${encodeURIComponent(
+                                                                src={`https:
                                                                     `${client.adresse} ${client.codePostal || ''} ${client.ville || ''} ${client.pays || 'France'}`
                                                                 )}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                                                                 allowFullScreen

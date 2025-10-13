@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/TarificationDomainService.java
-package com.boulevardsecurity.securitymanagementapp.service;
+﻿package com.boulevardsecurity.securitymanagementapp.service;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.TypeMission;
 import com.boulevardsecurity.securitymanagementapp.model.Mission;
@@ -16,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-// Service métier
+
 public class TarificationDomainService {
 
   private static final LocalTime DEBUT_NUIT = LocalTime.of(21, 0);

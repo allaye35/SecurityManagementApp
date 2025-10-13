@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/controller/DevisController.java
-package com.boulevardsecurity.securitymanagementapp.controller;
+﻿package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.dto.DevisCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.DevisDto;
@@ -17,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/devis")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http:
 @RequiredArgsConstructor
 @Slf4j
 public class DevisController {

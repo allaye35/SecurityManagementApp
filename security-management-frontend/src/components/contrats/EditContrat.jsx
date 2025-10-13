@@ -1,5 +1,4 @@
-// src/components/contrats/EditContrat.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import ContratService from "../../services/ContratService";
 import DevisService from "../../services/DevisService";

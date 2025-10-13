@@ -1,5 +1,4 @@
-// src/pages/VerifyEmailResendPage.jsx
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import AuthService from "../services/auth/AuthService";
 import "../styles/Auth.css";
 

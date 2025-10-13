@@ -1,5 +1,4 @@
-/* src/styles/NavBar.css */
-.navbar {
+﻿.navbar {
     display: flex;
     align-items: center;
     background-color: #0d47a1;
@@ -116,7 +115,6 @@
     background-color: rgba(255,255,255,0.2);
 }
 
-/* Grouping des éléments de menu pour une meilleure organisation */
 .menu-group-title {
     font-weight: bold;
     padding: 0.5rem 1rem;
@@ -125,7 +123,6 @@
     border-bottom: 1px solid #eee;
 }
 
-/* Style responsive pour les petits écrans */
 @media (max-width: 768px) {
     .navbar {
         flex-wrap: wrap;
@@ -143,7 +140,6 @@
     }
 }
 
-/* Propriétés du menu déroulant */
 .dropdown-menu {
     list-style: none;
     margin: 0;

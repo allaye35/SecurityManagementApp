@@ -1,5 +1,4 @@
-// src/components/layout/NotificationBadge.js
-import React from 'react';
+﻿import React from 'react';
 import { Badge, Button, Dropdown } from 'react-bootstrap';
 import { FaBell } from 'react-icons/fa';
 

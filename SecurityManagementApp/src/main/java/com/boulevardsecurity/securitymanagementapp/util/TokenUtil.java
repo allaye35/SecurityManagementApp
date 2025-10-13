@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/util/TokenUtil.java
-package com.boulevardsecurity.securitymanagementapp.util;
+﻿package com.boulevardsecurity.securitymanagementapp.util;
 
 import java.security.SecureRandom;
 import java.util.HexFormat;

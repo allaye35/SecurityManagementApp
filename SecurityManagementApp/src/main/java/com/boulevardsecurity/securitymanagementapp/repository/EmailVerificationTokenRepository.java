@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/repository/EmailVerificationTokenRepository.java
-package com.boulevardsecurity.securitymanagementapp.repository;
+﻿package com.boulevardsecurity.securitymanagementapp.repository;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.VerificationSubject;
 import com.boulevardsecurity.securitymanagementapp.model.EmailVerificationToken;

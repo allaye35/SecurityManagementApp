@@ -1,5 +1,4 @@
-// src/pages/AdminPendingAccounts.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import ClientService from "../services/ClientService";
 import AgentService from "../services/AgentService";
 import adminSvc from "../services/adminAccountsService";

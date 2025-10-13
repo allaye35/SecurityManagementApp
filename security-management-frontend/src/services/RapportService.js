@@ -1,5 +1,4 @@
-// src/services/RapportService.js
-import api from "./api";
+﻿import api from "./api";
 
 const API_URL = "/rapports";
 

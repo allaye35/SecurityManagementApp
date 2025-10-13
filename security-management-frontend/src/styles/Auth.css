@@ -1,4 +1,4 @@
-.auth-container {
+﻿.auth-container {
     max-width: 400px;
     margin: 80px auto;
     padding: 30px;
@@ -50,7 +50,7 @@
   color:#0f172a;
 }
 .card-select:hover{ border-color:#1976d2; box-shadow:0 6px 18px rgba(25,118,210,.12); }
-/* ====== Register Chooser ====== */
+
 .chooser-wrapper{
   min-height: 100vh;
   display: grid;
@@ -62,7 +62,7 @@
 .chooser-card{
   width: 100%;
   max-width: 760px;
-  background: #171a27;            /* fond foncé comme ta capture */
+  background: #171a27;            
   color: #fff;
   border-radius: 16px;
   padding: 28px 28px 20px;
@@ -91,7 +91,6 @@
   color: #c9d5ffcc;
 }
 
-/* grille deux colonnes / 1 col en mobile */
 .chooser-grid{
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -102,8 +101,6 @@
   .chooser-grid{ grid-template-columns: 1fr; }
 }
 
-/* ====== Cartes-boutons améliorées ====== */
-/* Base existante améliorée */
 .card-select{
   display:flex; align-items:center; gap:12px;
   padding:16px; border-radius:12px; text-decoration:none;
@@ -113,14 +110,12 @@
   transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
 
-/* style “bouton cliquable” */
 .card-select--button{
   cursor: pointer;
   position: relative;
   user-select: none;
 }
 
-/* Icone à gauche */
 .card-select__icon{
   width:44px; height:44px; min-width:44px;
   display:grid; place-items:center;
@@ -130,7 +125,6 @@
   font-size: 20px;
 }
 
-/* Texte */
 .card-select__content{ text-align:left; flex:1; }
 .card-select__title{
   font-weight: 800; margin-bottom: 2px; letter-spacing:.2px;
@@ -139,7 +133,6 @@
   font-size: 14px; color:#475569;
 }
 
-/* pastille à droite (renforce l’idée de CTA) */
 .card-select__cta{
   font-size: 12px;
   font-weight: 800;
@@ -150,7 +143,6 @@
   border:1px solid #d6e6ff;
 }
 
-/* Hover/Focus/Active : effet “bouton” évident */
 .card-select:hover{
   border-color:#1976d2;
   box-shadow:0 8px 22px rgba(25,118,210,.18);
@@ -160,7 +152,6 @@
   transform: translateY(-1px) scale(.997);
 }
 
-/* focus clavier accessible */
 .card-select--button:focus-visible{
   outline: none;
   border-color:#3b82f6;
@@ -169,12 +160,10 @@
     0 0 0 3px rgba(59,130,246,.35);
 }
 
-/* sur fond sombre de la carte principale, donner du “relief” */
 .chooser-card .card-select{
   background:#ffffff;
 }
 
-/* pied */
 .chooser-foot{
   margin: 14px 0 2px;
   color:#cbd5e1;

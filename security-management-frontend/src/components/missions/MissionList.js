@@ -1,5 +1,4 @@
-// src/components/missions/MissionList.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MissionService from "../../services/MissionService";
 import SiteService from "../../services/SiteService";

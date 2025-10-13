@@ -1,5 +1,4 @@
-/* Styles spécifiques pour l'impression et le PDF */
-@media print {
+﻿@media print {
     body * {
         visibility: hidden;
     }
@@ -63,7 +62,6 @@
     }
 }
 
-/* Classes pour les options d'impression/export */
 .export-options {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -100,7 +98,6 @@
     cursor: pointer;
 }
 
-/* Styles pour le sélecteur de mise en page */
 .layout-selector {
     margin-top: 10px;
 }
@@ -112,7 +109,6 @@
     background-color: white;
 }
 
-/* Styles spécifiques pour la version imprimée/exportée */
 .print-header {
     text-align: center;
     margin-bottom: 20px;
@@ -154,7 +150,6 @@
     break-after: page;
 }
 
-/* Loader pour l'export PDF */
 .export-loader {
     position: fixed;
     top: 0;
@@ -189,7 +184,6 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Boutons améliorés pour l'impression et l'export */
 .pdf-action-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -241,7 +235,6 @@
     font-size: 16px;
 }
 
-/* Responsive fixes */
 @media (max-width: 768px) {
     .pdf-action-buttons {
         flex-direction: column;

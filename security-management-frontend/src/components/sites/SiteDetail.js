@@ -1,5 +1,4 @@
-// src/components/sites/SiteDetail.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import SiteService from "../../services/SiteService";
 import MissionService from "../../services/MissionService";

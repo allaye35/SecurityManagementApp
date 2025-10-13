@@ -1,5 +1,4 @@
-/* Styles pour la page de détail des cartes professionnelles */
-.carte-pro-detail-container {
+﻿.carte-pro-detail-container {
     max-width: 1000px;
     margin: 2rem auto;
     padding: 0 1rem;
@@ -261,7 +260,6 @@
     border-radius: 0.4rem;
 }
 
-/* Styles spécifiques pour l'impression */
 @media print {
     .detail-actions, 
     .actions-card {
@@ -284,18 +282,16 @@
     .detail-content {
         display: block;
     }
-    
-    /* Ajout d'un en-tête pour l'impression */
-    .header-title::after {
+
+.header-title::after {
         content: "DOCUMENT IMPRIMÉ LE " attr(data-print-date);
         display: block;
         margin-top: 0.5rem;
         font-size: 0.8rem;
         color: #7f8c8d;
     }
-    
-    /* Ajout d'un style pour le filigrane d'impression */
-    body::before {
+
+body::before {
         content: "BOULEVARD SECURITY";
         position: fixed;
         top: 50%;

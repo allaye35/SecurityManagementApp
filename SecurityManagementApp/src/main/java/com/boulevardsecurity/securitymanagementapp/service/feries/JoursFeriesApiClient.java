@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/feries/JoursFeriesApiClient.java
-package com.boulevardsecurity.securitymanagementapp.service.feries;
+﻿package com.boulevardsecurity.securitymanagementapp.service.feries;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

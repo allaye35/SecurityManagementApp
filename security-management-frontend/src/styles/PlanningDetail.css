@@ -1,6 +1,4 @@
-/* PlanningDetail.css - Design amélioré pour les détails des plannings */
-
-.planning-detail-container {
+﻿.planning-detail-container {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   min-height: 100vh;
   padding: 20px 0;
@@ -73,7 +71,6 @@
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
 }
 
-/* Section d'informations générales */
 .info-section {
   margin-bottom: 30px;
 }
@@ -139,7 +136,6 @@
   width: 16px;
 }
 
-/* Section des agents */
 .agents-section {
   background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
   border-radius: 15px;
@@ -210,7 +206,6 @@
   font-weight: 500;
 }
 
-/* Section des missions */
 .missions-section {
   margin-top: 30px;
 }
@@ -392,7 +387,6 @@
   color: #ffc107;
 }
 
-/* Boutons de navigation */
 .navigation-section {
   margin-top: 40px;
   padding-top: 30px;
@@ -419,7 +413,6 @@
   background: linear-gradient(135deg, #495057 0%, #343a40 100%);
 }
 
-/* États de chargement et d'erreur */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -461,7 +454,6 @@
   margin: 20px;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .planning-detail-container {
     padding: 10px 0;
@@ -530,7 +522,6 @@
   }
 }
 
-/* Animations */
 .fade-in {
   animation: fadeIn 0.6s ease-in;
 }
@@ -558,7 +549,6 @@
   to { transform: translateX(0); opacity: 1; }
 }
 
-/* Styles pour les statistiques */
 .stats-card {
   border: none;
   border-radius: 12px;
@@ -587,7 +577,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Timeline des missions */
 .timeline-card {
   border: none;
   border-radius: 15px;
@@ -709,7 +698,6 @@
   }
 }
 
-/* Responsive pour la timeline */
 @media (max-width: 768px) {
   .timeline {
     padding-left: 25px;
@@ -732,7 +720,6 @@
   }
 }
 
-/* Styles pour AgentInfoCard */
 .agent-info-card {
   border: none;
   border-radius: 12px;

@@ -1,6 +1,5 @@
-import api from "./api";
+﻿import api from "./api";
 
-// Le chemin correct sans duplication de "/api" car baseURL contient déjà "http://localhost:8080/api"
 const PATH = "/clients";
 
 const ClientService = {

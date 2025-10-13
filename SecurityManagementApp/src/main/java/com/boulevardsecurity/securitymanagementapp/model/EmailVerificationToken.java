@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/model/EmailVerificationToken.java
-package com.boulevardsecurity.securitymanagementapp.model;
+﻿package com.boulevardsecurity.securitymanagementapp.model;
 
 import com.boulevardsecurity.securitymanagementapp.Enums.VerificationSubject;
 import jakarta.persistence.*;

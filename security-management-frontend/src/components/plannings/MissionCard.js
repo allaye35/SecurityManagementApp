@@ -1,5 +1,4 @@
-// src/components/plannings/MissionCard.js
-import React from 'react';
+﻿import React from 'react';
 import { Card, Badge, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 

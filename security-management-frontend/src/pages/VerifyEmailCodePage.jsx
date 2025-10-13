@@ -1,5 +1,4 @@
-// src/pages/VerifyEmailCodePage.jsx
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthService from "../services/auth/AuthService";
 import "../styles/Auth.css";

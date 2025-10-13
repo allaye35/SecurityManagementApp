@@ -1,5 +1,4 @@
-// src/services/SiteService.js
-import api from "./api";
+﻿import api from "./api";
 
 const SiteService = {
   getAllSites: () => {

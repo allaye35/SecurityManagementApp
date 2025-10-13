@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/mapper/ClientMapper.java
-package com.boulevardsecurity.securitymanagementapp.mapper;
+﻿package com.boulevardsecurity.securitymanagementapp.mapper;
 
 import com.boulevardsecurity.securitymanagementapp.dto.ClientCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.ClientDto;

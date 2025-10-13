@@ -1,5 +1,4 @@
-// src/services/FicheDePaieService.js
-import api from "./api";
+﻿import api from "./api";
 
 const PATH = "/fiches-paie";
 

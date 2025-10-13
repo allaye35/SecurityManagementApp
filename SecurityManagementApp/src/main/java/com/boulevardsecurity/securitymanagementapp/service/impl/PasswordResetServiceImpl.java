@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/service/impl/PasswordResetServiceImpl.java
-package com.boulevardsecurity.securitymanagementapp.service.impl;
+﻿package com.boulevardsecurity.securitymanagementapp.service.impl;
 
 import com.boulevardsecurity.securitymanagementapp.model.AgentDeSecurite;
 import com.boulevardsecurity.securitymanagementapp.model.PasswordResetToken;
@@ -28,7 +27,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final NotificationService notificationService;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${app.public-url:http://localhost:8080}")
+    @Value("${app.public-url:http:
     private String appPublicUrl;
 
     @Value("${app.password.reset.expiration-hours:2}")

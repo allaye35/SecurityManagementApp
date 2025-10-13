@@ -1,5 +1,4 @@
-// src/main/java/com/boulevardsecurity/securitymanagementapp/controller/ClientController.java
-package com.boulevardsecurity.securitymanagementapp.controller;
+﻿package com.boulevardsecurity.securitymanagementapp.controller;
 
 import com.boulevardsecurity.securitymanagementapp.dto.ClientCreateDto;
 import com.boulevardsecurity.securitymanagementapp.dto.ClientDto;
@@ -14,14 +13,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/clients")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http:
 @RequiredArgsConstructor
 public class ClientController {
 
     private final ClientService service;
 
-    // Création de compte CLIENT désactivée ici - utiliser /api/auth/register-client
-    @PostMapping
+@PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ClientDto> create(@RequestBody ClientCreateDto dto) {
         ClientDto created = service.createClient(dto);

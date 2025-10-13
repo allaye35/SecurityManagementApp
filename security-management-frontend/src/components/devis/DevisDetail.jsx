@@ -1,5 +1,4 @@
-// src/components/devis/DevisDetail.jsx
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate, useParams }     from "react-router-dom";
 import DevisService                    from "../../services/DevisService";
 import "../../styles/DevisDetail.css";

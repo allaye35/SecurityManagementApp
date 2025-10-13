@@ -1,5 +1,4 @@
-// src/components/articleContratTravails/ArticleContratTravailList.jsx
-import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
+﻿import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import ArticleContratTravailService from "../../services/ArticleContratTravailService";
 import { Container, Card, Button, Table, Form, Row, Col, Spinner, Alert, Badge, 
