@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.util.Date;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder @ToString
 public class PointageCreateDto {
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

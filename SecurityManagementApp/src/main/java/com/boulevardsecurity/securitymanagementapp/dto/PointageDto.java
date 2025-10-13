@@ -20,4 +20,12 @@ public class PointageDto {
     private double longitude;
 
     private Long missionId;
+    private Long agentId;
+    
+    // Informations de l'agent pour affichage
+    private String agentNom;
+    private String agentPrenom;
+    
+    // Informations de la mission pour affichage
+    private String missionTitre;
 }

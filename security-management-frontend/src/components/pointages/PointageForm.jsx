@@ -4,6 +4,7 @@ import PointageService from "../../services/PointageService";
 import MissionService from "../../services/MissionService";
 import AgentService from "../../services/AgentService";
 import { useAuth } from "../../context/AuthContext";
+import { Toast, ToastContainer } from "react-bootstrap";
 import "../../styles/PointageForm.css";
 
 export default function PointageForm() {
@@ -15,6 +16,13 @@ export default function PointageForm() {
     
     const serviceMode = searchParams.get('mode');
     const isServiceMode = serviceMode === 'prise' || serviceMode === 'fin';
+
+    // Bloquer l'accès si mode n'est pas prise ou fin et qu'on n'est pas en édition
+    useEffect(() => {
+        if (!isEdit && !isServiceMode) {
+            navigate('/pointages');
+        }
+    }, [isEdit, isServiceMode, navigate]);
 
     const [dto, setDto] = useState({
         datePointage: new Date().toISOString().slice(0, 16),
@@ -32,6 +40,9 @@ export default function PointageForm() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [gettingLocation, setGettingLocation] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [toastVariant, setToastVariant] = useState("success");
 
     useEffect(() => {
         if (user && user.id && !dto.agentId) {
@@ -161,9 +172,13 @@ export default function PointageForm() {
                     datePointage: data.datePointage.slice(0, 16),
                     estPresent: data.estPresent,
                     estRetard: data.estRetard,
-                    positionActuelle: data.positionActuelle || { latitude: "", longitude: "" },
-                    missionId: data.mission?.id ?? "",
-                    agentId: data.agent?.id ?? ""
+                    // Le backend renvoie latitude/longitude à la racine, pas dans positionActuelle
+                    positionActuelle: { 
+                        latitude: data.latitude ?? "", 
+                        longitude: data.longitude ?? "" 
+                    },
+                    missionId: data.missionId ?? "",
+                    agentId: data.agentId ?? ""
                 }))
                 .catch(() => setError("Impossible de charger ce pointage"));
         }
@@ -231,17 +246,27 @@ export default function PointageForm() {
         setError("");
         setSuccess("");
         
+        // Validation des coordonnées GPS
+        const lat = dto.positionActuelle.latitude ? parseFloat(dto.positionActuelle.latitude) : 0.0;
+        const lng = dto.positionActuelle.longitude ? parseFloat(dto.positionActuelle.longitude) : 0.0;
+        
+        if (!dto.positionActuelle.latitude || !dto.positionActuelle.longitude || isNaN(lat) || isNaN(lng)) {
+            setError("⚠️ Veuillez obtenir votre position GPS avant de valider le pointage");
+            return;
+        }
+        
+        // Le backend attend latitude/longitude à la racine, pas dans positionActuelle
         const payload = {
             datePointage: dto.datePointage ? new Date(dto.datePointage).toISOString() : new Date().toISOString(),
             estPresent: dto.estPresent,
             estRetard: dto.estRetard,
-            positionActuelle: {
-                latitude: parseFloat(dto.positionActuelle.latitude),
-                longitude: parseFloat(dto.positionActuelle.longitude)
-            },
+            latitude: lat,
+            longitude: lng,
             missionId: parseInt(dto.missionId, 10),
             agentId: parseInt(dto.agentId, 10)
         };
+        
+        console.log("Payload envoyé au backend:", payload);
         
         let call;
         if (isEdit) {
@@ -254,29 +279,38 @@ export default function PointageForm() {
             call = PointageService.create(payload);
         }
 
-        call.then(() => {
+        call.then((response) => {
+            console.log("Réponse du serveur:", response);
+            console.log("Mode de service:", serviceMode);
+            console.log("isServiceMode:", isServiceMode);
+            
             if (isServiceMode) {
-                setSuccess(
-                    serviceMode === 'prise' 
-                        ? "Prise de service enregistrée avec succès !" 
-                        : "Fin de service enregistrée avec succès !"
-                );
+                const message = serviceMode === 'prise' 
+                    ? "✅ Prise de service enregistrée avec succès !" 
+                    : "✅ Fin de service enregistrée avec succès !";
+                
+                const variant = serviceMode === 'prise' ? 'success' : 'info';
+                
+                console.log("Affichage du toast avec message:", message);
+                setToastMessage(message);
+                setToastVariant(variant);
+                setShowToast(true);
+                
+                // Rediriger vers la liste des pointages après 1.5 secondes
+                console.log("Redirection programmée dans 1.5 secondes...");
                 setTimeout(() => {
-                    setDto({
-                        datePointage: "",
-                        estPresent: true,
-                        estRetard: false,
-                        positionActuelle: { latitude: "", longitude: "" },
-                        missionId: "",
-                        agentId: ""
-                    });
-                    setSuccess("");
-                }, 2000);
+                    console.log("Redirection vers /pointages");
+                    navigate("/pointages");
+                }, 1500);
             } else {
+                console.log("Redirection immédiate vers /pointages");
                 navigate("/pointages");
             }
         })
-        .catch(err => setError(err.response?.data?.message || "Erreur serveur"));
+        .catch(err => {
+            console.error("Erreur lors de la soumission:", err);
+            setError(err.response?.data?.message || "Erreur serveur");
+        });
     };
 
     return (
@@ -466,6 +500,24 @@ export default function PointageForm() {
                     </button>
                 </div>
             </form>
+            
+            {/* Toast de confirmation */}
+            <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
+                <Toast 
+                    show={showToast} 
+                    onClose={() => setShowToast(false)} 
+                    delay={3000} 
+                    autohide
+                    bg={toastVariant}
+                >
+                    <Toast.Header>
+                        <strong className="me-auto">
+                            {toastVariant === 'success' ? '🟢 Prise de service' : '🔵 Fin de service'}
+                        </strong>
+                    </Toast.Header>
+                    <Toast.Body className="text-white">{toastMessage}</Toast.Body>
+                </Toast>
+            </ToastContainer>
         </div>
     );
 }

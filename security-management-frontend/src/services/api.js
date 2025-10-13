@@ -2,7 +2,7 @@
 import axios from "axios";
 import { tokenService } from "./auth/tokenService";
 
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
+const BASE_URL = process.env.REACT_APP_API_BASE || "http://localhost:8080/api";
 
 export const plain = axios.create({
   baseURL: BASE_URL,

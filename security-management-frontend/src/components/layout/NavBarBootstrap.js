@@ -48,7 +48,6 @@ export default function NavBarBootstrap() {
                             <NavDropdown.Item as={Link} to="/disponibilites">Disponibilités</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/disponibilites/create">Créer Disponibilité</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/pointages">Pointages</NavDropdown.Item>
-                            <NavDropdown.Item as={Link} to="/pointages/create">Créer Pointage</NavDropdown.Item>
                             <NavDropdown.Divider />
                             
                             <NavDropdown.Header>Documents</NavDropdown.Header>

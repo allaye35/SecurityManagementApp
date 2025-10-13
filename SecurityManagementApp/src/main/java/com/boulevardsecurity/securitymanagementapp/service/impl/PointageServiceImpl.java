@@ -53,7 +53,16 @@ public class PointageServiceImpl implements PointageService {
 
     @Override
     public PointageDto creerPointage(PointageCreateDto dto) {
+        System.out.println("DEBUG - Création pointage avec DTO: " + dto);
+        System.out.println("DEBUG - AgentID: " + dto.getAgentId());
+        System.out.println("DEBUG - MissionID: " + dto.getMissionId());
+        System.out.println("DEBUG - Latitude: " + dto.getLatitude() + ", Longitude: " + dto.getLongitude());
+        
         Pointage pointage = mapper.toEntity(dto);
+        
+        System.out.println("DEBUG - Pointage après mapping:");
+        System.out.println("DEBUG - AgentID dans entité: " + pointage.getAgentId());
+        System.out.println("DEBUG - Position GPS: " + pointage.getPositionActuelle());
 
         Mission mission = missionRepository.findById(dto.getMissionId())
                 .orElseThrow(() -> new NoSuchElementException("Mission introuvable id=" + dto.getMissionId()));
@@ -78,7 +87,18 @@ public class PointageServiceImpl implements PointageService {
 
         pointage.setDatePointage(new Date());
         pointage.setMission(mission);
+        
+        System.out.println("DEBUG - Pointage avant sauvegarde:");
+        System.out.println("DEBUG - AgentID: " + pointage.getAgentId());
+        System.out.println("DEBUG - Position: " + pointage.getPositionActuelle());
+        
         Pointage enregistre = pointageRepository.save(pointage);
+        
+        System.out.println("DEBUG - Pointage après sauvegarde:");
+        System.out.println("DEBUG - ID: " + enregistre.getId());
+        System.out.println("DEBUG - AgentID: " + enregistre.getAgentId());
+        System.out.println("DEBUG - Position: " + enregistre.getPositionActuelle());
+        
         return mapper.toDto(enregistre);
     }
 
@@ -101,6 +121,10 @@ public class PointageServiceImpl implements PointageService {
 
     @Override
     public PointageDto enregistrerPriseDeService(PointageCreateDto dto) {
+        System.out.println("DEBUG PRISE SERVICE - DTO reçu: " + dto);
+        System.out.println("DEBUG - AgentID: " + dto.getAgentId());
+        System.out.println("DEBUG - Latitude: " + dto.getLatitude() + ", Longitude: " + dto.getLongitude());
+        
         Mission mission = missionRepository.findById(dto.getMissionId())
                 .orElseThrow(() -> new NoSuchElementException("Mission introuvable id=" + dto.getMissionId()));
 
@@ -132,7 +156,17 @@ public class PointageServiceImpl implements PointageService {
         pointage.setAgentId(dto.getAgentId());
         pointage.setFinService(null);
         
+        System.out.println("DEBUG - Pointage avant sauvegarde:");
+        System.out.println("DEBUG - AgentID: " + pointage.getAgentId());
+        System.out.println("DEBUG - Position: " + pointage.getPositionActuelle());
+        
         Pointage enregistre = pointageRepository.save(pointage);
+        
+        System.out.println("DEBUG - Pointage sauvegardé:");
+        System.out.println("DEBUG - ID: " + enregistre.getId());
+        System.out.println("DEBUG - AgentID: " + enregistre.getAgentId());
+        System.out.println("DEBUG - Position: " + enregistre.getPositionActuelle());
+        
         return mapper.toDto(enregistre);
     }
 

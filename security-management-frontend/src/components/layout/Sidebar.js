@@ -44,7 +44,6 @@ const Sidebar = ({ show, handleClose, windowWidth }) => {
         { title: 'Disponibilités', path: '/disponibilites', icon: <FaUserClock size={14} className="me-1" /> },
         { title: 'Créer Disponibilité', path: '/disponibilites/create' },
         { title: 'Pointages', path: '/pointages', icon: <FaUserClock size={14} className="me-1" /> },
-        { title: 'Créer Pointage', path: '/pointages/create' },
         { title: 'Cartes Pro', path: '/cartes-professionnelles', icon: <FaIdCard size={14} className="me-1" /> },
         { title: 'Créer Carte Pro', path: '/cartes-professionnelles/create' },
         { title: 'Diplômes SSIAP', path: '/diplomes-ssiap', icon: <FaGraduationCap size={14} className="me-1" /> },

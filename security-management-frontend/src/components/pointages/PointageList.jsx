@@ -4,13 +4,13 @@ import PointageService from "../../services/PointageService";
 import { 
     Container, Row, Col, Card, Table, Button, Badge, 
     Spinner, Alert, Form, InputGroup, OverlayTrigger, 
-    Tooltip, Nav
+    Tooltip, Nav, Pagination
 } from "react-bootstrap";
 import { 
     FaUserClock, FaPlus, FaSearch, FaFilter, FaEye, 
     FaPencilAlt, FaTrashAlt, FaExclamationTriangle,
     FaCalendarAlt, FaCheck, FaTimes, FaClock, FaMapMarkerAlt,
-    FaSignInAlt, FaSignOutAlt
+    FaSignInAlt, FaSignOutAlt, FaUser, FaBriefcase, FaBuilding
 } from "react-icons/fa";
 
 export default function PointageList() {
@@ -20,19 +20,32 @@ export default function PointageList() {
     const [searchTerm, setSearchTerm] = useState("");
     const [showNotification, setShowNotification] = useState(false);
     const [notification, setNotification] = useState({ message: "", variant: "success" });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5); // 5 éléments par page par défaut pour avoir la pagination
     const navigate = useNavigate();
 
     const loadData = () => {
         setLoading(true);
+        setError("");
         PointageService.getAll()
             .then(({ data }) => {
+                console.log("Pointages chargés:", data);
+                // Afficher la structure du premier pointage pour déboguer
+                if (data && data.length > 0) {
+                    console.log("Structure du premier pointage:", data[0]);
+                    console.log("Mission du premier pointage:", data[0].mission);
+                    console.log("Latitude:", data[0].latitude, "Longitude:", data[0].longitude);
+                }
                 setItems(data);
                 setLoading(false);
             })
-            .catch(() => {
-                setError("Erreur de chargement des pointages");
+            .catch((err) => {
+                console.error("Erreur lors du chargement des pointages:", err);
+                console.error("Détails de l'erreur:", err.response);
+                const errorMessage = err.response?.data?.message || err.message || "Erreur de chargement des pointages";
+                setError(errorMessage);
                 setLoading(false);
-                showTemporaryNotification('Erreur lors du chargement des données', 'danger');
+                showTemporaryNotification(`Erreur: ${errorMessage}`, 'danger');
             });
     };
 
@@ -57,11 +70,76 @@ export default function PointageList() {
             .catch(() => showTemporaryNotification("Échec de la suppression", "danger"));
     };
 
-    const filteredItems = items.filter(p => {
-        const searchString = `${p.id} ${new Date(p.datePointage).toLocaleString()} ${p.mission?.id || ""}`
-            .toLowerCase();
-        return searchTerm === '' || searchString.includes(searchTerm.toLowerCase());
+    const filteredItems = (items || []).filter(p => {
+        if (!p) return false;
+        try {
+            // Utiliser les nouveaux champs du DTO
+            const agentName = p.agentNom && p.agentPrenom 
+                ? `${p.agentPrenom} ${p.agentNom}`.trim() 
+                : (p.agent ? `${p.agent.prenom || ''} ${p.agent.nom || ''}`.trim() : '');
+            
+            const missionInfo = p.missionTitre || (p.mission ? `${p.mission.titre || ''} ${p.mission.description || ''}` : '');
+            const siteInfo = p.mission?.site ? `${p.mission.site.nom || ''} ${p.mission.site.adresse || ''}` : '';
+            
+            const searchString = `${p.id || ''} ${agentName} ${p.datePointage ? new Date(p.datePointage).toLocaleString() : ''} ${missionInfo} ${siteInfo}`
+                .toLowerCase();
+            return searchTerm === '' || searchString.includes(searchTerm.toLowerCase());
+        } catch (error) {
+            console.error("Erreur lors du filtrage du pointage:", p, error);
+            return false;
+        }
     });
+
+    // Logique de pagination
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+
+    // Réinitialiser la page quand le filtre change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleItemsPerPageChange = (e) => {
+        setItemsPerPage(parseInt(e.target.value));
+        setCurrentPage(1);
+    };
+
+    // Générer les numéros de page pour la pagination
+    const generatePaginationItems = () => {
+        const items = [];
+        const maxPagesToShow = 5;
+        
+        if (totalPages <= maxPagesToShow) {
+            for (let i = 1; i <= totalPages; i++) {
+                items.push(i);
+            }
+        } else {
+            if (currentPage <= 3) {
+                for (let i = 1; i <= 4; i++) items.push(i);
+                items.push('...');
+                items.push(totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                items.push(1);
+                items.push('...');
+                for (let i = totalPages - 3; i <= totalPages; i++) items.push(i);
+            } else {
+                items.push(1);
+                items.push('...');
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) items.push(i);
+                items.push('...');
+                items.push(totalPages);
+            }
+        }
+        
+        return items;
+    };
 
     const renderTooltip = (text) => (
         <Tooltip id="button-tooltip">
@@ -149,19 +227,6 @@ export default function PointageList() {
                                     Sortie
                                 </span>
                             </Link>
-                            <Link 
-                                to="/pointages/create" 
-                                className="btn fw-bold shadow-lg text-white px-4 py-3" 
-                                style={{ 
-                                    fontSize: '1.15rem', 
-                                    transition: 'all 0.3s ease',
-                                    borderRadius: '12px',
-                                    border: 'none',
-                                    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-                                }}
-                            >
-                                <FaPlus className="me-2" size={20} /> Nouveau pointage
-                            </Link>
                         </Col>
                     </Row>
                 </Card.Header>
@@ -191,7 +256,7 @@ export default function PointageList() {
                                             <FaSearch className="text-primary" size={22} />
                                         </InputGroup.Text>
                                         <Form.Control
-                                            placeholder="Rechercher un pointage par ID, mission, date..."
+                                            placeholder="Rechercher par agent, mission, site, date..."
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                             className="border-0 px-3"
@@ -249,12 +314,12 @@ export default function PointageList() {
                                 <Table hover className="align-middle bg-white mb-0" style={{ fontSize: '1.05rem' }}>
                                     <thead style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
                                         <tr>
-                                            <th className="text-center text-white py-4" style={{fontSize: '1.15rem', borderRight: '1px solid rgba(255,255,255,0.1)'}}>
-                                                <div className="d-flex align-items-center justify-content-center">
+                                            <th className="text-white py-4" style={{fontSize: '1.15rem', borderRight: '1px solid rgba(255,255,255,0.1)'}}>
+                                                <div className="d-flex align-items-center">
                                                     <div className="bg-white bg-opacity-20 rounded-circle p-2 me-2">
                                                         <FaUserClock size={18} />
                                                     </div>
-                                                    <span className="fw-bold">ID</span>
+                                                    <span className="fw-bold">Agent</span>
                                                 </div>
                                             </th>
                                             <th className="text-white py-4" style={{fontSize: '1.15rem', borderRight: '1px solid rgba(255,255,255,0.1)'}}>
@@ -278,7 +343,7 @@ export default function PointageList() {
                                                     <div className="bg-white bg-opacity-20 rounded-circle p-2 me-2">
                                                         <FaMapMarkerAlt size={18} />
                                                     </div>
-                                                    <span className="fw-bold">Position GPS</span>
+                                                    <span className="fw-bold">Lieu / Site</span>
                                                 </div>
                                             </th>
                                             <th className="text-white py-4" style={{fontSize: '1.15rem', borderRight: '1px solid rgba(255,255,255,0.1)'}}>
@@ -295,7 +360,7 @@ export default function PointageList() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {filteredItems.length === 0 ? (
+                                        {currentItems.length === 0 ? (
                                             <tr>
                                                 <td colSpan="6" className="text-center py-5">
                                                     <div className="py-5">
@@ -308,19 +373,29 @@ export default function PointageList() {
                                                 </td>
                                             </tr>
                                         ) : (
-                                            filteredItems.map((p, index) => (
+                                            currentItems.map((p, index) => (
                                                 <tr key={p.id} className="hover-row" style={{ 
                                                     borderBottom: '2px solid #f0f0f0',
                                                     background: index % 2 === 0 ? '#ffffff' : '#f8f9fa'
                                                 }}>
-                                                    <td className="text-center py-4">
-                                                        <Badge className="px-4 py-2 shadow-sm" style={{ 
-                                                            fontSize: '1.15rem',
-                                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                                            borderRadius: '10px'
-                                                        }}>
-                                                            #{p.id}
-                                                        </Badge>
+                                                    <td className="py-4">
+                                                        <div className="d-flex align-items-center">
+                                                            <div className="bg-primary bg-opacity-10 rounded-circle p-3 me-3 shadow-sm">
+                                                                <FaUser className="text-primary" size={22} />
+                                                            </div>
+                                                            <div>
+                                                                <div className="fw-bold text-dark" style={{ fontSize: '1.1rem' }}>
+                                                                    {p.agentNom && p.agentPrenom
+                                                                        ? `${p.agentPrenom} ${p.agentNom}`
+                                                                        : (p.agent?.nom && p.agent?.prenom 
+                                                                            ? `${p.agent.prenom} ${p.agent.nom}`
+                                                                            : "Agent non spécifié")}
+                                                                </div>
+                                                                <div className="text-muted" style={{ fontSize: '0.9rem' }}>
+                                                                    {p.agentId ? `ID: #${p.agentId}` : `Pointage ID: #${p.id}`}
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td className="py-4">
                                                         <div className="d-flex align-items-center">
@@ -380,26 +455,63 @@ export default function PointageList() {
                                                     </td>
                                                     <td className="py-4">
                                                         <div className="d-flex align-items-center">
-                                                            <div className="bg-danger bg-opacity-10 rounded-circle p-3 me-3">
-                                                                <FaMapMarkerAlt className="text-danger" size={22} />
+                                                            <div className="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                                                <FaBuilding className="text-success" size={22} />
                                                             </div>
                                                             <div style={{ fontSize: '0.95rem' }}>
-                                                                <div className="text-dark"><span className="fw-bold">Lat:</span> {p.positionActuelle?.latitude?.toFixed(6) ?? "-"}</div>
-                                                                <div className="text-muted"><span className="fw-bold">Lng:</span> {p.positionActuelle?.longitude?.toFixed(6) ?? "-"}</div>
+                                                                {p.mission?.site?.nom || p.mission?.site?.adresse || p.siteName ? (
+                                                                    <>
+                                                                        <div className="fw-bold text-dark" style={{ fontSize: '1.05rem' }}>
+                                                                            {p.mission?.site?.nom || p.siteName || "Site"}
+                                                                        </div>
+                                                                        <div className="text-muted" style={{ fontSize: '0.9rem' }}>
+                                                                            {p.mission?.site?.adresse || 
+                                                                             (p.latitude != null && p.longitude != null
+                                                                                ? `${p.latitude.toFixed(4)}, ${p.longitude.toFixed(4)}`
+                                                                                : "Position non disponible")}
+                                                                        </div>
+                                                                    </>
+                                                                ) : p.latitude != null && p.longitude != null ? (
+                                                                    <>
+                                                                        <div className="text-dark">
+                                                                            <span className="fw-bold">Lat:</span> {p.latitude.toFixed(6)}
+                                                                        </div>
+                                                                        <div className="text-muted">
+                                                                            <span className="fw-bold">Lng:</span> {p.longitude.toFixed(6)}
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <div className="text-muted">
+                                                                        <FaMapMarkerAlt className="me-2" />
+                                                                        Position non disponible
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td className="py-4">
-                                                        <Badge 
-                                                            className="d-inline-flex align-items-center px-4 py-3 shadow-sm"
-                                                            style={{ 
-                                                                fontSize: '1.1rem',
-                                                                borderRadius: '10px',
-                                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                                                            }}
-                                                        >
-                                                            <FaUserClock className="me-2" size={18} /> Mission #{p.mission?.id ?? "-"}
-                                                        </Badge>
+                                                        <div className="d-flex align-items-center">
+                                                            <div className="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
+                                                                <FaBriefcase className="text-warning" size={22} />
+                                                            </div>
+                                                            <div>
+                                                                {p.missionTitre || p.mission ? (
+                                                                    <>
+                                                                        <div className="fw-bold text-dark" style={{ fontSize: '1.05rem' }}>
+                                                                            {p.missionTitre || p.mission?.titre || p.mission?.description || `Mission #${p.missionId || p.mission?.id}`}
+                                                                        </div>
+                                                                        <div className="text-muted" style={{ fontSize: '0.9rem' }}>
+                                                                            {p.missionId ? `ID: #${p.missionId}` : (p.mission?.id ? `ID: #${p.mission.id}` : 'Mission')}
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <div className="text-muted">
+                                                                        <FaBriefcase className="me-2" />
+                                                                        {p.missionId ? `Mission #${p.missionId}` : 'Mission non spécifiée'}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td className="text-center py-4">
                                                         <div className="d-flex justify-content-center gap-2">
@@ -464,6 +576,91 @@ export default function PointageList() {
                                         )}
                                     </tbody>
                                 </Table>
+                            </div>
+                        )}
+
+                        {/* Pagination - Toujours visible */}
+                        {!loading && (
+                            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 pt-4 border-top">
+                                <div className="mb-3 mb-md-0">
+                                    <Form.Group className="d-flex align-items-center">
+                                        <Form.Label className="me-3 mb-0 fw-bold" style={{ fontSize: '1.05rem' }}>
+                                            Afficher :
+                                        </Form.Label>
+                                        <Form.Select 
+                                            value={itemsPerPage} 
+                                            onChange={handleItemsPerPageChange}
+                                            style={{ 
+                                                width: '100px',
+                                                fontSize: '1.05rem',
+                                                borderRadius: '10px',
+                                                borderWidth: '2px',
+                                                borderColor: '#667eea',
+                                                fontWeight: '600'
+                                            }}
+                                        >
+                                            <option value={5}>5</option>
+                                            <option value={8}>8</option>
+                                            <option value={10}>10</option>
+                                            <option value={15}>15</option>
+                                            <option value={20}>20</option>
+                                            <option value={50}>50</option>
+                                            <option value={100}>100</option>
+                                        </Form.Select>
+                                        <span className="ms-3 text-muted" style={{ fontSize: '1.05rem' }}>
+                                            {filteredItems.length > 0 ? (
+                                                <>
+                                                    <strong>{indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredItems.length)}</strong> sur <strong>{filteredItems.length}</strong> pointages
+                                                </>
+                                            ) : (
+                                                <strong>0 pointage</strong>
+                                            )}
+                                        </span>
+                                    </Form.Group>
+                                </div>
+
+                                <Pagination className="mb-0">
+                                    <Pagination.First 
+                                        onClick={() => handlePageChange(1)} 
+                                        disabled={currentPage === 1 || totalPages === 0}
+                                        style={{ fontWeight: '600' }}
+                                    />
+                                    <Pagination.Prev 
+                                        onClick={() => handlePageChange(currentPage - 1)} 
+                                        disabled={currentPage === 1 || totalPages === 0}
+                                        style={{ fontWeight: '600' }}
+                                    />
+                                    
+                                    {totalPages > 0 && generatePaginationItems().map((page, idx) => {
+                                        if (page === '...') {
+                                            return <Pagination.Ellipsis key={`ellipsis-${idx}`} disabled />;
+                                        }
+                                        return (
+                                            <Pagination.Item
+                                                key={page}
+                                                active={page === currentPage}
+                                                onClick={() => handlePageChange(page)}
+                                                style={{ 
+                                                    fontWeight: '600',
+                                                    fontSize: '1.05rem'
+                                                }}
+                                            >
+                                                {page}
+                                            </Pagination.Item>
+                                        );
+                                    })}
+                                    
+                                    <Pagination.Next 
+                                        onClick={() => handlePageChange(currentPage + 1)} 
+                                        disabled={currentPage === totalPages || totalPages === 0}
+                                        style={{ fontWeight: '600' }}
+                                    />
+                                    <Pagination.Last 
+                                        onClick={() => handlePageChange(totalPages)} 
+                                        disabled={currentPage === totalPages || totalPages === 0}
+                                        style={{ fontWeight: '600' }}
+                                    />
+                                </Pagination>
                             </div>
                         )}
                     </div>
@@ -595,6 +792,48 @@ export default function PointageList() {
                 
                 .table-responsive::-webkit-scrollbar-thumb:hover {
                     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+                }
+
+                /* Styles de pagination */
+                .pagination {
+                    gap: 8px;
+                }
+
+                .pagination .page-item .page-link {
+                    border-radius: 10px;
+                    border: 2px solid #667eea;
+                    color: #667eea;
+                    font-weight: 600;
+                    padding: 0.6rem 1rem;
+                    transition: all 0.3s ease;
+                    margin: 0 4px;
+                }
+
+                .pagination .page-item.active .page-link {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border-color: #667eea;
+                    color: white;
+                    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                    transform: scale(1.1);
+                }
+
+                .pagination .page-item .page-link:hover:not(.active) {
+                    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+                    border-color: #764ba2;
+                    color: #764ba2;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+                }
+
+                .pagination .page-item.disabled .page-link {
+                    border-color: #dee2e6;
+                    color: #6c757d;
+                    opacity: 0.5;
+                }
+
+                .form-select:focus {
+                    border-color: #667eea;
+                    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
                 }
             `}</style>
         </Container>
